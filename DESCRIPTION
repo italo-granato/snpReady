@@ -10,7 +10,6 @@ Description: A tool created to assist breeders in genomic analysis. It consists
              of functions for cleaning, summarizing and prepraring genomic data
 			 to Genome Selection and Genomic Association analysis.
 Depends:
-    Matrix
-	matrixcalc
+    Matrix, matrixcalc
 License: GPL-2
 URL: 

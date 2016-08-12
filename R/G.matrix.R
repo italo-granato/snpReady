@@ -1,5 +1,38 @@
-G.matrix <-
-function(Z, method=c("WW, UAR, UARadj"), frame=c("matrix, column")){
+#' Generate realized relationship matrix
+#'
+#' @param \code{Z} \code{matrix}. Matrix of markers where individuals are in rows and SNP markers are in the columns.
+#' @param \code{method} \code{character} method to construct the genomic relationship matrix. Three methods are currently supported. \code{"WW"} indicates method propposed by Vanraden (2008) for additive
+#' and dominant genomic relationship. \code{"UAR"} and \code{"UARadj"} represents methods propposed by yang et al. (2010) for additive genomic relationship. See 'Detais'
+#' @param \code{frame} \code{character} format of matrix to be returned. \code{"matrix"} is used for value returned as matrix \eqn{n} x \eqn{n}.
+#' \code{"column"} is used for return in a table format with 3 columns. See 'Detais'
+#' @details
+#' Function g.matrix provides three diferent types of relationship matrix. For \code{"ww"} method, the relationship matrix was built as propposed by Vanraden (2008) where
+#'  \deqn{G = \frac{ZZ'}{2\sum p_i(1-p_i)}} where \eqn{Z} is the marker matrix coded with classical parameterization. The SNP genotype takes a value of 0, 1 or 2 if the genotype of the \eqn{j}th
+#' individual at SNP i \eqn{A_1 A_1}, \eqn{A_1 A_2} or \eqn{A_2 A_2}, respectively was centered for allele frequency.
+#' \code{"UAR"} and \code{"UARadj"} represents the genomic relationship matrix propposed by Yang et al. (2010) named by Powell et al. (2010) as unified additive relationship (UAR)
+#' and adjusted UAR, respectively. To obtain a genome-wide relationship, they use:
+#' \deqn{A_{jk} = \frac{1}{N}\sum_i{A_{ijk}} = \begin{cases}
+#' \dfrac{1}{N} \sum_i{\dfrac{(x_{ij} - 2p_{i})(x_{ik} - 2p_i)}{2p_i(1-p_i)}}, j \neq k \cr
+#' 1 +  \dfrac{1}{N} \sum_i{\dfrac{x_{ij}^{2}(1 + 2p_{i})x_{ij} + 2p_i^{2}}{2p_i(1-p_i)}}, j = k
+#'\end{cases}}
+#' Where, \eqn{p_i} is the allele frequency at SNP \eqn{i}, \eqn{x_{ij}} is SNP genotype that takes a value of 0, 1 or 2 if the genotype of the \eqn{j}th
+#' individual at SNP \eqn{i} is \eqn{A_1 A_1}, \eqn{A_1 A_2} or \eqn{A_2 A_2}, respectively.
+#' The \code{frame} argument is the desired format output. For \code{"matrix"}, the relationship output produced is in matrix format, with dimension \eqn{n x n}. 
+#' If \code{"column"} is the format chosen, the inverse of relationship matrix is produced and converted to a table where the upper triangular part of a matrix
+#' is converted to a table with columns pointing respectives row, column and value. This format is used mainly by asreml. To solve the inverse of a relationship matrix
+#' that should be a positive definite. In case it's not, a near positive definite matrix is created and then solved and a warning is produced.
+#' @return The selected matrix is returned in a matrix or table format.
+#' @examples
+#'
+#' #(1) Additive and dominance relationship matrix 
+#' Z <- data(maize)
+#' x <- G.matrix(Z, method="WW", frame = "matrix")
+#' A <- x$Ga
+#' D <- x$Gd
+#' 
+
+
+G.matrix <- function(Z, method=c("WW, UAR, UARadj"), frame=c("matrix, column")){
   coded <- unique(as.vector(Z))
   if (any(is.na(match(coded, c(0,1,2)))))
     stop("SNPs must be coded as 0, 1, 2")
@@ -74,11 +107,14 @@ function(Z, method=c("WW, UAR, UARadj"), frame=c("matrix, column")){
     attr(x, "rowNames") <- rownames(m)
     return(x)}
   
-  posdefmat <- function(mat){if(is.positive.definite(mat)){
+  posdefmat <- function(mat){
+    #' @importFrom matrixcalc is.positive.definite
+    if(is.positive.definite(mat)){
     g = solve(mat)
   }else{
+    #' @importFrom Matrix nearPD
     g <- solve(nearPD(mat)$mat)
-    cat("The matrix was adjusted for the nearest positive definite matrix ")
+    warning("The matrix was adjusted for the nearest positive definite matrix")
     }
     return(g)
   }

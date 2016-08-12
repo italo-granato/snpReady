@@ -2,14 +2,16 @@ Package: SNPReady
 Version: 1.0
 Date: 2016-08-01
 Authors@R: c(
-    person("Italo", "Granato", , "italo.granato@gmail.com", c("aut", "cre")),
-    person("Roberto", "Fritsche-Neto", , "rfritscheneto.com", "aut"),
+    person("Italo", "Granato", email="italo.granato@gmail.com", role = c("aut", "cre")),
+    person("Roberto", "Fritsche-Neto", email="rfritscheneto@gmail.com", role =c("aut", "ths"))
     )
-Title: A tool to assist breeders in genomic analysis  
+Title: A tool to assist breeders in genomic analysis
 Description: A tool created to assist breeders in genomic analysis. It consists
-             of functions for cleaning, summarizing and prepraring genomic data
-			 to Genome Selection and Genomic Association analysis.
+    of functions for cleaning, summarizing and prepraring genomic data
+    to Genome Selection and Genome Association analysis.
 Depends:
-    Matrix, matrixcalc
+    Matrix,
+    matrixcalc
 License: GPL-2
 URL: 
+RoxygenNote: 5.0.1.9000

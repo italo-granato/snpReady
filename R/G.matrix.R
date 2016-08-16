@@ -32,10 +32,6 @@
 #' D <- x$Gd
 #' 
 
-library("roxygen2")
-roxygenise()
-devtools::document()
-
 G.matrix <- function(Z, method=c("WW, UAR, UARadj"), frame=c("matrix, column")){
   coded <- unique(as.vector(Z))
   if (any(is.na(match(coded, c(0,1,2)))))

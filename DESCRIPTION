@@ -1,5 +1,5 @@
 Package: SNPReady
-Version: 1.0
+Version: 0.9.1
 Date: 2016-08-01
 Authors@R: c(
     person("Italo", "Granato", email="italo.granato@gmail.com", role = c("aut", "cre")),
@@ -14,4 +14,4 @@ Depends:
     matrixcalc
 License: GPL-2
 URL: 
-RoxygenNote: 5.0.1.9000
+RoxygenNote: 5.0.1

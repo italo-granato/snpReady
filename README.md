@@ -1,4 +1,4 @@
-# SnpReady
-A tool to assist breeders in genomic analysis
+# snpReady
+A tool to assist breeders to prepare genotypic datasets for genomic analysis
 
 In construction...

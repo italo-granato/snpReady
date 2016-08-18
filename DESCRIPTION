@@ -1,14 +1,15 @@
-Package: SNPReady
+Package: snpReady
 Version: 0.9.1
 Date: 2016-08-01
 Authors@R: c(
     person("Italo", "Granato", email="italo.granato@gmail.com", role = c("aut", "cre")),
-    person("Roberto", "Fritsche-Neto", email="rfritscheneto@gmail.com", role =c("aut", "ths"))
+    person("Roberto", "Fritsche-Neto", email="roberto.neto@usp.br", role =c("aut", "ths"))
     )
-Title: A tool to assist breeders in genomic analysis
-Description: A tool created to assist breeders in genomic analysis. It consists
-    of functions for cleaning, summarizing and prepraring genomic data
-    to Genome Selection and Genome Association analysis.
+Title: A tool to assist breeders to prepare genotypic datasets in order to run genomic analysis and estimate population genetic parameters.
+Description: This package consists of three functions. The first two, raw.data() and G.matrix(), which clean, summarize 
+and prepare genomic datasets to Genome Selection and Genome Association analysis. With popgen() , the third function, 
+it is possible to estimate population genetic parameters for whole population or by subgroups, per genotypes or per loci. 
+Furthermore, fixed allelos or even exclusive markers can be identify using popgen().
 Depends:
     Matrix,
     matrixcalc

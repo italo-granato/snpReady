@@ -2,41 +2,41 @@
 % Please edit documentation in R/G.matrix.R
 \name{G.matrix}
 \alias{G.matrix}
-\title{Generate realized relationship matrix}
+\title{Generate Genetic Relationship Matrix}
 \usage{
 G.matrix(Z, method = c("WW, UAR, UARadj"), frame = c("matrix, column"))
 }
 \arguments{
-\item{\code{Z}}{\code{matrix}. Matrix of markers where individuals are in rows and SNP markers are in the columns.}
+\item{\code{Z}}{\code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns.}
 
-\item{\code{method}}{\code{character} method to construct the genomic relationship matrix. Three methods are currently supported. \code{"WW"} indicates method propposed by Vanraden (2008) for additive
-and dominant genomic relationship. \code{"UAR"} and \code{"UARadj"} represents methods propposed by yang et al. (2010) for additive genomic relationship. See 'Detais'}
+\item{\code{method}}{\code{character}. Method for constructing the GRM. Three methods are currently supported. \code{"WW"} indicates the method proposed by Vanraden (2008) for additive
+and dominant genomic relationship. \code{"UAR"} and \code{"UARadj"} represent methods proposed by Yang et al. (2010) for additive genomic relationship. See 'Detais'}
 
-\item{\code{frame}}{\code{character} format of matrix to be returned. \code{"matrix"} is used for value returned as matrix \eqn{n} x \eqn{n}.
-\code{"column"} is used for return in a table format with 3 columns. See 'Detais'}
+\item{\code{frame}}{\code{character}. Class of object to be returned. \code{"matrix"} returns a \eqn{n} x \eqn{n} matrix.
+\code{"column"} returns the GRM as a table with 3 columns. See 'Details'}
 }
 \value{
-The selected matrix is returned in a matrix or table format.
+The GRM is returned in a matrix or table format.
 }
 \description{
-Generate realized relationship matrix
+Generate Genomic Relationship Matrix (GRM)
 }
 \details{
-Function g.matrix provides three diferent types of relationship matrix. For \code{"ww"} method, the relationship matrix was built as propposed by Vanraden (2008) where
- \deqn{G = \frac{ZZ'}{2\sum p_i(1-p_i)}} where \eqn{Z} is the marker matrix coded with classical parameterization. The SNP genotype takes a value of 0, 1 or 2 if the genotype of the \eqn{j}th
-individual at SNP i \eqn{A_1 A_1}, \eqn{A_1 A_2} or \eqn{A_2 A_2}, respectively was centered for allele frequency.
-\code{"UAR"} and \code{"UARadj"} represents the genomic relationship matrix propposed by Yang et al. (2010) named by Powell et al. (2010) as unified additive relationship (UAR)
-and adjusted UAR, respectively. To obtain a genome-wide relationship, they use:
+Function G.matrix provides three diferent types of relationship matrix. For \code{"WW"} method, the relationship matrix is estimated as proposed by Vanraden (2008):
+ \deqn{G = \frac{ZZ'}{2\sum p_i(1-p_i)}} where: \eqn{Z} is the marker matrix. The SNP genotype takes a value of 0, 1 or 2 if the genotype of the \eqn{j}th
+individual at SNP \eqn{i} is \eqn{A_1 A_1}, \eqn{A_1 A_2} or \eqn{A_2 A_2}, respectively.
+\code{"UAR"} and \code{"UARadj"} represents the genomic relationship matrix proposed by Yang et al. (2010) named by Powell et al. (2010) as Unified Additive Relationship (UAR)
+and Adjusted UAR, respectively. GRM is then obtained by:
 \deqn{A_{jk} = \frac{1}{N}\sum_i{A_{ijk}} = \begin{cases}
 \dfrac{1}{N} \sum_i{\dfrac{(x_{ij} - 2p_{i})(x_{ik} - 2p_i)}{2p_i(1-p_i)}}, j \neq k \cr
 1 +  \dfrac{1}{N} \sum_i{\dfrac{x_{ij}^{2}(1 + 2p_{i})x_{ij} + 2p_i^{2}}{2p_i(1-p_i)}}, j = k
 \end{cases}}
-Where, \eqn{p_i} is the allele frequency at SNP \eqn{i}, \eqn{x_{ij}} is SNP genotype that takes a value of 0, 1 or 2 if the genotype of the \eqn{j}th
+where: \eqn{p_i} is the allele frequency at SNP \eqn{i}, \eqn{x_{ij}} is the SNP genotype that takes a value of 0, 1 or 2 if the genotype of the \eqn{j}th
 individual at SNP \eqn{i} is \eqn{A_1 A_1}, \eqn{A_1 A_2} or \eqn{A_2 A_2}, respectively.
-The \code{frame} argument is the desired format output. For \code{"matrix"}, the relationship output produced is in matrix format, with dimension \eqn{n x n}. 
-If \code{"column"} is the format chosen, the inverse of relationship matrix is produced and converted to a table where the upper triangular part of a matrix
-is converted to a table with columns pointing respectives row, column and value. This format is used mainly by asreml. To solve the inverse of a relationship matrix
-that should be a positive definite. In case it's not, a near positive definite matrix is created and then solved and a warning is produced.
+The \code{frame} argument is the desired output format. For \code{"matrix"}, the relationship output produced is in matrix format, with \eqn{n x n} dimension. 
+If \code{"column"} is the chosen format, the inverse of the relationship matrix is produced and converted to a table. In this case, the upper triangular part of the relationship matrix
+is changed to a table with 3 columns representing the respective rows, columns and values (Used mainly by ASReml).
+If the relationship matrix is not positive definite, a near positive definite matrix is created and solved, followed by a warning message.
 }
 \examples{
 

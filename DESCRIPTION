@@ -9,7 +9,7 @@ Title: A tool to assist breeders to prepare genotypic datasets in order to run g
 Description: This package consists of three functions. The first two, raw.data() and G.matrix(), which clean, summarize 
 and prepare genomic datasets to Genome Selection and Genome Association analysis. With popgen() , the third function, 
 it is possible to estimate population genetic parameters for whole population or by subgroups, per genotypes or per loci. 
-Furthermore, fixed allelos or even exclusive markers can be identify using popgen().
+Furthermore, fixed alleles or even exclusive markers can be identify using popgen().
 Depends:
     Matrix,
     matrixcalc

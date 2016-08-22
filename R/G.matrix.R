@@ -32,7 +32,7 @@
 #' D <- x$Gd
 #' 
 
-G.matrix <- function(Z, method=c("WW, UAR, UARadj"), frame=c("matrix, column")){
+G.matrix <- function(Z, method=c("WW", "UAR", "UARadj"), frame=c("matrix", "column")){
   coded <- unique(as.vector(Z))
   if (any(is.na(match(coded, c(0,1,2)))))
     stop("SNPs must be coded as 0, 1, 2")
@@ -40,64 +40,42 @@ G.matrix <- function(Z, method=c("WW, UAR, UARadj"), frame=c("matrix, column")){
     stop("matrix must not have missing values")
   N <- nrow(Z) 
   n <- ncol(Z) 
-  n.hom <- colSums(Z==2) 
-  nhete <- colSums(Z==1)
-  n.ind <- nrow(Z) - colSums(is.na(Z))
-  p <- (2*n.hom + nhete)/(2*n.ind)
-  q <- 1-p
+  p <- (2*colSums(Z==2) + colSums(Z==1))/(2*nrow(Z))
   
-  WWG <- function(Z){
-    repW <- function(i){
-      x <- Z[,i]
-      x[x==2] <- 2*q[i]
-      x[x==1] <- q[i]-p[i]
-      x[x==0] <- (-2)*p[i]
-      return(x)}
-    w <- sapply(1:ncol(Z), function (i) repW(i))
-    repS <- function(j){
-      s <- Z[,j]
-      s[s==2] <- (-2)*q[j]^2
-      s[s==1] <- 2*p[j]*q[j]
-      s[s==0] <- (-2)*p[j]^2
-      return(s)}
-    s <- sapply(1:ncol(Z), function (x) repS(x))
-    WWl <- w%*%t(w)
-    I <- diag(1e-6, nrow=dim(WWl)[1], ncol=dim(WWl)[2])
-    Ga <- WWl/(sum(diag(WWl))/nrow(Z)) + I
+  WWG <- function(Z, p){
+    w <- Z - matrix(rep(2*p, each=nrow(Z)), ncol = ncol(Z))
     
-    SSl <- s%*%t(s)
-    Gd <- SSl/(sum(diag(SSl))/nrow(Z))
+    S <- ((Z==2)*1) * -rep(2*p^2, each=nrow(Z)) + ((Z==1)*1) * rep(2*p*(1-p), each=nrow(Z)) + ((Z==0)*1) * (-rep(2*(1-p)^2, each=nrow(Z)))
+    
+    WWl <- w %*% t(w)
+    Ga <- WWl/sum(2*p*(1-p)) + diag(1e-6, nrow(WWl))
+   
+    SSl <- S %*% t(S)
+    Gd <- SSl/sum((2*p*(1-p))^2)
     
     return(list(Ga=Ga,Gd=Gd))
   }
   
-  UAR <- function(Z, adj=FALSE){
-    id <- expand.grid(id1 = seq(N), id2 = seq(N))
-    Rel <- function (z){
-      i=id[z,1]
-      j=id[z,2]
-      if (j==i){
-        y <- 1 +(1/n)*sum((Z[i,]^2-(1+2*p)*Z[i,]+2*p^2)/(2*p*(1-p)))
-      }else
-      {
-        y <- (1/n)*sum(((Z[i,]-2*p)*(Z[j,]-2*p))/(2*p*(1-p)))
-      }
-      return(y)
-    }
+ UAR <- function(Z, p, adj=FALSE){
     
-    UARel <- sapply(1:nrow(id), function(x) Rel(x))
+    mrep <- Z - matrix(rep(2*p, each=nrow(Z)), ncol = ncol(Z))
+    
+    X <- (1/n)*(mrep %*% (t(mrep) * (1/(2*p*(1-p)))))
+    numerator <- Z^2 - t(t(Z) * (1+2*p)) + matrix(rep(2*p^2, each=nrow(Z)), ncol=ncol(Z)) 
+    diag(X) <- 1+(1/n)*colSums(t(numerator) *  (1/(2*p*(1-p))))
     
     if (adj==TRUE){
-      vid <- id[,1]==id[,2]
-      (Beta <- 1-((6.2*10^-6 + (1/n))/var(UARel)))
-      UARel[vid] <- 1 + (Beta*(UARel[vid]-1))
-      UARel[!vid] <- Beta*(UARel[!vid])
+      B <- 1-((6.2*10^-6 + (1/n))/var(c(X)))
+      X[lower.tri(X, diag = FALSE)] <- B*X[lower.tri(X, diag = FALSE)]
+      X[upper.tri(X, diag = FALSE)] <- B*X[upper.tri(X, diag = FALSE)]  
+      diag(X) <- 1 + (B*(diag(X)-1))
+      return(X)
     }
-    
-    Ad <- matrix(UARel, N, N, byrow=TRUE)
-    colnames(Ad) <- rownames(Ad) <- rownames(Z)
-    return(Ad)
+    else{
+      return(X)
+    }
   }
+    
   
   toSparse <- function(m){
     comb <- data.frame(row = rep(seq(nrow(m)), each=nrow(m)),
@@ -119,33 +97,31 @@ G.matrix <- function(Z, method=c("WW, UAR, UARadj"), frame=c("matrix, column")){
     return(g)
   }
   
-  
   if (method == "WW" & frame == "matrix"){
-    Gww <- WWG(Z)
+    Gww <- WWG(Z, p)
     return(Gww)
-  }
-  
+  } 
   if (method == "WW" & frame == "column"){
-    Gmat <- WWG(Z)
+    Gmat <- WWG(Z, p)
     Aww <- toSparse(posdefmat(Gmat$Ga))
     Dww <- toSparse(posdefmat(Gmat$Gd))
     return(list(Ga=Aww, Gd=Dww))
   }
   if (method=="UAR" & frame == "matrix"){
-    uar <- UAR(Z)
+    uar <- UAR(Z, p)
     return(Ga=uar)
   }
   if (method=="UAR" & frame == "column"){
-    Gmat <- UAR(Z)
+    Gmat <- UAR(Z, p)
     uarsp <- toSparse(posdefmat(Gmat))
     return(Ga=uarsp)
   }
   if (method=="UARadj" & frame == "matrix"){
-    uaradj <- UAR(Z, adj = TRUE)
+    uaradj <- UAR(Z, p, adj = TRUE)
     return(Ga=uaradj)
   }
   if (method=="UARadj" & frame == "column"){
-    uaradj <- UAR(Z, adj = TRUE)
+    uaradj <- UAR(Z, p, adj = TRUE)
     uaradjsp <- toSparse(posdefmat(uaradj))
     return(Ga=uaradjsp)
   }

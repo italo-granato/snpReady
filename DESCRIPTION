@@ -5,14 +5,17 @@ Authors@R: c(
     person("Italo", "Granato", email="italo.granato@gmail.com", role = c("aut", "cre")),
     person("Roberto", "Fritsche-Neto", email="roberto.neto@usp.br", role =c("aut", "ths"))
     )
-Title: A tool to assist breeders to prepare genotypic datasets in order to run genomic analysis and estimate population genetic parameters.
-Description: This package consists of three functions. The first two, raw.data() and G.matrix(), which clean, summarize 
-and prepare genomic datasets to Genome Selection and Genome Association analysis. With popgen() , the third function, 
-it is possible to estimate population genetic parameters for whole population or by subgroups, per genotypes or per loci. 
-Furthermore, fixed alleles or even exclusive markers can be identify using popgen().
+Title: A tool to assist breeders to prepare genotypic datasets in order to run
+    genomic analysis and estimate population genetic parameters.
+Description: This package consists of three functions. The first two, raw.data()
+    and G.matrix(), which clean, summarize and prepare genomic datasets to Genome
+    Selection and Genome Association analysis. With popgen() , the third function,
+    it is possible to estimate population genetic parameters for whole population
+    or by subgroups, per genotypes or per loci. Furthermore, fixed alleles or even
+    exclusive markers can be identify using popgen().
 Depends:
     Matrix,
     matrixcalc
 License: GPL-2
 URL: 
-RoxygenNote: 5.0.1
+RoxygenNote: 5.0.1.9000

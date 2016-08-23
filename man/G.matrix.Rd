@@ -4,7 +4,8 @@
 \alias{G.matrix}
 \title{Generate Genetic Relationship Matrix}
 \usage{
-G.matrix(Z, method = c("WW, UAR, UARadj"), frame = c("matrix, column"))
+G.matrix(Z, method = c("WW", "UAR", "UARadj"), frame = c("matrix",
+  "column"))
 }
 \arguments{
 \item{\code{Z}}{\code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns.}
@@ -24,7 +25,7 @@ Generate Genomic Relationship Matrix (GRM)
 \details{
 Function G.matrix provides three diferent types of relationship matrix. For \code{"WW"} method, the relationship matrix is estimated as proposed by Vanraden (2008):
  \deqn{G = \frac{ZZ'}{2\sum p_i(1-p_i)}} where: \eqn{Z} is the marker matrix. The SNP genotype takes a value of 0, 1 or 2 if the genotype of the \eqn{j}th
-individual at SNP \eqn{i} is \eqn{A_1 A_1}, \eqn{A_1 A_2} or \eqn{A_2 A_2}, respectively.
+individual at SNP \eqn{i} is \eqn{aa}, \eqn{Aa} or \eqn{AA}, respectively.
 \code{"UAR"} and \code{"UARadj"} represents the genomic relationship matrix proposed by Yang et al. (2010) named by Powell et al. (2010) as Unified Additive Relationship (UAR)
 and Adjusted UAR, respectively. GRM is then obtained by:
 \deqn{A_{jk} = \frac{1}{N}\sum_i{A_{ijk}} = \begin{cases}
@@ -32,7 +33,7 @@ and Adjusted UAR, respectively. GRM is then obtained by:
 1 +  \dfrac{1}{N} \sum_i{\dfrac{x_{ij}^{2}(1 + 2p_{i})x_{ij} + 2p_i^{2}}{2p_i(1-p_i)}}, j = k
 \end{cases}}
 where: \eqn{p_i} is the allele frequency at SNP \eqn{i}, \eqn{x_{ij}} is the SNP genotype that takes a value of 0, 1 or 2 if the genotype of the \eqn{j}th
-individual at SNP \eqn{i} is \eqn{A_1 A_1}, \eqn{A_1 A_2} or \eqn{A_2 A_2}, respectively.
+individual at SNP \eqn{i} is \eqn{aa}, \eqn{Aa} or \eqn{AA}, respectively.
 The \code{frame} argument is the desired output format. For \code{"matrix"}, the relationship output produced is in matrix format, with \eqn{n x n} dimension. 
 If \code{"column"} is the chosen format, the inverse of the relationship matrix is produced and converted to a table. In this case, the upper triangular part of the relationship matrix
 is changed to a table with 3 columns representing the respective rows, columns and values (Used mainly by ASReml).

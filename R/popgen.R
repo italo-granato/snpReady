@@ -1,5 +1,50 @@
-popgen <-
-function(Z, subgroups){
+#' Estimate parameters of population genetics from genomic data
+#' 
+#' 
+#' @description This function allows estimate parameters of population genetics from genomic data. Further,
+#' it also allows estimate those parameters by subpopulations.
+#' 
+#' @param Z object of class \code{matrix} a (non-empty) matrix of markers incidence
+#' by genotype. The columns represent the markers and rows the individuals
+#' @param subgroups \code{vector}. Vector with information of subgroups or
+#' subpopulations for individuals.
+#' @details 
+#' The matrix of makers are the dimension nxm, where individuals are in rows and markers in column. The
+#' genotypic matrix should be numeric and it should be contain only the name of
+#' the markers in the column.
+#' The number of subgroups is defined by the user and it can accept anything to distinguish subpopulations.
+ 
+#' @return The function returns two lists, one with general information for markers and individuals and another by group (if this is available).
+#' \code{General}
+#' for each marker: the function returns allelic frequency (as \code{p} and \code{q}),
+#' Minor Allele Frequency (MAF), expected heterozygosity (He), observed
+#' heterozygosity (Ho), Nei's Genetic Diversity (DG) and Polymorphism Informative Content(PIC). 
+
+#' For population:  Same parameters used for each marker are returned for general population with mean, lower and upper limits.
+
+#' For individuals: it's returned his observed heterozygosity (Ho), coefficient of inbreeding (Fi) and selfing index (Si).
+#' 
+#' Variability: shows estimates of effective population size (Ne), variance adittive component(Va) and variance dominance component (Vd) and a
+#' summary of number of groups, genotypes and markers.
+#' 
+#' \code{bygroups} 
+#' Same output produced in general list, here is generated for subpopulations or subgroups. Moreover, for subgroups is outputed
+#' the number of exclusive alleles and number of fixed alleles per group
+#'
+#' @examples
+#' # hybrids maize data
+#' M <- data(maize.hyb)
+#' x <- popgen(M) 
+#'
+#' # using subpopulations
+#' PS<-c(rep(1,25), rep(2,25))
+#' x <- popgen(M, subgroups=PS)
+
+
+
+
+
+popgen <- function(Z, subgroups){
   Z<-as.matrix(Z) # matrix of markers incidence by genotype
   if(missing(subgroups)) {subgroups <- rep(1, nrow(Z))}
   subgroups<-as.factor(subgroups)
@@ -19,15 +64,14 @@ g.of.p<-function(X){
   p<-f
   q<-1-f
   Hesp<-2*p*q # expected heterosigosity
-  H<-function(M){sum(M[M==1])} #proportion of heterozygotes
-  Hobs<-apply(M, 2, H)/(2*g) # observed heterosigosity
+  Hobs<-colSums(M==1)/(2*g) # observed heterosigosity
   Dg<-1-p^2-q^2 # genetic diversity
   PIC<-1-(p^2+q^2)-(2*p^2*q^2) # Polimorphism Information Contend
   
   markers<-round(data.frame(p, q, MAF, "He"=Hesp, "Ho"=Hobs, "DG"=Dg, PIC),2)
   
   #genotypes
-  Hg.obs<-apply(M, 1, H)/(2*m) # observed heterosigosity
+  Hg.obs<-rowSums(M==1)/(2*m) # observed heterosigosity
   Fi<-1-Hg.obs/mean(Hesp) # endogamy
   Si<-(2*Fi)/(1+Fi) # self index
   
@@ -103,3 +147,12 @@ else{
   return<-list("general" = general, "bygroup"=bygroup)
  }
 }
+
+
+Z <- matrix(sample(c(0,1,2),10*30, replace = TRUE), 10, 30)
+colnames(Z) <- paste("M", 1:30, sep="")
+rownames(Z) <- paste("ID", 1:10, sep="")
+Z[1:5,1:5]
+a <- popgen(Z)
+
+ls(a)

@@ -1,5 +1,40 @@
-raw.data <-
-function(data, frame=c("table","matrix"), hapmap, sweep.sample= 0, call.rate=0.95, maf=0.05, input=TRUE, outfile=c("012","-101","structure")) {
+#' @title Preparation of genomic data to perform genomic predictions
+#' 
+#' @description This function prepares genomic data to be used in packages or softwares that
+#' performe genomic predictions
+#' 
+#' @usage raw.data(data, frame=c("table","matrix"), hapmap, sweep.sample= 0, call.rate=0.95, maf=0.05, input=TRUE, outfile=c("012","-101","structure"))
+#' 
+#' @param data object of class \code{matrix}
+#' @param frame \code{character}. The format of genomic data to be used. It is accepted two formats of data as input. \code{"table"} allows an input as a format
+#' with four columns in this sequence, first one is identification of samples, identification os markers, and one column for each allele. \code{"matrix"} 
+#' allows the use of matrix nxm where SNPs must be in columns and individuals must be in rows.  
+#' @param hapmap \code{matrix}. matrix with information on SNPs, chromosome and position.
+#' @param sweep.sample \code{numeric}. Threshold to remove samples from data by missing rate. Samples with missing rate more than threshold defined will be
+#' remove from dataset.
+#' @param call.rate \code{numeric}. threshold to remove marker by missing genotype rate. SNPs with more than \code{"call rate"} are removed from dataset.
+#' @param maf \code{numeric}. threshold to remove SNPs by minor allele frequency. 
+#' @param input \code{logical}. If \code{"TRUE"}, imputation on missing data is performed. See details
+#' @param outfile \code{character}. Type of output to be produced. \code{"012"} outputs matrix coded as 0 to \code{AA}, 1 to \code{Aa} and 2 to \code{aa}. \code{"-101"}
+#' presents marker matrix coded as -1, 0 and 1 to \code{AA}, \code{Aa} and \code{aa}, respectively. \code{"structure"} returns a matrix suitable to use in STRUCTURE program.
+#' For this, each left marker is splited in two columns, one for each allele. Each  nitrogen-containing base is recoded to a number. A is 1, C is 2, G is 3 and T is 4. 
+#' 
+#' @details The input data is flexible, allowing data entry in a table format with the data organized by sample and marker with 4 columns or in a matrix 
+#' format where the markers are in columns and individuals in the rows. In the workflow you can eliminate individuals for missing data rate, 
+#' eliminate marks by missing genotype rate and allele frequency. The imputation is carried out through a combination of allelic frequency with the individual
+#' inbreeding coefficient. So, for a lost position it generates a random value as 0, 1 or 2, but the probability of occurrence of these values,
+#' depends both on the frequency which it occurs in the marker and the inbreeding of the individual on that position.
+#' 
+#' @return marker matrix pruned coded in a properly output and a report specifying which individuals are removed by \code{sweep.sample} and which markers are removed by \code{"call.rate"}
+#' and \code{maf}.
+#' @seealso # # missing
+#' @references # missing
+#' @examples # missing
+#' 
+#' 
+
+
+raw.data <- function(data, frame=c("table","matrix"), hapmap, sweep.sample= 0, call.rate=0.95, maf=0.05, input=TRUE, outfile=c("012","-101","structure")) {
   
   if (call.rate < 0 | call.rate > 1 | maf < 0 | maf > 1 | sweep.sample < 0 | sweep.sample > 1)
     stop("Treshold for call rate, maf and sweep.clean must be between 0 and 1")

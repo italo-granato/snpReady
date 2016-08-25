@@ -38,8 +38,6 @@
 #' PS<-c(rep(1,25), rep(2,25))
 #' x <- popgen(M, subgroups=PS)
 
-library(roxygen2)
-devtools::document()
 
 popgen <- function(Z, subgroups){
   Z<-as.matrix(Z) # matrix of markers incidence by genotype

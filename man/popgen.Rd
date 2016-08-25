@@ -2,45 +2,45 @@
 % Please edit documentation in R/popgen.R
 \name{popgen}
 \alias{popgen}
-\title{Estimate parameters of population genetics from genomic data}
+\title{Population genetics from genomic data}
 \usage{
 popgen(Z, subgroups)
 }
 \arguments{
-\item{Z}{object of class \code{matrix} a (non-empty) matrix of markers incidence
-by genotype. The columns represent the markers and rows the individuals}
+\item{\code{Z}}{object of class \code{matrix}. A (non-empty) matrix of molecular markers. Markers must be in columns and individuals in rows.}
 
-\item{subgroups}{\code{vector}. Vector with information of subgroups or
-subpopulations for individuals.}
+\item{\code{subgroups}}{a \code{vector}. Vector with information for subgroups or subpopulations.}
 }
 \value{
-The function returns two lists, one with general information for markers and individuals and another by group (if this is available).
-\code{General}
-for each marker: the function returns allelic frequency (as \code{p} and \code{q}),
-Minor Allele Frequency (MAF), expected heterozygosity (He), observed
-heterozygosity (Ho), Nei's Genetic Diversity (DG) and Polymorphism Informative Content(PIC). 
-For population:  Same parameters used for each marker are returned for general population with mean, lower and upper limits.
-For individuals: it's returned his observed heterozygosity (Ho), coefficient of inbreeding (Fi) and selfing index (Si).
+Two lists are returned, one with general information for markers and individuals and another by group (if applicable).
 
-Variability: shows estimates of effective population size (Ne), variance adittive component(Va) and variance dominance component (Vd) and a
+\code{General}
+
+For each marker: allelic frequency (\code{p} and \code{q}),
+Minor Allele Frequency (\eqn{MAF}), expected heterozygosity (\code{He}), observed
+heterozygosity (\eqn{Ho}), Nei's Genetic Diversity (\eqn{DG}) and Polymorphism Informative Content(\eqn{PIC}). 
+
+For genotypes:  observed heterozygosity (\eqn{Ho}), coefficient of inbreeding (\eqn{Fi}) and selfing index (\eqn{Si}) are returned.
+
+For population:  parameters used for markers are returned for general population with mean, lower and upper limits.
+
+Variability: shows estimates of effective population size (\eqn{Ne}), adittive (\eqn{Va}) and dominance \eqn{Vd} variance components, and a
 summary of number of groups, genotypes and markers.
 
-\code{bygroups} 
-Same output produced in general list, here is generated for subpopulations or subgroups. Moreover, for subgroups is outputed
-the number of exclusive alleles and number of fixed alleles per group
+\code{bygroups}
+
+Same outputs are here generated for subpopulations or subgroups. Moreover, number of exclusive and fixed alleles per group for subgroups are also returned.
 }
 \description{
-This function allows estimate parameters of population genetics from genomic data. Further,
-it also allows estimate those parameters by subpopulations.
+This function allows for estimating parameters of population genetics from genomic data. In addition,
+it also allows estimations considering subpopulations.
 }
 \details{
-The matrix of makers are the dimension nxm, where individuals are in rows and markers in column. The
-genotypic matrix should be numeric and it should be contain only the name of
-the markers in the column.
-The number of subgroups is defined by the user and it can accept anything to distinguish subpopulations.
+The matrix of makers is of dimension \eqn{n x p}, in which individuals are in rows and markers in columns.
+The number of subgroups is defined by the user and accepts any data type (\code{character}, \code{integer}, \code{numeric}...) to distinguish subpopulations.
 }
 \examples{
-# hybrids maize data
+# hybrid maize data
 M <- data(maize.hyb)
 x <- popgen(M) 
 

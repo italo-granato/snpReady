@@ -4,30 +4,30 @@
 #' it also allows estimations considering subpopulations.
 #' 
 #' @param \code{Z} object of class \code{matrix}. A (non-empty) matrix of molecular markers. Markers must be in columns and individuals in rows.
-#' @param \code{subgroups} a \code{vector}. Vector with information for subgroups or subpopulations.
+#' @param \code{subgroups} a \code{vector} with information for subgroups or subpopulations.
 #' 
 #' @details 
-#' The matrix of makers is of dimension \eqn{n x p}, in which individuals are in rows and markers in columns.
-#' The number of subgroups is defined by the user and accepts any data type (\code{character}, \code{integer}, \code{numeric}...) to distinguish subpopulations.
+#' The matrix of makers is of dimension \eqn{n} x \eqn{p}, in which individuals are in rows and markers in columns.
+#' The number of subgroups is user defined  and accepts any data type (\code{character}, \code{integer}, \code{numeric}...) to distinguish subpopulations.
 #' 
-#' @return Two lists are returned, one with general information for markers and individuals and another by group (if applicable).
+#' @return Two lists are returned (\code{general} and \code{bygroup}), one with general information for markers and individuals and another by group (if applicable).
 #' 
-#' \code{General}
+#' \code{general}
 #' 
-#' For each marker: allelic frequency (\code{p} and \code{q}),
-#' Minor Allele Frequency (\eqn{MAF}), expected heterozygosity (\code{He}), observed
+#' For each marker: allelic frequency (\eqn{p} and \eqn{q}),
+#' Minor Allele Frequency (\eqn{MAF}), expected heterozygosity (\eqn{He}), observed
 #' heterozygosity (\eqn{Ho}), Nei's Genetic Diversity (\eqn{DG}) and Polymorphism Informative Content(\eqn{PIC}). 
 #' 
 #' For genotypes:  observed heterozygosity (\eqn{Ho}), coefficient of inbreeding (\eqn{Fi}) and selfing index (\eqn{Si}) are returned.
 #'
 #' For population:  parameters used for markers are returned for general population with mean, lower and upper limits.
 #'
-#' Variability: shows estimates of effective population size (\eqn{Ne}), adittive (\eqn{Va}) and dominance \eqn{Vd} variance components, and a
+#' Variability: shows estimates of effective population size (\eqn{Ne}), additive (\eqn{Va}) and dominance (\eqn{Vd}) variances components, and a
 #' summary of number of groups, genotypes and markers.
 #' 
 #' \code{bygroups}
 #' 
-#' Same outputs are here generated for subpopulations or subgroups. Moreover, number of exclusive and fixed alleles per group for subgroups are also returned.
+#' Same outputs are here generated for subpopulations or subgroups. Moreover, number of exclusive and fixed alleles per group are also assessed.
 #'
 #' @examples
 #' # hybrid maize data

@@ -3,13 +3,14 @@
 #' @description This function allows for estimating parameters of population genetics from genomic data. In addition,
 #' it also allows estimations considering subpopulations.
 #' 
-#' @param \code{Z} object of class \code{matrix}. A (non-empty) matrix of molecular markers. Markers must be in columns and individuals in rows.
+#' @param \code{Z} object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows.
 #' @param \code{subgroups} a \code{vector} with information for subgroups or subpopulations.
 #' 
 #' @details 
 #' The matrix of makers is of dimension \eqn{n} x \eqn{p}, in which individuals are in rows and markers in columns.
 #' The number of subgroups is user defined  and accepts any data type (\code{character}, \code{integer}, \code{numeric}...) to distinguish subpopulations.
-#' 
+#' These two dataset must have the same sort for rows (genotypes).
+
 #' @return Two lists are returned (\code{general} and \code{bygroup}), one with general information for markers and individuals and another by group (if applicable).
 #' 
 #' \code{general}

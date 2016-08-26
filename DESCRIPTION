@@ -16,6 +16,6 @@ Description: This package consists of three functions. The first two, raw.data()
 Depends:
     Matrix,
     matrixcalc
-License: GPL-2
+License: GPL-3
 URL: 
 RoxygenNote: 5.0.1.9000

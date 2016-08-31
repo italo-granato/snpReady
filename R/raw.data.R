@@ -31,10 +31,14 @@
 #' and \code{"maf"}.
 #' @seealso # # missing
 #' @references # missing
-#' @examples # missing
-#' 
-#' 
-
+#'
+#' @examples
+#' data <- data(maize.line)
+#' hapmap <- data(hapmap)
+#' raw.data(data, frame="table", hapmap, sweep.sample= 0, 
+#'          call.rate=0.95, maf=0.05, input=TRUE, outfile="-101")
+#'
+#'
 
 raw.data <- function(data, frame=c("table","matrix"), hapmap, sweep.sample= 0, call.rate=0.95, maf=0.05, input=TRUE, outfile=c("012","-101","structure")) {
   

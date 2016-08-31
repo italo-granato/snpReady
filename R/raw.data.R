@@ -99,14 +99,14 @@ raw.data <- function(data, frame=c("table","matrix"), hapmap, sweep.sample= 0, c
         {
         position <- which(CR >= call.rate & minor >= maf)
         if (length(position)==0L){
-          return(message("No marker selected. Try again with another treshold for CR and MAF"))}
+          return(message("No marker selected. Try again with another treshold for call rate and MAF"))}
         m2 <- m1[,position]
         data <- data[,position]
       }
     
     
     if(input==TRUE & call.rate==0 & any(CR==0))
-      stop("There's markers with all missing data. Try again using call rate
+      stop("There are markers with all missing data. Try again using call rate
            different from zero")
     
     if(all(CR==1) | !isTRUE(input))
@@ -114,7 +114,7 @@ raw.data <- function(data, frame=c("table","matrix"), hapmap, sweep.sample= 0, c
       m3 <- m2}
     else{
       if (any(miss.freq==1) & sweep.sample==0)
-        stop("There's individuals with all missing data. there's no way to do
+        stop("There are individuals with all missing data. there's no way to do
            imputation. Try again using sweep.sample different from zero")
       
       f <- 1 - (rowSums(m2==1, na.rm = TRUE)/rowSums(!is.na(m2)))

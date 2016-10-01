@@ -35,6 +35,7 @@
 #' D <- x$Gd
 #' 
 
+#' @export
 G.matrix <- function(Z, method=c("WW", "UAR", "UARadj"), format=c("wide", "long")){
   coded <- unique(as.vector(Z))
   if (any(is.na(match(coded, c(0,1,2)))))

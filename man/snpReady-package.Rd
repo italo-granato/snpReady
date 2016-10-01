@@ -1,24 +1,24 @@
-\name{SnpReady-package}
-\alias{SnpReady-package}
-\alias{SnpReady}
+\name{snpReady-package}
+\alias{snpReady-package}
+\alias{snpReady}
 \docType{package}
 \title{
-\packageTitle{SnpReady}
+\packageTitle{snpReady}
 }
 \description{
-\packageDescription{SnpReady}
+\packageDescription{snpReady}
 }
 \details{
 
 The DESCRIPTION file:
-\packageDESCRIPTION{SnpReady}
-\packageIndices{SnpReady}
+\packageDESCRIPTION{snpReady}
+\packageIndices{snpReady}
 ~~ An overview of how to use the package, including the most important functions ~~
 }
 \author{
-\packageAuthor{SnpReady}
+\packageAuthor{snpReady}
 
-Maintainer: \packageMaintainer{SnpReady}
+Maintainer: \packageMaintainer{snpReady}
 }
 \references{
 ~~ Literature or other references for background information ~~

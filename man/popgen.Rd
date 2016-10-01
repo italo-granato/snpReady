@@ -7,7 +7,7 @@
 popgen(Z, subgroups)
 }
 \arguments{
-\item{\code{Z}}{object of class \code{matrix}. A (non-empty) matrix of molecular markers. Markers must be in columns and individuals in rows.}
+\item{\code{Z}}{object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows.}
 
 \item{\code{subgroups}}{a \code{vector} with information for subgroups or subpopulations.}
 }
@@ -38,6 +38,7 @@ it also allows estimations considering subpopulations.
 \details{
 The matrix of makers is of dimension \eqn{n} x \eqn{p}, in which individuals are in rows and markers in columns.
 The number of subgroups is user defined  and accepts any data type (\code{character}, \code{integer}, \code{numeric}...) to distinguish subpopulations.
+These two dataset must have the same sort for rows (genotypes).
 }
 \examples{
 # hybrid maize data

@@ -4,8 +4,7 @@
 \alias{G.matrix}
 \title{Generate Genetic Relationship Matrix}
 \usage{
-G.matrix(Z, method = c("WW", "UAR", "UARadj"), frame = c("matrix",
-  "column"))
+G.matrix(Z, method=c("WW", "UAR", "UARadj"), format=c("long","wide"))
 }
 \arguments{
 \item{\code{Z}}{\code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns.}
@@ -13,8 +12,8 @@ G.matrix(Z, method = c("WW", "UAR", "UARadj"), frame = c("matrix",
 \item{\code{method}}{\code{character}. Method for constructing the GRM. Three methods are currently supported. \code{"WW"} indicates the method proposed by Vanraden (2008) for additive
 and dominant genomic relationship. \code{"UAR"} and \code{"UARadj"} represent methods proposed by Yang et al. (2010) for additive genomic relationship. See 'Detais'}
 
-\item{\code{frame}}{\code{character}. Class of object to be returned. \code{"matrix"} returns a \eqn{n} x \eqn{n} matrix.
-\code{"column"} returns the GRM as a table with 3 columns. See 'Details'}
+\item{\code{format}}{\code{character}. Class of object to be returned. \code{"wide"} returns a \eqn{n} x \eqn{n} matrix.
+\code{"long"} returns the GRM as a table with 3 columns. See 'Details'}
 }
 \value{
 The GRM is returned in a matrix or table format.
@@ -34,8 +33,8 @@ and Adjusted UAR, respectively. GRM is then obtained by:
 \end{cases}}
 where: \eqn{p_i} is the allele frequency at SNP \eqn{i}, \eqn{x_{ij}} is the SNP genotype that takes a value of 0, 1 or 2 if the genotype of the \eqn{j}th
 individual at SNP \eqn{i} is \eqn{aa}, \eqn{Aa} or \eqn{AA}, respectively.
-The \code{frame} argument is the desired output format. For \code{"matrix"}, the relationship output produced is in matrix format, with \eqn{n x n} dimension. 
-If \code{"column"} is the chosen format, the inverse of the relationship matrix is produced and converted to a table. In this case, the upper triangular part of the relationship matrix
+The \code{format} argument is the desired output format. For \code{"wide"}, the relationship output produced is in matrix format, with \eqn{n x n} dimension. 
+If \code{"long"} is the chosen format, the inverse of the relationship matrix is produced and converted to a table. In this case, the upper triangular part of the relationship matrix
 is changed to a table with 3 columns representing the respective rows, columns and values (Used mainly by ASReml).
 If the relationship matrix is not positive definite, a near positive definite matrix is created and solved, followed by a warning message.
 }
@@ -43,7 +42,7 @@ If the relationship matrix is not positive definite, a near positive definite ma
 
 #(1) Additive and dominance relationship matrix 
 Z <- data(maize)
-x <- G.matrix(Z, method="WW", frame = "matrix")
+x <- G.matrix(Z, method="WW", format = "wide")
 A <- x$Ga
 D <- x$Gd
 

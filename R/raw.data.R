@@ -36,8 +36,10 @@
 #' hapmap <- data(hapmap)
 #' raw.data(data, frame="table", hapmap, sweep.sample= 0, 
 #'          call.rate=0.95, maf=0.05, input=TRUE, outfile="-101")
+#' 
+#' @export raw.data
 #'
-#'
+
 
 
 raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 0, call.rate=0.95, maf=0.05, input=TRUE, outfile=c("012","-101","structure")) {

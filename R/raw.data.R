@@ -31,14 +31,6 @@
 #' and \code{"maf"}.
 #' @seealso # # missing
 #' @references # missing
-<<<<<<< HEAD
-#' @examples # missing
-#' 
-#' 
-
-raw.data <- function(data, frame=c("long","wide"), hapmap, sweep.sample= 0, call.rate=0.95, maf=0.05, input=TRUE, outfile=c("012","-101","structure")) {
-=======
-#'
 #' @examples
 #' data <- data(maize.line)
 #' hapmap <- data(hapmap)
@@ -47,9 +39,9 @@ raw.data <- function(data, frame=c("long","wide"), hapmap, sweep.sample= 0, call
 #'
 #'
 
-raw.data <- function(data, frame=c("table","matrix"), hapmap, sweep.sample= 0, call.rate=0.95, maf=0.05, input=TRUE, outfile=c("012","-101","structure")) {
->>>>>>> origin/master
-  
+
+raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 0, call.rate=0.95, maf=0.05, input=TRUE, outfile=c("012","-101","structure")) {
+
   if (call.rate < 0 | call.rate > 1 | maf < 0 | maf > 1 | sweep.sample < 0 | sweep.sample > 1)
     stop("Treshold for call rate, maf and sweep.clean must be between 0 and 1")
   
@@ -105,7 +97,6 @@ raw.data <- function(data, frame=c("table","matrix"), hapmap, sweep.sample= 0, c
       count <- rowSums(snp.col == ref.allel[1])
       return(count)}}
   
-<<<<<<< HEAD
   m <- sapply(as.data.frame(data), function(x) count_alleles(x))
   rownames(m) <- rownames(data)
 
@@ -150,13 +141,12 @@ raw.data <- function(data, frame=c("table","matrix"), hapmap, sweep.sample= 0, c
     if (any(miss.freq==1) & sweep.sample==0)
       stop("There's individuals with all missing data. there's no way to do
            imputation. Try again using sweep.sample different from zero")
-=======
-    CR <- (colSums(!is.na(m1)) - colSums(is.na(m1)))/colSums(!is.na(m1))
+
+	CR <- (colSums(!is.na(m1)) - colSums(is.na(m1)))/colSums(!is.na(m1))
     CR[!is.finite(CR)] <- 0
     
     
-    p <- (2*colSums(m1==2, na.rm=TRUE) +
-            colSums(m1==1, na.rm=TRUE))/(2*colSums(!is.na(m1)))
+    p <- colSums(m1, na.rm=TRUE)/(2*colSums(!is.na(m1)))
     minor <- apply(cbind(p,1-p), 1, min)
     minor[is.nan(minor)] <- 0
     
@@ -171,12 +161,10 @@ raw.data <- function(data, frame=c("table","matrix"), hapmap, sweep.sample= 0, c
         m2 <- m1[,position]
         data <- data[,position]
       }
->>>>>>> origin/master
     
     f <- rowSums(m2!=1, na.rm = TRUE)/rowSums(!is.na(m2))
     f[is.nan(f)] <- 1
     
-<<<<<<< HEAD
     samplefp <- function(p, f){
       samp <- sample(c(0,1,2), 1,
                      prob=c(((1-p)^2+((1-p)*p*f)), 
@@ -190,8 +178,8 @@ raw.data <- function(data, frame=c("table","matrix"), hapmap, sweep.sample= 0, c
       irow <- rep(seq(length(posrow)), times=posrow)
       m[cbind(irow, icol)] <- mapply(samplefp, p[icol], f[irow])
       return(m)}
-=======
-    if(input==TRUE & call.rate==0 & any(CR==0))
+
+	  if(input==TRUE & call.rate==0 & any(CR==0))
       stop("There are markers with all missing data. Try again using call rate
            different from zero")
     
@@ -225,7 +213,6 @@ raw.data <- function(data, frame=c("table","matrix"), hapmap, sweep.sample= 0, c
       
     if (outfile=="012")
       {m4 <- m3}
->>>>>>> origin/master
     
     m3 <- input.fun(m=m2, p=p[position], f=f)
   }

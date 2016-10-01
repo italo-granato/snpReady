@@ -4,44 +4,46 @@
 \alias{raw.data}
 \title{Preparation of genomic data to perform genomic predictions}
 \usage{
-raw.data(data, frame=c("table","matrix"), hapmap, sweep.sample= 0, call.rate=0.95, maf=0.05, input=TRUE, outfile=c("012","-101","structure"))
+raw.data(data, frame=c("long","wide"),
+       hapmap, sweep.sample= 0, call.rate=0.95, maf=0.05,
+       input=TRUE, outfile=c("012","-101","structure"))
 }
 \arguments{
 \item{data}{object of class \code{matrix}}
 
-\item{frame}{\code{character}. The format of genomic data to be used. It is accepted two formats of data as input. \code{"table"} allows an input as a format
-with four columns in this sequence, first one is identification of samples, identification os markers, and one column for each allele. \code{"matrix"} 
-allows the use of matrix nxm where SNPs must be in columns and individuals must be in rows.}
+\item{frame}{\code{character}. Format of genomic data to be inputed. Two formats are currently supported. \code{"long"} is used for objects
+with sample ID (1st column), marker ID (2nd column), fist allele (3rd column) and second allele (4th column). \code{"wide"} inputes
+a \eqn{n} x \eqn{m} matrix where markers must be in columns and individuals in rows}
 
-\item{hapmap}{\code{matrix}. matrix with information on SNPs, chromosome and position.}
+\item{hapmap}{\code{matrix}. Object with information on SNPs, chromosome and position}
 
-\item{sweep.sample}{\code{numeric}. Threshold to remove samples from data by missing rate. Samples with missing rate more than threshold defined will be
-remove from dataset.}
+\item{sweep.sample}{\code{numeric}. Threshold for removing samples from data by missing rate. Samples with missing rate above the defined threshold are
+removed from dataset.}
 
-\item{call.rate}{\code{numeric}. threshold to remove marker by missing genotype rate. SNPs with more than \code{"call rate"} are removed from dataset.}
+\item{call.rate}{\code{numeric}. Threshold for removing marker by missing genotype rate. SNP with \code{"call rate"} below threshold are removed from dataset.}
 
-\item{maf}{\code{numeric}. threshold to remove SNPs by minor allele frequency.}
+\item{maf}{\code{numeric}. Threshold for removing SNP by minor allele frequency.}
 
-\item{input}{\code{logical}. If \code{"TRUE"}, imputation on missing data is performed. See details}
+\item{input}{\code{logical}. If \code{"TRUE"}, imputation of missing data is performed. See details.}
 
 \item{outfile}{\code{character}. Type of output to be produced. \code{"012"} outputs matrix coded as 0 to \code{AA}, 1 to \code{Aa} and 2 to \code{aa}. \code{"-101"}
-presents marker matrix coded as -1, 0 and 1 to \code{AA}, \code{Aa} and \code{aa}, respectively. \code{"structure"} returns a matrix suitable to use in STRUCTURE program.
-For this, each left marker is splited in two columns, one for each allele. Each  nitrogen-containing base is recoded to a number. A is 1, C is 2, G is 3 and T is 4.}
+presents marker matrix coded as -1, 0 and 1 to \code{aa}, \code{Aa} and \code{AA}, respectively. \code{"structure"} returns a matrix suitable for STRUCTURE Software.
+For this, each remaining marker is splited in two columns, one for each allele. Nitrogenous bases are then recoded to a number, so A is 1, C is 2, G is 3 and T is 4.}
 }
 \value{
-marker matrix pruned coded in a properly output and a report specifying which individuals are removed by \code{sweep.sample} and which markers are removed by \code{"call.rate"}
-and \code{maf}.
+Returns a properly coded marker matrix output and a report specifying which individuals are removed by \code{sweep.sample} and which markers are removed by \code{"call.rate"}
+and \code{"maf"}.
 }
 \description{
-This function prepares genomic data to be used in packages or softwares that
-performe genomic predictions
+This function gets genomic data ready to be used in packages or softwares that
+perform genomic predictions
 }
 \details{
-The input data is flexible, allowing data entry in a table format with the data organized by sample and marker with 4 columns or in a matrix 
-format where the markers are in columns and individuals in the rows. In the workflow you can eliminate individuals for missing data rate, 
-eliminate marks by missing genotype rate and allele frequency. The imputation is carried out through a combination of allelic frequency with the individual
-inbreeding coefficient. So, for a lost position it generates a random value as 0, 1 or 2, but the probability of occurrence of these values,
-depends both on the frequency which it occurs in the marker and the inbreeding of the individual on that position.
+The function allows flexible imputation of genomic data. Data might be in long format with 4 columns or in wide 
+format where markers are in columns and individuals in rows. Samples and markers can be eliminated based on missing data rate. Markers can also be eliminated based on
+the frequency of the minor allele. Imputation is carried out through combination of allelic frequency and individual
+inbreeding coefficient. Hence, for missing values, genotypes are imputed based on their probability of occurrence. This probability
+depends both on genotype frequency and inbreeding of the individual a specific locus.
 }
 \examples{
 # missing

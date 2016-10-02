@@ -85,7 +85,7 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 0, ca
   } else{
     bs <- unique(na.omit(as.vector(data)))
     if(!any(all(bs %in% c("A","C", "G", "T")) | all(bs %in% c("A", "B"))))
-      stop("SNPs must be coded as nitrogenous bases (ACGT) or as A and B")
+      stop("SNPs must be coded as nitrogenous bases (ACGT) or as AB")
   }
   
 
@@ -113,7 +113,6 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 0, ca
   CR <- (colSums(!is.na(m1)) - colSums(is.na(m1)))/colSums(!is.na(m1))
   CR[!is.finite(CR)] <- 0
   
-  
   p <- colSums(m1, na.rm = TRUE)/(2*colSums(!is.na(m1)))
   minor <- apply(cbind(p, 1-p), 1, min)
   minor[is.nan(minor)] <- 0
@@ -130,7 +129,6 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 0, ca
     data <- data[, position]
   }
   
-  
   if(input==TRUE & call.rate==0 & any(CR==0))
     stop("There's markers with all missing data. Try again using call rate
          different from zero")
@@ -143,26 +141,6 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 0, ca
       stop("There's individuals with all missing data. there's no way to do
            imputation. Try again using sweep.sample different from zero")
 
-	CR <- (colSums(!is.na(m1)) - colSums(is.na(m1)))/colSums(!is.na(m1))
-    CR[!is.finite(CR)] <- 0
-    
-    
-    p <- colSums(m1, na.rm=TRUE)/(2*colSums(!is.na(m1)))
-    minor <- apply(cbind(p,1-p), 1, min)
-    minor[is.nan(minor)] <- 0
-    
-    if (call.rate == 0 & maf == 0)
-    {
-      m2 <- m1
-      }else
-        {
-        position <- which(CR >= call.rate & minor >= maf)
-        if (length(position)==0L){
-          return(message("No marker selected. Try again with another treshold for call rate and MAF"))}
-        m2 <- m1[,position]
-        data <- data[,position]
-      }
-    
     f <- rowSums(m2!=1, na.rm = TRUE)/rowSums(!is.na(m2))
     f[is.nan(f)] <- 1
     
@@ -179,41 +157,6 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 0, ca
       irow <- rep(seq(length(posrow)), times=posrow)
       m[cbind(irow, icol)] <- mapply(samplefp, p[icol], f[irow])
       return(m)}
-
-	  if(input==TRUE & call.rate==0 & any(CR==0))
-      stop("There are markers with all missing data. Try again using call rate
-           different from zero")
-    
-    if(all(CR==1) | !isTRUE(input))
-      {
-      m3 <- m2}
-    else{
-      if (any(miss.freq==1) & sweep.sample==0)
-        stop("There are individuals with all missing data. there's no way to do
-           imputation. Try again using sweep.sample different from zero")
-      
-      f <- 1 - (rowSums(m2==1, na.rm = TRUE)/rowSums(!is.na(m2)))
-      f[is.nan(f)] <- 1
-      
-      samplefp <- function(p, f){
-        samp <- sample(c(0,1,2), 1,
-                       prob=c(((1-p)^2+((1-p)*p*f)), 
-                              (2*p*(1-p)-(2*p*(1-p)*f)), 
-                              (p^2+((1-p)*p*f))))
-        return(as.integer(samp))}
-      
-      input.fun <- function(m, p, f){
-        icol <- unlist(apply(m, 1, function(x) which(is.na(x))))
-        posrow <- apply(m, 1, function(x) sum(is.na(x)))
-        irow <- rep(seq(length(posrow)), times=posrow)
-        m[cbind(irow, icol)] <- mapply(samplefp, p[icol], f[irow])
-        return(m)}
-      
-      m3 <- input.fun(m=m2, p=p[position], f=f)
-        }
-      
-    if (outfile=="012")
-      {m4 <- m3}
     
     m3 <- input.fun(m=m2, p=p[position], f=f)
   }
@@ -243,20 +186,17 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 0, ca
                  colnames(m)[CR < call.rate],
                  paste(sum(miss.freq > sweep.sample), "Samples removed =", sweep.sample, sep = " "),
                  rownames(m)[miss.freq > sweep.sample],
-                 paste(sum(is.na(m2)), "markers were inputed = ", round(sum(is.na(m2)/(dim(m2)[1]*dim(m2)[2])*100),2), "%")
-                 
-  )
+                 paste(sum(is.na(m2)), "markers were inputed = ", round(sum(is.na(m2)/(dim(m2)[1]*dim(m2)[2])*100),2), "%"))
   
   if(missing(hapmap)){
     storage.mode(m4) <- "numeric"
     return(list(Z.cleaned=m4, report=report))
   } else{
     storage.mode(m4)  <- "numeric"
-    hapmap <- hapmap[hapmap[,1] %in% as.matrix(snp.name)[position,],]
-    hapmap <- as.matrix(hapmap)
-    hapmap <- hapmap[order(as.numeric(hapmap[,2]), as.numeric(hapmap[,3]), na.last = TRUE, decreasing = F),]
-    colnames(hapmap) <- c("SNP","Chromosome","Position")
-    return(list(Z.cleaned=m4, Hapmap=hapmap, report=report))
+    hap <- hapmap[hapmap[,1] %in% colnames(m3),]
+    hap <- hap[order(hap[,2], hap[,3], na.last = TRUE, decreasing = F),]
+    colnames(hap) <- c("SNP","Chromosome","Position")
+    return(list(Z.cleaned=m4, Hapmap=hap, report=report))
   }
 }
 

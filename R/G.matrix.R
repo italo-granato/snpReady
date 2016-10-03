@@ -1,6 +1,6 @@
 #' Generate Genetic Relationship Matrix
 #'
-#' @description Generate Genomic Relationship Matrix (GRM)
+#' @description G.matrix allows to create Genomic Relationship Matrix (GRM)
 #' 
 #' @usage G.matrix(Z, method=c("WW", "UAR", "UARadj"), format=c("long","wide"))
 #'        

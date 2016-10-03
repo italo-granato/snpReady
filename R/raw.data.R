@@ -1,4 +1,4 @@
-#' @title Preparation of genomic data to perform genomic predictions
+#' @title Preparation of genomic data
 #' 
 #' @description This function gets genomic data ready to be used in packages or softwares that
 #' perform genomic predictions

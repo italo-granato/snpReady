@@ -5,8 +5,7 @@ Authors@R: c(
     person("Italo", "Granato", email="italo.granato@gmail.com", role = c("aut", "cre")),
     person("Roberto", "Fritsche-Neto", email="roberto.neto@usp.br", role =c("aut", "ths"))
     )
-Title: A tool to assist breeders to prepare genotypic datasets in order to run
-    genomic analysis and estimate population genetic parameters.
+Title: Preparing genotypic datasets in order to run genomic analysis
 Description: This package consists of three functions. The first two, raw.data()
     and G.matrix(), which clean, summarize and prepare genomic datasets to Genome
     Selection and Genome Association analysis. With popgen() , the third function,

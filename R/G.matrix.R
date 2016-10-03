@@ -51,33 +51,33 @@ G.matrix <- function(Z, method=c("WW", "UAR", "UARadj"), format=c("wide", "long"
     stop("Format argument is missing")
   
   N <- nrow(Z) 
-  n <- ncol(Z) 
-  p <- colSums(Z)/(2*nrow(Z))
+  m <- ncol(Z) 
+  p <- colSums(Z)/(2*N)
 
     WWG <- function(Z, p){
-    w <- Z - matrix(rep(2*p, each=nrow(Z)), ncol = ncol(Z))
+    w <- Z - matrix(rep(2*p, each=N), ncol = m)
     
-    S <- ((Z==2)*1) * -rep(2*p^2, each=nrow(Z)) + ((Z==1)*1) * rep(2*p*(1-p), each=nrow(Z)) + ((Z==0)*1) * (-rep(2*(1-p)^2, each=nrow(Z)))
+    S <- ((Z==2)*1) * -rep(2*p^2, each=N) + ((Z==1)*1) * rep(2*p*(1-p), each=N) + ((Z==0)*1) * (-rep(2*(1-p)^2, each=N))
     
     WWl <- w %*% t(w)
     Ga <- WWl/sum(2*p*(1-p)) + diag(1e-6, nrow(WWl))
     
     SSl <- S %*% t(S)
-    Gd <- SSl/sum((2*p*(1-p))^2)
+    Gd <- SSl/(sum(diag(SSl))/N)
     
     return(list(Ga=Ga,Gd=Gd))
   }
   
   UAR <- function(Z, p, adj=FALSE){
     
-    mrep <- Z - matrix(rep(2*p, each=nrow(Z)), ncol = ncol(Z))
+    mrep <- Z - matrix(rep(2*p, each=N), ncol = m)
     
-    X <- (1/n)*(mrep %*% (t(mrep) * (1/(2*p*(1-p)))))
-    numerator <- Z^2 - t(t(Z) * (1+2*p)) + matrix(rep(2*p^2, each=nrow(Z)), ncol=ncol(Z)) 
-    diag(X) <- 1+(1/n)*colSums(t(numerator) *  (1/(2*p*(1-p))))
+    X <- (1/m)*(mrep %*% (t(mrep) * (1/(2*p*(1-p)))))
+    numerator <- Z^2 - t(t(Z) * (1+2*p)) + matrix(rep(2*p^2, each=N), ncol=m) 
+    diag(X) <- 1+(1/m)*colSums(t(numerator) *  (1/(2*p*(1-p))))
     
     if (adj==TRUE){
-      B <- 1-((6.2*10^-6 + (1/n))/var(c(X)))
+      B <- 1-((6.2*10^-6 + (1/m))/var(c(X)))
       X[lower.tri(X, diag = FALSE)] <- B*X[lower.tri(X, diag = FALSE)]
       X[upper.tri(X, diag = FALSE)] <- B*X[upper.tri(X, diag = FALSE)]  
       diag(X) <- 1 + (B*(diag(X)-1))
@@ -138,3 +138,6 @@ G.matrix <- function(Z, method=c("WW", "UAR", "UARadj"), format=c("wide", "long"
     return(Ga=uaradjsp)
   }
 }
+
+
+G.matrix()

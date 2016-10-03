@@ -83,7 +83,7 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 0, ca
     rownames(mbase) <- snp.name
     data <- t(mbase)
   } else{
-    bs <- unique(na.omit(as.vector(data)))
+    bs <- unique(unlist(strsplit(unique(na.omit(as.vector(data))), split="")))
     if(!any(all(bs %in% c("A","C", "G", "T")) | all(bs %in% c("A", "B"))))
       stop("SNPs must be coded as nitrogenous bases (ACGT) or as AB")
   }

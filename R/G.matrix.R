@@ -138,6 +138,3 @@ G.matrix <- function(Z, method=c("WW", "UAR", "UARadj"), format=c("wide", "long"
     return(Ga=uaradjsp)
   }
 }
-
-
-G.matrix()

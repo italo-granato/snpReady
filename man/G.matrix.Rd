@@ -19,7 +19,7 @@ and dominant genomic relationship. \code{"UAR"} and \code{"UARadj"} represent me
 The GRM is returned in a matrix or table format.
 }
 \description{
-Generate Genomic Relationship Matrix (GRM)
+G.matrix allows to create Genomic Relationship Matrix (GRM)
 }
 \details{
 Function G.matrix provides three diferent types of relationship matrix. For \code{"WW"} method, the relationship matrix is estimated as proposed by Vanraden (2008):

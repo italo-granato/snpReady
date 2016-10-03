@@ -2,7 +2,7 @@
 % Please edit documentation in R/raw.data.R
 \name{raw.data}
 \alias{raw.data}
-\title{Preparation of genomic data to perform genomic predictions}
+\title{Preparation of genomic data}
 \usage{
 raw.data(data, frame=c("long","wide"),
        hapmap, sweep.sample= 0, call.rate=0.95, maf=0.05,

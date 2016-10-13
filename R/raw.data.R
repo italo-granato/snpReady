@@ -41,14 +41,15 @@
 
 
 #' @export
-raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 0, call.rate=0.95, maf=0.05, input=TRUE, outfile=c("012","-101","structure")) {
+raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 1, call.rate=0.95, maf=0.05, input=TRUE, outfile=c("012","-101","structure")) {
 
-  if (call.rate < 0 | call.rate > 1 | maf < 0 | maf > 1 | sweep.sample < 0 | sweep.sample > 1)
-    stop("Treshold for call rate, maf and sweep.clean must be between 0 and 1")
+  if (call.rate < 0 | call.rate > 1 | maf < 0 | maf > 1)
+    stop("Treshold for call rate and maf must be between 0 and 1")
   
-  if(missing(outfile)) {outfile = "012"}
-  
-  if(!is.matrix(data))
+  if(missing(outfile))
+    outfile = "012"
+
+	if(!is.matrix(data))
     stop("Data must be matrix class")
   
   match.arg(frame)
@@ -62,14 +63,14 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 0, ca
     if(!any(all(bs %in% c("A","C", "G", "T")) | all(bs %in% c("A", "B"))))
       stop("SNPs must be coded as nitrogenous bases (ACGT) or as A and B")
     
-    sample.id <- sort(unique(data[,1]))
-    snp.name <- sort(unique(data[,2]))
+    sample.id <- sort(unique(data[,1L]))
+    snp.name <- sort(unique(data[,2L]))
     
     col2row <- function(x, data){
-      curId <- data[,1] %in% x
-      curSnp <- ifelse(is.na(data[curId, 3]) | is.na(data[curId, 4]), NA, 
-                       paste(data[curId, 3], data[curId, 4], sep = ""))
-      curPos <- match(snp.name, data[curId, 2])
+      curId <- data[,1L] %in% x
+      curSnp <- ifelse(is.na(data[curId, 3L]) | is.na(data[curId, 4L]), NA, 
+                       paste(data[curId, 3L], data[curId, 4L], sep = ""))
+      curPos <- match(snp.name, data[curId, 2L])
       if(any(is.na(curPos))){
         vec <- rep(NA,length(snp.name))
         vec[which(!is.na(curPos))] <- curSnp[na.omit(curPos)]
@@ -83,65 +84,67 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 0, ca
     rownames(mbase) <- snp.name
     data <- t(mbase)
   } else{
-    bs <- unique(unlist(strsplit(unique(na.omit(as.vector(data))), split="")))
+    bs <- unique(unlist(strsplit(unique(data[!is.na(data)]), "")))
     if(!any(all(bs %in% c("A","C", "G", "T")) | all(bs %in% c("A", "B"))))
       stop("SNPs must be coded as nitrogenous bases (ACGT) or as AB")
   }
   
-
-  count_alleles <- function(x){
-    if (all(is.na(x))){
-      return(x)
-    }else{
-      snp.col <- do.call(rbind, strsplit(as.character(x), split = ""))
-      ref.allel <- sort(unique(as.vector(snp.col)))
-      count <- rowSums(snp.col == ref.allel[1])
-      return(count)}}
-  
-  m <- sapply(as.data.frame(data), function(x) count_alleles(x))
-  rownames(m) <- rownames(data)
+   count_allele <- function(m){
+    #' @importFrom stringr str_count
+    A <- matrix(str_count(m, "A"), ncol = ncol(m), byrow = FALSE)
+    C <- matrix(str_count(m, "C"), ncol = ncol(m), byrow = FALSE)
+    G <- matrix(str_count(m, "G"), ncol = ncol(m), byrow = FALSE)
+    C[, colSums(A, na.rm = TRUE)!=0] <- 0
+    G[, colSums(A, na.rm = TRUE)!=0 | colSums(C, na.rm = TRUE)!=0] <- 0
+    res <- A + C + G
+    if (any(colSums(res, na.rm=TRUE) == 0))
+      res[,colSums(res, na.rm=TRUE) == 0] <- 2
+    res[is.na(m)] <- NA
+    rownames(res) <- rownames(m)
+    colnames(res) <- colnames(m)
+    return(res)
+  }
+    
+  m <- count_allele(data)
 
   miss.freq <- rowSums(is.na(m))/ncol(m)
   
-  if(sweep.sample==0){
-    m1 <- m
-  }else{
-    m1 <- m[miss.freq <= sweep.sample,]
+  if (sweep.sample < 0 | sweep.sample > 1)
+      stop("Treshold for sweep.clean must be between 0 and 1")
+	id.rmv <- rownames(m)[miss.freq > sweep.sample]
+    m <- m[miss.freq <= sweep.sample,]
     data <- data[miss.freq <= sweep.sample,]
-  }
+ 
   
-  CR <- (colSums(!is.na(m1)) - colSums(is.na(m1)))/colSums(!is.na(m1))
+  CR <- (colSums(!is.na(m)) - colSums(is.na(m)))/colSums(!is.na(m))
   CR[!is.finite(CR)] <- 0
   
-  p <- colSums(m1, na.rm = TRUE)/(2*colSums(!is.na(m1)))
+  p <- colSums(m, na.rm = TRUE)/(2*colSums(!is.na(m)))
   minor <- apply(cbind(p, 1-p), 1, min)
   minor[is.nan(minor)] <- 0
   
-  if (call.rate == 0 & maf == 0)
-  {
-    m2 <- m1
-  }else
-  {
-    position <- which(CR >= call.rate & minor >= maf)
-    if (length(position)==0L){
-      return(message("All markers were removed. Try again with another treshold for CR and MAF"))}
-    m2 <- m1[,position]
+  snp.rmv <- vector("list", 2)
+  snp.rmv[[1]] <- colnames(m)[CR < call.rate]
+  snp.rmv[[2]] <- colnames(m)[minor < maf]
+  
+  position <- (CR >= call.rate) & (minor >= maf)
+  if (sum(position)==0L)
+     stop("All markers were removed. Try again with another treshold for CR and MAF")
+    m <- m[, position]
     data <- data[, position]
-  }
+  
   
   if(input==TRUE & call.rate==0 & any(CR==0))
     stop("There's markers with all missing data. Try again using call rate
          different from zero")
   
-  if(all(CR==1) | !isTRUE(input))
+  if(any(CR!=1L) & isTRUE(input))
   {
-    m3 <- m2}
-  else{
-    if (any(miss.freq==1) & sweep.sample==0)
+    if (any(miss.freq==1))
       stop("There's individuals with all missing data. there's no way to do
            imputation. Try again using sweep.sample different from zero")
 
-    f <- rowSums(m2!=1, na.rm = TRUE)/rowSums(!is.na(m2))
+    f <- rowSums(m!=1, na.rm = TRUE)/rowSums(!is.na(m))
     f[is.nan(f)] <- 1
     
     samplefp <- function(p, f){
@@ -158,45 +161,41 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 0, ca
       m[cbind(irow, icol)] <- mapply(samplefp, p[icol], f[irow])
       return(m)}
     
-    m3 <- input.fun(m=m2, p=p[position], f=f)
+    m <- input.fun(m=m, p=p[position], f=f)
   }
   
-  if (outfile=="012")
-  {m4 <- m3}
-  
-  if (outfile=="-101"){
-    m4 <- m3 - 1
-  }
-  
+  if (outfile=="-101")
+    m <- m - 1
+
   if(outfile=="structure"){
-    m4 <- lapply(as.data.frame(data), function(x){
+    m <- lapply(as.data.frame(data), function(x){
       curCol <- do.call(rbind, strsplit(as.character(x), split = ""))
       if(all(is.na(curCol))) {curCol <- cbind(curCol, curCol)}
       return(curCol)})
-    m4 <- as.matrix(do.call(cbind, m4))
-    colnames(m4) <- rep(colnames(data), each=2)
+    m <- as.matrix(do.call(cbind, m))
+    colnames(m) <- rep(colnames(data), each=2)
     
-    m4 <- chartr("ACGT", "1234", m4)
-    m4[is.na(m4)] <- -9
+    m <- chartr("ACGT", "1234", m)
+    m[is.na(m)] <- -9
   }
   
-  report <- list(paste(sum(minor < maf, na.rm = TRUE), "Markers removed by MAF =", maf, sep = " "),
-                 colnames(m)[minor < maf],
-                 paste(sum(CR < call.rate), "Markers removed by Call Rate =", call.rate, sep=" "),
-                 colnames(m)[CR < call.rate],
-                 paste(sum(miss.freq > sweep.sample), "Samples removed =", sweep.sample, sep = " "),
-                 rownames(m)[miss.freq > sweep.sample],
-                 paste(sum(is.na(m2)), "markers were inputed = ", round(sum(is.na(m2)/(dim(m2)[1]*dim(m2)[2])*100),2), "%"))
+  report <- list(paste(length(snp.rmv[[2]]), "Markers removed by MAF =", maf, sep = " "),
+                 snp.rmv[[2]],
+                 paste(length(snp.rmv[[1]]), "Markers removed by Call Rate =", call.rate, sep=" "),
+                 snp.rmv[[1]],
+                 paste(length(id.rmv), "Samples removed by sweep.sample =", sweep.sample, sep = " "),
+                 id.rmv,
+                 paste(sum(is.na(data)), "markers were inputed = ", round((sum(is.na(data))/length(data))*100, 2), "%"))
   
   if(missing(hapmap)){
-    storage.mode(m4) <- "numeric"
-    return(list(Z.cleaned=m4, report=report))
+    storage.mode(m) <- "numeric"
+    return(list(Z.cleaned=m, report=report))
   } else{
-    storage.mode(m4)  <- "numeric"
-    hap <- hapmap[hapmap[,1] %in% colnames(m3),]
-    hap <- hap[order(hap[,2], hap[,3], na.last = TRUE, decreasing = F),]
+    storage.mode(m)  <- "numeric"
+    hap <- hapmap[hapmap[,1L] %in% colnames(m),]
+    hap <- hap[order(hap[,2L], hap[,3L], na.last = TRUE, decreasing = F),]
     colnames(hap) <- c("SNP","Chromosome","Position")
-    return(list(Z.cleaned=m4, Hapmap=hap, report=report))
+    return(list(Z.cleaned=m, Hapmap=hap, report=report))
   }
 }
 

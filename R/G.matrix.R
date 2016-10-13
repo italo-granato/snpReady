@@ -57,7 +57,7 @@ G.matrix <- function(Z, method=c("WW", "UAR", "UARadj"), format=c("wide", "long"
     WWG <- function(Z, p){
     w <- Z - matrix(rep(2*p, each=N), ncol = m)
     
-    S <- ((Z==2)*1) * -rep(2*p^2, each=N) + ((Z==1)*1) * rep(2*p*(1-p), each=N) + ((Z==0)*1) * (-rep(2*(1-p)^2, each=N))
+    S <- ((Z==2)*1) * -rep(2*(1-p)^2, each=N) + ((Z==1)*1) * rep(2*p*(1-p), each=N) + ((Z==0)*1) * (-rep(2*p^2, each=N))
     
     WWl <- w %*% t(w)
     Ga <- WWl/sum(2*p*(1-p)) + diag(1e-6, nrow(WWl))

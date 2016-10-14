@@ -24,6 +24,6 @@ install_github("italo-granato/snpReady")
 
 
 
-To anyone who wants to conttibute, please contact italo.granato@gmail.com for more details.
+To anyone who wants to contribute, please contact italo.granato@gmail.com for more details.
 
 

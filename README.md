@@ -1,19 +1,19 @@
 # snpReady
 A tool to assist breeders to prepare genotypic datasets for genomic analysis in order to run genomic analysis and estimates some population genetics parameters.
 
-## Installation
+### Installation
 
 ```
 library(devtools)
 install_github("italo-granato/snpReady")
 ```
 
-## Authors
+### Authors
 
 * **Italo Granato**
 * **Roberto F. Neto**
 
-## Contributors
+### Contributors
 
 * **Giovanni Galli**
 * **Leandro Mendonça**

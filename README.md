@@ -21,4 +21,10 @@ install_github("italo-granato/snpReady")
 * **Massaine Bandeira**
 * **Evellyn Couto**
 
-Please contact italo.granato@gmail.com for details on how to contribute and the process for submitting pull requests to us.
+[Allogamous Plant Breeding Laboratory Team](http://www.genetica.esalq.usp.br/alogamas/index2.html)
+
+
+
+To anyone who wants to conttibute, please contact italo.granato@gmail.com for more details.
+
+

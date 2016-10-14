@@ -4,8 +4,8 @@
 \alias{raw.data}
 \title{Preparation of genomic data}
 \usage{
-raw.data(data, frame=c("long","wide"),
-       hapmap, sweep.sample= 0, call.rate=0.95, maf=0.05,
+raw.data(data, frame=c("long","wide"), hapmap,
+       bases=TRUE, sweep.sample= 0, call.rate=0.95, maf=0.05,
        input=TRUE, outfile=c("012","-101","structure"))
 }
 \arguments{
@@ -16,6 +16,8 @@ with sample ID (1st column), marker ID (2nd column), fist allele (3rd column) an
 a \eqn{n} x \eqn{m} matrix where markers must be in columns and individuals in rows}
 
 \item{hapmap}{\code{matrix}. Object with information on SNPs, chromosome and position}
+
+\item{base}{\code{logical}. Are gentype coded as nitrogenous bases? if \code{TRUE}, data are converted to numeric. If \code{FALSE}, it follows to clean up.}
 
 \item{sweep.sample}{\code{numeric}. Threshold for removing samples from data by missing rate. Samples with missing rate above the defined threshold are
 removed from dataset.}
@@ -40,7 +42,7 @@ perform genomic predictions
 }
 \details{
 The function allows flexible imputation of genomic data. Data might be in long format with 4 columns or in wide 
-format where markers are in columns and individuals in rows. Samples and markers can be eliminated based on missing data rate. Markers can also be eliminated based on
+format where markers are in columns and individuals in rows. Both numeric and nitrogenous bases are accepted. Samples and markers can be eliminated based on missing data rate. Markers can also be eliminated based on
 the frequency of the minor allele. Imputation is carried out through combination of allelic frequency and individual
 inbreeding coefficient. Hence, for missing values, genotypes are imputed based on their probability of occurrence. This probability
 depends both on genotype frequency and inbreeding of the individual a specific locus.
@@ -48,7 +50,7 @@ depends both on genotype frequency and inbreeding of the individual a specific l
 \examples{
 data <- data(maize.line)
 hapmap <- data(hapmap)
-raw.data(data, frame="table", hapmap, sweep.sample= 0, 
+raw.data(data, frame="table", base=TRUE, hapmap, sweep.sample= 1, 
          call.rate=0.95, maf=0.05, input=TRUE, outfile="-101")
 
 

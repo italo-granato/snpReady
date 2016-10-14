@@ -3,8 +3,8 @@
 #' @description This function gets genomic data ready to be used in packages or softwares that
 #' perform genomic predictions
 #' 
-#' @usage raw.data(data, frame=c("long","wide"),
-#'        hapmap, sweep.sample= 0, call.rate=0.95, maf=0.05,
+#' @usage raw.data(data, frame=c("long","wide"), hapmap,
+#'        bases=TRUE, sweep.sample= 0, call.rate=0.95, maf=0.05,
 #'        input=TRUE, outfile=c("012","-101","structure"))
 #' 
 #' @param data object of class \code{matrix}
@@ -12,6 +12,7 @@
 #' with sample ID (1st column), marker ID (2nd column), fist allele (3rd column) and second allele (4th column). \code{"wide"} inputes
 #' a \eqn{n} x \eqn{m} matrix where markers must be in columns and individuals in rows
 #' @param hapmap \code{matrix}. Object with information on SNPs, chromosome and position
+#' @param base \code{logical}. Are gentype coded as nitrogenous bases? if \code{TRUE}, data are converted to numeric. If \code{FALSE}, it follows to clean up.
 #' @param sweep.sample \code{numeric}. Threshold for removing samples from data by missing rate. Samples with missing rate above the defined threshold are
 #' removed from dataset.
 #' @param call.rate \code{numeric}. Threshold for removing marker by missing genotype rate. SNP with \code{"call rate"} below threshold are removed from dataset.
@@ -22,7 +23,7 @@
 #' For this, each remaining marker is splited in two columns, one for each allele. Nitrogenous bases are then recoded to a number, so A is 1, C is 2, G is 3 and T is 4. 
 #' 
 #' @details The function allows flexible imputation of genomic data. Data might be in long format with 4 columns or in wide 
-#' format where markers are in columns and individuals in rows. Samples and markers can be eliminated based on missing data rate. Markers can also be eliminated based on
+#' format where markers are in columns and individuals in rows. Both numeric and nitrogenous bases are accepted. Samples and markers can be eliminated based on missing data rate. Markers can also be eliminated based on
 #' the frequency of the minor allele. Imputation is carried out through combination of allelic frequency and individual
 #' inbreeding coefficient. Hence, for missing values, genotypes are imputed based on their probability of occurrence. This probability
 #' depends both on genotype frequency and inbreeding of the individual a specific locus.
@@ -34,14 +35,14 @@
 #' @examples
 #' data <- data(maize.line)
 #' hapmap <- data(hapmap)
-#' raw.data(data, frame="table", hapmap, sweep.sample= 0, 
+#' raw.data(data, frame="table", base=TRUE, hapmap, sweep.sample= 1, 
 #'          call.rate=0.95, maf=0.05, input=TRUE, outfile="-101")
 #' 
 #'
 
 
 #' @export
-raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 1, call.rate=0.95, maf=0.05, input=TRUE, outfile=c("012","-101","structure")) {
+raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sample= 1, call.rate=0.95, maf=0.05, input=TRUE, outfile=c("012","-101","structure")) {
 
   if (call.rate < 0 | call.rate > 1 | maf < 0 | maf > 1)
     stop("Treshold for call rate and maf must be between 0 and 1")
@@ -55,9 +56,10 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 1, ca
   match.arg(frame)
   match.arg(outfile)
   
-  if (frame=="long"){
-    if(ncol(data)>4)
-      stop("For format long, the object must have four columns")
+  if(isTRUE(base)){
+    if (frame=="long"){
+      if(ncol(data)>4)
+        stop("For format long, the object must have four columns")
     
     bs <- unique(na.omit(as.vector(data[, 3:4])))
     if(!any(all(bs %in% c("A","C", "G", "T")) | all(bs %in% c("A", "B"))))
@@ -106,6 +108,11 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, sweep.sample= 1, ca
   }
     
   m <- count_allele(data)
+  } else{
+    if(frame=="long")
+      stop("format long only works with nitrogenous bases")
+    m <- data
+  }
 
   miss.freq <- rowSums(is.na(m))/ncol(m)
   

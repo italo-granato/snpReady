@@ -10,15 +10,15 @@ install_github("italo-granato/snpReady")
 
 ### Authors
 
-* **Italo Granato**
-* **Roberto F. Neto**
+* Italo Granato
+* Roberto F. Neto
 
 ### Contributors
 
-* **Giovanni Galli**
-* **Leandro Mendonça**
-* **Massaine Bandeira**
-* **Evellyn Couto**
+* Giovanni Galli
+* Leandro Mendonça
+* Massaine Bandeira
+* Evellyn Couto
 
 [Allogamous Plant Breeding Laboratory Team](http://www.genetica.esalq.usp.br/alogamas/index2.html)
 

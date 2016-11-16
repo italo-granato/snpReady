@@ -2,15 +2,15 @@
 #'
 #' @description G.matrix allows to create Genomic Relationship Matrix (GRM)
 #' 
-#' @usage G.matrix(Z, method=c("WW", "UAR", "UARadj"), format=c("long","wide"))
+#' @usage G.matrix(Z, method=c("VanRaden", "UAR", "UARadj"), format=c("long","wide"))
 #'        
 #' @param \code{Z} \code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns.
-#' @param \code{method} \code{character}. Method for constructing the GRM. Three methods are currently supported. \code{"WW"} indicates the method proposed by Vanraden (2008) for additive
+#' @param \code{method} \code{character}. Method for constructing the GRM. Three methods are currently supported. \code{"VanRaden"} indicates the method proposed by Vanraden (2008) for additive
 #' and dominant genomic relationship. \code{"UAR"} and \code{"UARadj"} represent methods proposed by Yang et al. (2010) for additive genomic relationship. See 'Detais'
 #' @param \code{format} \code{character}. Class of object to be returned. \code{"wide"} returns a \eqn{n} x \eqn{n} matrix.
 #' \code{"long"} returns the GRM as a table with 3 columns. See 'Details'
 #' @details
-#' Function G.matrix provides three diferent types of relationship matrix. For \code{"WW"} method, the relationship matrix is estimated as proposed by Vanraden (2008):
+#' Function G.matrix provides three diferent types of relationship matrix. For \code{"VanRaden"} method, the relationship matrix is estimated as proposed by Vanraden (2008):
 #'  \deqn{G = \frac{ZZ'}{2\sum p_i(1-p_i)}} where: \eqn{Z} is the marker matrix. The SNP genotype takes a value of 0, 1 or 2 if the genotype of the \eqn{j}th
 #' individual at SNP \eqn{i} is \eqn{aa}, \eqn{Aa} or \eqn{AA}, respectively.
 #' \code{"UAR"} and \code{"UARadj"} represents the genomic relationship matrix proposed by Yang et al. (2010) named by Powell et al. (2010) as Unified Additive Relationship (UAR)
@@ -30,13 +30,13 @@
 #'
 #' #(1) Additive and dominance relationship matrix 
 #' Z <- data(maize)
-#' x <- G.matrix(Z, method="WW", format = "wide")
+#' x <- G.matrix(Z, method="VanRaden", format = "wide")
 #' A <- x$Ga
 #' D <- x$Gd
 #' 
 
 #' @export
-G.matrix <- function(Z, method=c("WW", "UAR", "UARadj"), format=c("wide", "long")){
+G.matrix <- function(Z, method=c("VanRaden", "UAR", "UARadj"), format=c("wide", "long")){
   coded <- unique(as.vector(Z))
   if (any(is.na(match(coded, c(0,1,2)))))
     stop("SNPs must be coded as 0, 1, 2")
@@ -109,11 +109,11 @@ G.matrix <- function(Z, method=c("WW", "UAR", "UARadj"), format=c("wide", "long"
     return(g)
   }
   
-  if (method == "WW" & format == "wide"){
+  if (method == "VanRaden" & format == "wide"){
     Gww <- WWG(Z, p)
     return(Gww)
   } 
-  if (method == "WW" & format == "long"){
+  if (method == "VanRaden" & format == "long"){
     Gmat <- WWG(Z, p)
     Aww <- toSparse(posdefmat(Gmat$Ga))
     Dww <- toSparse(posdefmat(Gmat$Gd))

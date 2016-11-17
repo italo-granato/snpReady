@@ -5,7 +5,7 @@
 \title{Preparation of genomic data}
 \usage{
 raw.data(data, frame=c("long","wide"), hapmap,
-       bases=TRUE, sweep.sample= 0, call.rate=0.95, maf=0.05,
+       bases=TRUE, sweep.sample= 1, call.rate=0.95, maf=0.05,
        input=TRUE, outfile=c("012","-101","structure"))
 }
 \arguments{

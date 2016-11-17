@@ -4,7 +4,7 @@
 #' perform genomic predictions
 #' 
 #' @usage raw.data(data, frame=c("long","wide"), hapmap,
-#'        bases=TRUE, sweep.sample= 0, call.rate=0.95, maf=0.05,
+#'        bases=TRUE, sweep.sample= 1, call.rate=0.95, maf=0.05,
 #'        input=TRUE, outfile=c("012","-101","structure"))
 #' 
 #' @param data object of class \code{matrix}
@@ -110,7 +110,7 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
   m <- count_allele(data)
   } else{
     if(frame=="long")
-      stop("format long only works with nitrogenous bases")
+      stop("format long only works with nitrogenous bases. Check base argument")
     m <- data
   }
 
@@ -121,10 +121,8 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
 	id.rmv <- rownames(m)[miss.freq > sweep.sample]
     m <- m[miss.freq <= sweep.sample,]
     data <- data[miss.freq <= sweep.sample,]
- 
-  
+    
   CR <- (colSums(!is.na(m)) - colSums(is.na(m)))/colSums(!is.na(m))
-  CR[!is.finite(CR)] <- 0
   
   p <- colSums(m, na.rm = TRUE)/(2*colSums(!is.na(m)))
   minor <- apply(cbind(p, 1-p), 1, min)
@@ -139,16 +137,15 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
      stop("All markers were removed. Try again with another treshold for CR and MAF")
     m <- m[, position]
     data <- data[, position]
-  
-  
-  if(input==TRUE & call.rate==0 & any(CR==0))
-    stop("There's markers with all missing data. Try again using call rate
-         different from zero")
+    
+  if(input==TRUE & any(!is.finite(CR[position])))
+    stop("There's markers with all missing data. There's no way to do
+           imputation. Try again using call rate different from zero")
   
   if(any(CR!=1L) & isTRUE(input))
   {
-    if (any(miss.freq==1))
-      stop("There's individuals with all missing data. there's no way to do
+    if (any(miss.freq[miss.freq <= sweep.sample]==1))
+      stop("There's individuals with all missing data. There's no way to do
            imputation. Try again using sweep.sample different from zero")
 
     f <- rowSums(m!=1, na.rm = TRUE)/rowSums(!is.na(m))
@@ -196,13 +193,13 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
   
   if(missing(hapmap)){
     storage.mode(m) <- "numeric"
-    return(list(Z.cleaned=m, report=report))
+    return(list(M.clean=m, report=report))
   } else{
     storage.mode(m)  <- "numeric"
     hap <- hapmap[hapmap[,1L] %in% colnames(m),]
     hap <- hap[order(hap[,2L], hap[,3L], na.last = TRUE, decreasing = F),]
     colnames(hap) <- c("SNP","Chromosome","Position")
-    return(list(Z.cleaned=m, Hapmap=hap, report=report))
+    return(list(M.clean=m, Hapmap=hap, report=report))
   }
 }
 

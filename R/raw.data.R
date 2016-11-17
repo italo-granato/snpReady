@@ -138,15 +138,17 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
     m <- m[, position]
     data <- data[, position]
     
-  if(input==TRUE & any(!is.finite(CR[position])))
-    stop("There's markers with all missing data. There's no way to do
-           imputation. Try again using call rate different from zero")
+  if (input==TRUE && any(!is.finite(CR[position])))
+      stop("There are markers with all missing data. There is no way to do
+           imputation. Try again using call rate other than zero")
   
-  if(any(CR!=1L) & isTRUE(input))
+  all.equal_ <- Vectorize(function(x, y) {isTRUE(all.equal(x, y))})
+  
+  if (any(CR!=1L) && isTRUE(input))
   {
-    if (any(miss.freq[miss.freq <= sweep.sample]==1))
-      stop("There's individuals with all missing data. There's no way to do
-           imputation. Try again using sweep.sample different from zero")
+    if (any(all.equal_(miss.freq[miss.freq <= sweep.sample], 1L)))
+       stop("There are samples with all missing data. There is no way to do
+           imputation. Try again using sweep.sample other than zero")
 
     f <- rowSums(m!=1, na.rm = TRUE)/rowSums(!is.na(m))
     f[is.nan(f)] <- 1

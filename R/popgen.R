@@ -3,6 +3,8 @@
 #' @description This function allows for estimating parameters of population genetics from genomic data. In addition,
 #' it also allows estimations considering subpopulations.
 #' 
+#' @usage popgen(M, subgroups)
+#' 
 #' @param \code{M} object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows.
 #' @param \code{subgroups} a \code{vector} with information for subgroups or subpopulations.
 #' 

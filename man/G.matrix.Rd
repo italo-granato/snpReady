@@ -4,10 +4,10 @@
 \alias{G.matrix}
 \title{Generate Genetic Relationship Matrix}
 \usage{
-G.matrix(Z, method=c("VanRaden", "UAR", "UARadj"), format=c("long","wide"))
+G.matrix(M, method=c("VanRaden", "UAR", "UARadj"), format=c("long","wide"))
 }
 \arguments{
-\item{\code{Z}}{\code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns.}
+\item{\code{M}}{\code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns.}
 
 \item{\code{method}}{\code{character}. Method for constructing the GRM. Three methods are currently supported. \code{"VanRaden"} indicates the method proposed by Vanraden (2008) for additive
 and dominant genomic relationship. \code{"UAR"} and \code{"UARadj"} represent methods proposed by Yang et al. (2010) for additive genomic relationship. See 'Detais'}
@@ -23,7 +23,7 @@ G.matrix allows to create Genomic Relationship Matrix (GRM)
 }
 \details{
 Function G.matrix provides three diferent types of relationship matrix. For \code{"VanRaden"} method, the relationship matrix is estimated as proposed by Vanraden (2008):
- \deqn{G = \frac{ZZ'}{2\sum p_i(1-p_i)}} where: \eqn{Z} is the marker matrix. The SNP genotype takes a value of 0, 1 or 2 if the genotype of the \eqn{j}th
+ \deqn{G = \frac{MM'}{2\sum p_i(1-p_i)}} where: \eqn{M} is the marker matrix. The SNP genotype takes a value of 0, 1 or 2 if the genotype of the \eqn{j}th
 individual at SNP \eqn{i} is \eqn{aa}, \eqn{Aa} or \eqn{AA}, respectively.
 \code{"UAR"} and \code{"UARadj"} represents the genomic relationship matrix proposed by Yang et al. (2010) named by Powell et al. (2010) as Unified Additive Relationship (UAR)
 and Adjusted UAR, respectively. GRM is then obtained by:

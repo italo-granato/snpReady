@@ -2,16 +2,16 @@
 #'
 #' @description G.matrix allows to create Genomic Relationship Matrix (GRM)
 #' 
-#' @usage G.matrix(Z, method=c("VanRaden", "UAR", "UARadj"), format=c("long","wide"))
+#' @usage G.matrix(M, method=c("VanRaden", "UAR", "UARadj"), format=c("long","wide"))
 #'        
-#' @param \code{Z} \code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns.
+#' @param \code{M} \code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns.
 #' @param \code{method} \code{character}. Method for constructing the GRM. Three methods are currently supported. \code{"VanRaden"} indicates the method proposed by Vanraden (2008) for additive
 #' and dominant genomic relationship. \code{"UAR"} and \code{"UARadj"} represent methods proposed by Yang et al. (2010) for additive genomic relationship. See 'Detais'
 #' @param \code{format} \code{character}. Class of object to be returned. \code{"wide"} returns a \eqn{n} x \eqn{n} matrix.
 #' \code{"long"} returns the GRM as a table with 3 columns. See 'Details'
 #' @details
 #' Function G.matrix provides three diferent types of relationship matrix. For \code{"VanRaden"} method, the relationship matrix is estimated as proposed by Vanraden (2008):
-#'  \deqn{G = \frac{ZZ'}{2\sum p_i(1-p_i)}} where: \eqn{Z} is the marker matrix. The SNP genotype takes a value of 0, 1 or 2 if the genotype of the \eqn{j}th
+#'  \deqn{G = \frac{MM'}{2\sum p_i(1-p_i)}} where: \eqn{M} is the marker matrix. The SNP genotype takes a value of 0, 1 or 2 if the genotype of the \eqn{j}th
 #' individual at SNP \eqn{i} is \eqn{aa}, \eqn{Aa} or \eqn{AA}, respectively.
 #' \code{"UAR"} and \code{"UARadj"} represents the genomic relationship matrix proposed by Yang et al. (2010) named by Powell et al. (2010) as Unified Additive Relationship (UAR)
 #' and Adjusted UAR, respectively. GRM is then obtained by:
@@ -36,12 +36,12 @@
 #' 
 
 #' @export
-G.matrix <- function(Z, method=c("VanRaden", "UAR", "UARadj"), format=c("wide", "long")){
-  coded <- unique(as.vector(Z))
+G.matrix <- function(M, method=c("VanRaden", "UAR", "UARadj"), format=c("wide", "long")){
+  coded <- unique(as.vector(M))
   if (any(is.na(match(coded, c(0,1,2)))))
     stop("SNPs must be coded as 0, 1, 2")
   
-  if (any(is.na(Z)))
+  if (any(is.na(M)))
     stop("Matrix must not have missing values")
   
   if(missing(method))
@@ -50,14 +50,14 @@ G.matrix <- function(Z, method=c("VanRaden", "UAR", "UARadj"), format=c("wide", 
      if(missing(format))
     stop("Format argument is missing")
   
-  N <- nrow(Z) 
-  m <- ncol(Z) 
-  p <- colSums(Z)/(2*N)
+  N <- nrow(M) 
+  m <- ncol(M) 
+  p <- colSums(M)/(2*N)
 
-    WWG <- function(Z, p){
-    w <- Z - matrix(rep(2*p, each=N), ncol = m)
+    WWG <- function(M, p){
+    w <- M - matrix(rep(2*p, each=N), ncol = m)
     
-    S <- ((Z==2)*1) * -rep(2*(1-p)^2, each=N) + ((Z==1)*1) * rep(2*p*(1-p), each=N) + ((Z==0)*1) * (-rep(2*p^2, each=N))
+    S <- ((M==2)*1) * -rep(2*(1-p)^2, each=N) + ((M==1)*1) * rep(2*p*(1-p), each=N) + ((M==0)*1) * (-rep(2*p^2, each=N))
     
     WWl <- w %*% t(w)
     Ga <- WWl/sum(2*p*(1-p)) + diag(1e-6, nrow(WWl))
@@ -68,12 +68,12 @@ G.matrix <- function(Z, method=c("VanRaden", "UAR", "UARadj"), format=c("wide", 
     return(list(Ga=Ga,Gd=Gd))
   }
   
-  UAR <- function(Z, p, adj=FALSE){
+  UAR <- function(M, p, adj=FALSE){
     
-    mrep <- Z - matrix(rep(2*p, each=N), ncol = m)
+    mrep <- M - matrix(rep(2*p, each=N), ncol = m)
     
     X <- (1/m)*(mrep %*% (t(mrep) * (1/(2*p*(1-p)))))
-    numerator <- Z^2 - t(t(Z) * (1+2*p)) + matrix(rep(2*p^2, each=N), ncol=m) 
+    numerator <- M^2 - t(t(M) * (1+2*p)) + matrix(rep(2*p^2, each=N), ncol=m) 
     diag(X) <- 1+(1/m)*colSums(t(numerator) *  (1/(2*p*(1-p))))
     
     if (adj==TRUE){
@@ -110,30 +110,30 @@ G.matrix <- function(Z, method=c("VanRaden", "UAR", "UARadj"), format=c("wide", 
   }
   
   if (method == "VanRaden" & format == "wide"){
-    Gww <- WWG(Z, p)
+    Gww <- WWG(M, p)
     return(Gww)
   } 
   if (method == "VanRaden" & format == "long"){
-    Gmat <- WWG(Z, p)
+    Gmat <- WWG(M, p)
     Aww <- toSparse(posdefmat(Gmat$Ga))
     Dww <- toSparse(posdefmat(Gmat$Gd))
     return(list(Ga=Aww, Gd=Dww))
   }
   if (method=="UAR" & format == "wide"){
-    uar <- UAR(Z, p)
+    uar <- UAR(M, p)
     return(Ga=uar)
   }
   if (method=="UAR" & format == "long"){
-    Gmat <- UAR(Z, p)
+    Gmat <- UAR(M, p)
     uarsp <- toSparse(posdefmat(Gmat))
     return(Ga=uarsp)
   }
   if (method=="UARadj" & format == "wide"){
-    uaradj <- UAR(Z, p, adj = TRUE)
+    uaradj <- UAR(M, p, adj = TRUE)
     return(Ga=uaradj)
   }
   if (method=="UARadj" & format == "long"){
-    uaradj <- UAR(Z, p, adj = TRUE)
+    uaradj <- UAR(M, p, adj = TRUE)
     uaradjsp <- toSparse(posdefmat(uaradj))
     return(Ga=uaradjsp)
   }

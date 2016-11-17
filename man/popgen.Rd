@@ -4,10 +4,10 @@
 \alias{popgen}
 \title{Population genetics from genomic data}
 \usage{
-popgen(Z, subgroups)
+popgen(M, subgroups)
 }
 \arguments{
-\item{\code{Z}}{object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows.}
+\item{\code{M}}{object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows.}
 
 \item{\code{subgroups}}{a \code{vector} with information for subgroups or subpopulations.}
 }

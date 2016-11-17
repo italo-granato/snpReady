@@ -3,7 +3,7 @@
 #' @description This function allows for estimating parameters of population genetics from genomic data. In addition,
 #' it also allows estimations considering subpopulations.
 #' 
-#' @param \code{Z} object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows.
+#' @param \code{M} object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows.
 #' @param \code{subgroups} a \code{vector} with information for subgroups or subpopulations.
 #' 
 #' @details 
@@ -40,8 +40,8 @@
 #' x <- popgen(M, subgroups=PS)
 
 #' @export
-popgen <- function(Z, subgroups){
-  Z<-as.matrix(Z) # matrix of markers incidence by genotype
+popgen <- function(M, subgroups){
+  Z<-as.matrix(M) # matrix of markers incidence by genotype
   if(missing(subgroups)) {subgroups <- rep(1, nrow(Z))}
   subgroups<-as.factor(subgroups)
   X<-as.data.frame(cbind(subgroups, Z)) # data frame with subgroups and Z
@@ -143,12 +143,3 @@ else{
   return<-list("general" = general, "bygroup"=bygroup)
  }
 }
-
-
-Z <- matrix(sample(c(0,1,2),10*30, replace = TRUE), 10, 30)
-colnames(Z) <- paste("M", 1:30, sep="")
-rownames(Z) <- paste("ID", 1:10, sep="")
-Z[1:5,1:5]
-a <- popgen(Z)
-
-ls(a)

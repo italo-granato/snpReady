@@ -42,12 +42,15 @@ G.matrix <- function(M, method=c("VanRaden", "UAR", "UARadj"), format=c("wide", 
     stop("SNPs must be coded as 0, 1, 2")
   
   if (any(is.na(M)))
-    stop("Matrix must not have missing values")
+    stop("Matrix should not have missing values")
+  
+  match.arg(method)
+  match.arg(format)
   
   if(missing(method))
     stop("Method argument is missing")
      
-     if(missing(format))
+  if(missing(format))
     stop("Format argument is missing")
   
   N <- nrow(M) 

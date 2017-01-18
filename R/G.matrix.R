@@ -74,8 +74,10 @@ G.matrix <- function(M, method=c("VanRaden", "UAR", "UARadj"), format=c("wide", 
   UAR <- function(M, p, adj=FALSE){
     
     mrep <- M - matrix(rep(2*p, each=N), ncol = m)
-    
     X <- (1/m)*(mrep %*% (t(mrep) * (1/(2*p*(1-p)))))
+    X[lower.tri(X, diag = T)] <- 0
+    X <- X + t(X)
+    
     numerator <- M^2 - t(t(M) * (1+2*p)) + matrix(rep(2*p^2, each=N), ncol=m) 
     diag(X) <- 1+(1/m)*colSums(t(numerator) *  (1/(2*p*(1-p))))
     

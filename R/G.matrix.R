@@ -104,7 +104,7 @@ G.matrix <- function(M, method=c("VanRaden", "UAR", "UARadj"), format=c("wide", 
   
   posdefmat <- function(mat){
     #' @importFrom matrixcalc is.positive.definite
-    if(is.positive.definite(mat)){
+    if(is.positive.definite(round(mat, 18))){
       g = solve(mat)
     }else{
       #' @importFrom Matrix nearPD

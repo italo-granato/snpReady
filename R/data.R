@@ -20,7 +20,7 @@ NULL
 #' @rdname maize.line
 #' @name maize.line
 #' @docType data
-#' @format A data frame with 70656 observations on the following 4 variables.
+#' @format A matrix with 70656 observations on the following 4 variables.
 #' \itemize{ 
 #' \item{sample: }{identification of samples (name of individuals)}
 #' \item{marker: }{identification of SNP markers}

@@ -7,9 +7,9 @@
 popgen(M, subgroups)
 }
 \arguments{
-\item{\code{M}}{object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows.}
+\item{M}{object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows.}
 
-\item{\code{subgroups}}{a \code{vector} with information for subgroups or subpopulations.}
+\item{subgroups}{a \code{vector} with information for subgroups or subpopulations.}
 }
 \value{
 Two lists are returned (\code{general} and \code{bygroup}), one with general information for markers and individuals and another by group (if applicable).

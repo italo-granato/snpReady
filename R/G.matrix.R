@@ -2,12 +2,12 @@
 #'
 #' @description G.matrix allows to create Genomic Relationship Matrix (GRM)
 #' 
-#' @usage G.matrix(M, method=c("VanRaden", "UAR", "UARadj"), format=c("long","wide"))
+#' @usage G.matrix(M, method=c("VanRaden", "UAR", "UARadj"), format=c("wide", "long"))
 #'        
-#' @param \code{M} \code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns.
-#' @param \code{method} \code{character}. Method for constructing the GRM. Three methods are currently supported. \code{"VanRaden"} indicates the method proposed by Vanraden (2008) for additive
+#' @param M \code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns.
+#' @param method \code{character}. Method for constructing the GRM. Three methods are currently supported. \code{"VanRaden"} indicates the method proposed by Vanraden (2008) for additive
 #' and dominant genomic relationship. \code{"UAR"} and \code{"UARadj"} represent methods proposed by Yang et al. (2010) for additive genomic relationship. See 'Detais'
-#' @param \code{format} \code{character}. Class of object to be returned. \code{"wide"} returns a \eqn{n} x \eqn{n} matrix.
+#' @param format \code{character}. Class of object to be returned. \code{"wide"} returns a \eqn{n} x \eqn{n} matrix.
 #' \code{"long"} returns the GRM as a table with 3 columns. See 'Details'
 #' @details
 #' Function G.matrix provides three diferent types of relationship matrix. For \code{"VanRaden"} method, the relationship matrix is estimated as proposed by Vanraden (2008):
@@ -29,8 +29,8 @@
 #' @examples
 #'
 #' #(1) Additive and dominance relationship matrix 
-#' Z <- data(maize)
-#' x <- G.matrix(Z, method="VanRaden", format = "wide")
+#' data(maize.hyb)
+#' x <- G.matrix(maize.hyb, method="VanRaden", format = "wide")
 #' A <- x$Ga
 #' D <- x$Gd
 #' 

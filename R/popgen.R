@@ -5,8 +5,8 @@
 #' 
 #' @usage popgen(M, subgroups)
 #' 
-#' @param \code{M} object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows.
-#' @param \code{subgroups} a \code{vector} with information for subgroups or subpopulations.
+#' @param M object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows.
+#' @param subgroups a \code{vector} with information for subgroups or subpopulations.
 #' 
 #' @details 
 #' The matrix of makers is of dimension \eqn{n} x \eqn{p}, in which individuals are in rows and markers in columns.

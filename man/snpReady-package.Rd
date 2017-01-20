@@ -27,10 +27,10 @@ Yang, J., B. Benyamin, B.P. McEvoy, S. Gordon, A.K. Henders, D.R. Nyholt, et al.
 \keyword{ package; genetics }
 
 \examples{
-
 #raw.data
 data(maize.line)
-raw.data(maize.line, frame="table", base=TRUE, sweep.sample= 1, 
+M <- as.matrix(maize.line)
+raw.data(M, frame="long", base=TRUE, sweep.sample= 0.8, 
           call.rate=0.95, maf=0.05, input=TRUE, outfile="-101")
 
 #G.matrix

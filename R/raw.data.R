@@ -4,7 +4,7 @@
 #' perform genomic predictions
 #' 
 #' @usage raw.data(data, frame=c("long","wide"), hapmap,
-#'        bases=TRUE, sweep.sample= 1, call.rate=0.95, maf=0.05,
+#'        base=TRUE, sweep.sample= 1, call.rate=0.95, maf=0.05,
 #'        input=TRUE, outfile=c("012","-101","structure"))
 #' 
 #' @param data object of class \code{matrix}
@@ -34,7 +34,8 @@
 #' @references # missing
 #' @examples
 #' data(maize.line)
-#' raw.data(maize.line, frame="table", base=TRUE, hapmap, sweep.sample= 1, 
+#' M <- as.matrix(maize.line)
+#' raw.data(M, frame="long", base=TRUE, sweep.sample= 0.8, 
 #'          call.rate=0.95, maf=0.05, input=TRUE, outfile="-101")
 #' 
 #'
@@ -139,7 +140,7 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
     
   if (input==TRUE && any(!is.finite(CR[position])))
       stop("There are markers with all missing data. There is no way to do
-           imputation. Try again using call rate other than zero")
+           imputation. Try again using another call rate treshold")
   
   all.equal_ <- Vectorize(function(x, y) {isTRUE(all.equal(x, y))})
   
@@ -147,7 +148,7 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
   {
     if (any(all.equal_(miss.freq[miss.freq <= sweep.sample], 1L)))
        stop("There are samples with all missing data. There is no way to do
-           imputation. Try again using sweep.sample other than zero")
+           imputation. Try again using another sweep.sample treshold")
 
     f <- rowSums(m!=1, na.rm = TRUE)/rowSums(!is.na(m))
     f[is.nan(f)] <- 1

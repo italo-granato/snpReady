@@ -48,9 +48,8 @@ inbreeding coefficient. Hence, for missing values, genotypes are imputed based o
 depends both on genotype frequency and inbreeding of the individual a specific locus.
 }
 \examples{
-data <- data(maize.line)
-hapmap <- data(hapmap)
-raw.data(data, frame="table", base=TRUE, hapmap, sweep.sample= 1, 
+data(maize.line)
+raw.data(maize.line, frame="table", base=TRUE, hapmap, sweep.sample= 1, 
          call.rate=0.95, maf=0.05, input=TRUE, outfile="-101")
 
 

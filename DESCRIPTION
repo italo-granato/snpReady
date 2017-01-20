@@ -6,12 +6,8 @@ Authors@R: c(
     person("Roberto", "Fritsche-Neto", email="roberto.neto@usp.br", role =c("aut", "ths"))
     )
 Title: Preparing genotypic datasets in order to run genomic analysis
-Description: This package consists of three functions. The first two, raw.data()
-    and G.matrix(), which clean, summarize and prepare genomic datasets to Genome
-    Selection and Genome Association analysis. With popgen() , the third function,
-    it is possible to estimate population genetic parameters for whole population
-    or by subgroups, per genotypes or per loci. Furthermore, fixed alleles or even
-    exclusive markers can be identify using popgen().
+Description: This package consists of three functions to clean, summarize and prepare genomic datasets to Genome
+    Selection and Genome Association analysis and to estimate population genetic parameters.
 Depends:
     Matrix,
     matrixcalc

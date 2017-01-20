@@ -33,9 +33,8 @@
 #' @seealso # # missing
 #' @references # missing
 #' @examples
-#' data <- data(maize.line)
-#' hapmap <- data(hapmap)
-#' raw.data(data, frame="table", base=TRUE, hapmap, sweep.sample= 1, 
+#' data(maize.line)
+#' raw.data(maize.line, frame="table", base=TRUE, hapmap, sweep.sample= 1, 
 #'          call.rate=0.95, maf=0.05, input=TRUE, outfile="-101")
 #' 
 #'

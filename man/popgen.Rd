@@ -42,11 +42,11 @@ These two dataset must have the same sort for rows (genotypes).
 }
 \examples{
 # hybrid maize data
-M <- data(maize.hyb)
-x <- popgen(M) 
+data(maize.hyb)
+x <- popgen(maize.hyb) 
 
 # using subpopulations
 PS<-c(rep(1,25), rep(2,25))
-x <- popgen(M, subgroups=PS)
+x <- popgen(maize.hyb, subgroups=PS)
 }
 

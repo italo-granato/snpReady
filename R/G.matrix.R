@@ -37,9 +37,10 @@
 
 #' @export
 G.matrix <- function(M, method=c("VanRaden", "UAR", "UARadj"), format=c("wide", "long")){
-  coded <- unique(as.vector(M))
-  if (any(is.na(match(coded, c(0,1,2)))))
-    stop("SNPs must be coded as 0, 1, 2")
+  #commenting this condition to allows values from continuous imputation 
+  #coded <- unique(as.vector(M))
+  #if (any(is.na(match(coded, c(0,1,2)))))
+  #  stop("SNPs must be coded as 0, 1, 2")
   
   if (any(is.na(M)))
     stop("Matrix should not have missing values")

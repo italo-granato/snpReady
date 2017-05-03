@@ -191,7 +191,8 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
                  snp.rmv[[1]],
                  paste(length(id.rmv), "Samples removed by sweep.sample =", sweep.sample, sep = " "),
                  id.rmv,
-                 paste(sum(is.na(data)), "markers were inputed = ", round((sum(is.na(data))/length(data))*100, 2), "%"))
+                 ifelse(input, paste(sum(is.na(data)), "markers were inputed = ", round((sum(is.na(data))/length(data))*100, 2), "%"),
+		       "No marker was imputed"))
   
   if(missing(hapmap)){
     storage.mode(m) <- "numeric"

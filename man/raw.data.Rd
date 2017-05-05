@@ -61,4 +61,3 @@ raw.data(M, frame="long", base=TRUE, sweep.sample= 0.8,
 \seealso{
 # # missing
 }
-

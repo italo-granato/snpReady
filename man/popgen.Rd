@@ -14,22 +14,22 @@ popgen(M, subgroups)
 \value{
 Two lists are returned (\code{general} and \code{bygroup}), one with general information for markers and individuals and another by group (if applicable).
 
-\code{general}
+\code{general}: A four-level list 
 
-For each marker: allelic frequency (\eqn{p} and \eqn{q}),
-Minor Allele Frequency (\eqn{MAF}), expected heterozygosity (\eqn{He}), observed
-heterozygosity (\eqn{Ho}), Nei's Genetic Diversity (\eqn{DG}) and Polymorphism Informative Content(\eqn{PIC}). 
+\itemize{marker}: For each marker it presents the allelic frequency (\eqn{p} and \eqn{q}),
+Minor Allele Frequency (\eqn{MAF}), expected heterozygosity (\eqn{H_e}), observed
+heterozygosity (\eqn{H_o}), Nei's Genetic Diversity (\eqn{DG}) and Polymorphism Informative Content(\eqn{PIC}) 
 
-For genotypes:  observed heterozygosity (\eqn{Ho}), coefficient of inbreeding (\eqn{Fi}) and selfing index (\eqn{Si}) are returned.
+\itemize{genotypes}: it presents observed heterozygosity (\eqn{H_o}), coefficient of inbreeding (\eqn{F_i}) and selfing index (\eqn{S_i})
 
-For population:  parameters used for markers are returned for general population with mean, lower and upper limits.
+\itemize{population}: The same parameters produced for markers are returned for general population with its mean, lower and upper limits
 
-Variability: shows estimates of effective population size (\eqn{Ne}), additive (\eqn{Va}) and dominance (\eqn{Vd}) variances components, and a
-summary of number of groups, genotypes and markers.
+\itemize{Variability}: shows estimates of effective population size (\eqn{Ne}), additive (\eqn{Va}) and dominance (\eqn{Vd}) variances components, and a
+summary of number of groups, genotypes and markers
 
 \code{bygroups}
 
-Same outputs are here generated for subpopulations or subgroups. Moreover, number of exclusive and fixed alleles per group are also assessed.
+Same outputs produced for general it is created for subpopulations or subgroups. Moreover, two more list are presented each with number of exclusive and fixed alleles per group
 }
 \description{
 This function allows for estimating parameters of population genetics from genomic data. In addition,
@@ -49,4 +49,3 @@ x <- popgen(maize.hyb)
 PS<-c(rep(1,25), rep(2,25))
 x <- popgen(maize.hyb, subgroups=PS)
 }
-

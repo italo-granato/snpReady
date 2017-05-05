@@ -15,22 +15,22 @@
 
 #' @return Two lists are returned (\code{general} and \code{bygroup}), one with general information for markers and individuals and another by group (if applicable).
 #' 
-#' \code{general}
+#' \code{general}: A four-level list 
 #' 
-#' For each marker: allelic frequency (\eqn{p} and \eqn{q}),
-#' Minor Allele Frequency (\eqn{MAF}), expected heterozygosity (\eqn{He}), observed
-#' heterozygosity (\eqn{Ho}), Nei's Genetic Diversity (\eqn{DG}) and Polymorphism Informative Content(\eqn{PIC}). 
+#' \itemize{marker}: For each marker it presents the allelic frequency (\eqn{p} and \eqn{q}),
+#' Minor Allele Frequency (\eqn{MAF}), expected heterozygosity (\eqn{H_e}), observed
+#' heterozygosity (\eqn{H_o}), Nei's Genetic Diversity (\eqn{DG}) and Polymorphism Informative Content(\eqn{PIC}) 
 #' 
-#' For genotypes:  observed heterozygosity (\eqn{Ho}), coefficient of inbreeding (\eqn{Fi}) and selfing index (\eqn{Si}) are returned.
+#' \itemize{genotypes}: it presents observed heterozygosity (\eqn{H_o}), coefficient of inbreeding (\eqn{F_i}) and selfing index (\eqn{S_i})
 #'
-#' For population:  parameters used for markers are returned for general population with mean, lower and upper limits.
+#' \itemize{population}: The same parameters produced for markers are returned for general population with its mean, lower and upper limits
 #'
-#' Variability: shows estimates of effective population size (\eqn{Ne}), additive (\eqn{Va}) and dominance (\eqn{Vd}) variances components, and a
-#' summary of number of groups, genotypes and markers.
+#' \itemize{Variability}: shows estimates of effective population size (\eqn{Ne}), additive (\eqn{Va}) and dominance (\eqn{Vd}) variances components, and a
+#' summary of number of groups, genotypes and markers
 #' 
 #' \code{bygroups}
 #' 
-#' Same outputs are here generated for subpopulations or subgroups. Moreover, number of exclusive and fixed alleles per group are also assessed.
+#' Same outputs produced for general it is created for subpopulations or subgroups. Moreover, two more list are presented each with number of exclusive and fixed alleles per group
 #'
 #' @examples
 #' # hybrid maize data
@@ -42,106 +42,98 @@
 #' x <- popgen(maize.hyb, subgroups=PS)
 
 #' @export
-popgen <- function(M, subgroups){
-  Z<-as.matrix(M) # matrix of markers incidence by genotype
-  if(missing(subgroups)) {subgroups <- rep(1, nrow(Z))}
-  subgroups<-as.factor(subgroups)
-  X<-as.data.frame(cbind(subgroups, Z)) # data frame with subgroups and Z
+popgen <- function(M, subgroups)
+  {
+  if(is.null(colnames(M)))
+  stop("Colnames is missing")
   
-g.of.p<-function(X){
+  hasAllMiss <- colSums(is.na(M)) == nrow(M)
   
-  M<-X[,-1]
-  G<-X[,1]
-  m<-ncol(M) # number of markers
-  g<-length(G) # number of genotypes
+  if(any(hasAllMiss))
+    warning("There are some markers with all data points missing. They were removed from dataset")
   
-  #markers
-  f<-apply(M, 2, sum)/(2*g) # allele frequency
-  fs<-cbind(f, 1-f) 
-  MAF<-apply(fs, 1, min)
-  p<-f
-  q<-1-f
-  Hesp<-2*p*q # expected heterosigosity
-  Hobs<-colSums(M==1)/(2*g) # observed heterosigosity
-  Dg<-1-p^2-q^2 # genetic diversity
-  PIC<-1-(p^2+q^2)-(2*p^2*q^2) # Polimorphism Information Contend
+  Z<-as.matrix(M[, !hasAllMiss])
   
-  markers<-round(data.frame(p, q, MAF, "He"=Hesp, "Ho"=Hobs, "DG"=Dg, PIC),2)
+  if(missing(subgroups))
+    subgroups <- 1
   
-  #genotypes
-  Hg.obs<-rowSums(M==1)/(2*m) # observed heterosigosity
-  Fi<-1-Hg.obs/mean(Hesp) # endogamy
-  Si<-(2*Fi)/(1+Fi) # self index
-  
-  genotypes<-round(data.frame("Ho"=Hg.obs, Fi, Si),2)
-  
-  #population
-  DG.pop<-c("mean"=mean(Dg), "lower"=range(Dg)[1], "upper"=range(Dg)[2])
-  PIC.pop<-c("mean"=mean(PIC), "lower"=range(PIC)[1], "upper"=range(PIC)[2])
-  MAF.pop<-c("mean"=mean(MAF), "lower"=range(MAF)[1], "upper"=range(MAF)[2])
- 
-  Hg.obs.pop<-c("mean"=mean(Hg.obs), "lower"=range(Hg.obs)[1], "upper"=range(Hg.obs)[2])
-  Fi.pop<-c("mean"=mean(Fi), "lower"=range(Fi)[1], "upper"=range(Fi)[2])
-  Si.pop<-c("mean"=mean(Si), "lower"=range(Si)[1], "upper"=range(Si)[2])
-  
-  population<-t(round(data.frame("DG"=DG.pop, "PIC"=PIC.pop, "MAF"=MAF.pop, "Ho"=Hg.obs.pop, "F"=Fi.pop, "S"=Si.pop),2))
-  
-  #variance
-  Ne<-1/(2*mean(Fi))*g # effective size
-  Va<-sum(2*p*q) # additive variance component
-  Vd<-sum((2*p*q)^2) # dominance variance component
-  NG<-length(unique(G))
-  variance<-t(round(data.frame(Ne, Va, Vd, "number of groups" = NG, "number of genotypes" = g, "number of markers" = m),2))
-  colnames(variance)<-("estimate")
-  
-  #average
-  average<-list("markers" = markers, "genotypes" = genotypes, "population" = population, "variability" = variance)  
+  labelSG <- unique(subgroups)
+  nSG <- length(labelSG)
 
-  return(average)
+  g.of.p<-function(M){
 
- }
-
-general<-g.of.p(X)
-
-#by groups
-if(length(unique(subgroups)) != 1){
-  groups<-split(X, X$subgroups)
-  bygroup<-lapply(groups, g.of.p)
-  
-  pbyg<-matrix(0, ncol(Z), length(unique(subgroups)), dimnames= list(colnames(Z),c(1:length(unique(subgroups)))))
-
-  for(i in 1:length(unique(X$subgroups))){
-    pbyg[,i]<-bygroup[[i]]$markers$p
+      m<-ncol(M)
+      g<-nrow(M)
+      
+      p <- colMeans(M, na.rm = T)/2
+      fs <- cbind(p, 1-p)
+      MAF <- apply(fs, 1, min)
+      q <- 1-p
+      Hesp <- 2*p*q
+      Hobs <- colMeans(M==1, na.rm = T)/2
+      Dg <- 1-p^2-q^2
+      PIC <- 1-(p^2+q^2)-(2*p^2*q^2)
+      propMiss <- colSums(is.na(M))/g
+      markers <- round(cbind(p, q, MAF, "He"=Hesp, "Ho"=Hobs, "DG"=Dg, PIC, "Miss" = propMiss), 2)
+      markers[is.nan(markers)] <- NA
+      markers <- as.data.frame(markers)
+      
+      
+      Hg.obs <- rowMeans(M==1, na.rm = T)/2
+      Fi <- 1- Hg.obs/mean(Hesp, na.rm = TRUE)
+      Si <- (2*Fi)/(1+Fi)
+      
+      genotypes <- round(cbind("Ho"=Hg.obs, Fi, Si),2)
+      
+      meanMrk <- colMeans(markers, na.rm = TRUE)
+      rangeMrk <- t(apply(X = markers, MARGIN = 2, FUN = function(x) range(x, na.rm = TRUE)))
+      
+      meanGen <- colMeans(genotypes, na.rm = TRUE)
+      rangeGen <- t(apply(X = genotypes, MARGIN = 2, FUN = function(x) range(x, na.rm = TRUE)))
+      
+      population <- round(rbind(cbind(meanMrk, rangeMrk)[c(6,7,3),], cbind(meanGen, rangeGen)), 2)
+      rownames(population) <- c(rownames(population)[1:4], "F", "S")
+      colnames(population) <- c("mean", "lower", "upper")
+      
+      Ne <- 1/(2*mean(Fi))*g
+      Va <- sum(2*p*q)
+      Vd <- sum((2*p*q)^2)
+      variance <- t(round(data.frame(Ne, Va, Vd, "number of genotypes" = g, "number of markers" = m),2))
+      colnames(variance) <- ("estimate")
+      
+      average <- list("markers" = markers, "genotypes" = genotypes, "population" = population, "variability" = variance)
+      return(average)
   }
-
-  fallelle <- list()
-  exclusive <- list()
   
-  for(i in 1:length(unique(X$subgroups))){
-    fixed<-pbyg[,i]==1|pbyg[,i]==0
-    present<-pbyg[,i]>0
-
-    exclusive[[i]]<-colnames(Z)[c(which(pbyg[,i]>0 & apply(as.matrix(pbyg[,-i]==0), 1, function(x) all(x))),
-                                     which(pbyg[,i]<1 & apply(as.matrix(pbyg[,-i]==1), 1, function(x) all(x))))]
+  general <- g.of.p(Z)
+  
+  bygroup <- c("There are no subgroups")
+  
+  if(nSG > 1){
+    bygroup <- lapply(labelSG, function(i) g.of.p(Z[subgroups == labelSG, ]) )
+    names(bygroup) <- labelSG
     
+    pbyg <- sapply(X = labelSG, FUN = function(x) bygroup[[x]]$markers$p)
     
-  fallelle[[i]]<-colnames(Z)[fixed==TRUE]
-if (length(exclusive[[i]])==0){exclusive[[i]]<-c("there are no exclusive alleles for this group")}
-if (length(fallelle[[i]])==0){exclusive[[i]]<-c("there are no fixed alleles for this group")}
+    for(i in 1:nSG){
+    fixed <- pbyg[,i] == 1 | pbyg[,i] == 0
+    
+
+    exclus <- colnames(Z)[c(which(pbyg[,i]>0 & apply(as.matrix(pbyg[,-i]==0),MARGIN =  1,FUN = all)),
+                            which(pbyg[,i]<1 & apply(as.matrix(pbyg[,-i]==1),MARGIN =  1,FUN = all)))]
+    
+    fixed <- colnames(Z)[which(fixed)]
+    
+    bygroup[[labelSG[i]]]$exclusive <- ifelse(length(exclus) == 0,
+                                              "There are no exclusive alleles for this group",
+                                              exclus)
+    bygroup[[labelSG[i]]]$fixed <- ifelse(length(fixed) == 0,
+                                          "There are no exclusive alleles for this group",
+                                          fixed)
+    }
   }
-
-
-  for(i in 1:length(unique(X$subgroups))){
-  fixed<-pbyg[,i]==1
-
-  }
-
-return(list("general" = general, "bygroup"=bygroup, "exclusive_alleles"= exclusive, "fixed_alleles" = fallelle))  
-
-  }
-
-else{
-  bygroup<-c("there are no subgroups")
-  return<-list("general" = general, "bygroup"=bygroup)
- }
+  
+    return<-list("general" = general, "bygroup"=bygroup)
 }
+
+

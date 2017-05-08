@@ -36,9 +36,7 @@ For this, each remaining marker is splited in two columns, one for each allele. 
 \details{
 The function allows flexible input of genomic data. Data might be in long format with 4 columns or in wide 
 format where markers are in columns and individuals in rows. Both numeric and nitrogenous bases are accepted. Samples and markers can be eliminated based on missing data rate. Markers can also be eliminated based on
-the frequency of the minor allele. Imputation is carried out through combination of allelic frequency and individual
-inbreeding coefficient. Hence, for missing values, genotypes are imputed based on their probability of occurrence. This probability
-depends both on genotype frequency and inbreeding of the individual a specific locus.
+the frequency of the minor allele. Imputation is carried out through combination of allelic frequency and individual inbreeding coefficient. Hence, for missing values, genotypes are imputed based on their probability of occurrence. This probability depends both on genotype frequency and inbreeding of the individual a specific locus.
 }
 \value{
 Returns a properly coded marker matrix output and a report specifying which individuals are removed by \code{sweep.sample} and which markers are removed by \code{"call.rate"}

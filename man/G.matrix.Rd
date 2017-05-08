@@ -4,7 +4,7 @@
 \alias{G.matrix}
 \title{Generate Genetic Relationship Matrix}
 \usage{
-G.matrix(M, method=c("VanRaden", "UAR", "UARadj"), format=c("wide", "long"))
+G.matrix(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("wide", "long"))
 }
 \arguments{
 \item{M}{\code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns.}

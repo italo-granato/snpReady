@@ -2,7 +2,7 @@
 #'
 #' @description G.matrix allows to create Genomic Relationship Matrix (GRM)
 #' 
-#' @usage G.matrix(M, method=c("VanRaden", "UAR", "UARadj"), format=c("wide", "long"))
+#' @usage G.matrix(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("wide", "long"))
 #'        
 #' @param M \code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns.
 #' @param method \code{character}. Method for constructing the GRM. Four methods are currently supported. \code{"VanRaden"} indicates the method proposed by Vanraden (2008) for additive

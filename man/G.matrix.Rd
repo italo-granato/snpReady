@@ -9,8 +9,8 @@ G.matrix(M, method=c("VanRaden", "UAR", "UARadj"), format=c("wide", "long"))
 \arguments{
 \item{M}{\code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns.}
 
-\item{method}{\code{character}. Method for constructing the GRM. Three methods are currently supported. \code{"VanRaden"} indicates the method proposed by Vanraden (2008) for additive
-and dominant genomic relationship. \code{"UAR"} and \code{"UARadj"} represent methods proposed by Yang et al. (2010) for additive genomic relationship. See 'Detais'}
+\item{method}{\code{character}. Method for constructing the GRM. Four methods are currently supported. \code{"VanRaden"} indicates the method proposed by Vanraden (2008) for additive
+genomic relationship and its counterpart for dominance genomic relationship. \code{"UAR"} and \code{"UARadj"} represent methods proposed by Yang et al. (2010) for additive genomic relationship. \code{GK} represents the Gaussian kernel for additive genomic. See 'Detais'}
 
 \item{format}{\code{character}. Class of object to be returned. \code{"wide"} returns a \eqn{n} x \eqn{n} matrix.
 \code{"long"} returns the GRM as a table with 3 columns. See 'Details'}
@@ -33,6 +33,9 @@ and Adjusted UAR, respectively. GRM is then obtained by:
 \end{cases}}
 where: \eqn{p_i} is the allele frequency at SNP \eqn{i}, \eqn{x_{ij}} is the SNP genotype that takes a value of 0, 1 or 2 if the genotype of the \eqn{j}th
 individual at SNP \eqn{i} is \eqn{aa}, \eqn{Aa} or \eqn{AA}, respectively.
+For \code{GK}, the Gaussian kernel is obtained by:
+\eqn{ K (x_i, x_{i'}) = exp(-d_{ii'}^2)}  
+Where \eqn{d_{ii'}^2} is the euclidian distance square between two individuals.  
 The \code{format} argument is the desired output format. For \code{"wide"}, the relationship output produced is in matrix format, with \eqn{n x n} dimension. 
 If \code{"long"} is the chosen format, the inverse of the relationship matrix is produced and converted to a table. In this case, the upper triangular part of the relationship matrix
 is changed to a table with 3 columns representing the respective rows, columns and values (Used mainly by ASReml).

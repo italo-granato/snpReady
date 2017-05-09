@@ -1,5 +1,8 @@
 #' @export
-raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sample= 1, call.rate=0.95, maf=0.05, input=TRUE, outfile=c("012","-101","structure")) {
+raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE, sweep.sample= 1,
+                     call.rate=0.95, maf=0.05, input=TRUE, type = c("wright", "mean"),
+                     outfile=c("012","-101","structure"))
+{
 
   if (call.rate < 0 | call.rate > 1 | maf < 0 | maf > 1)
     stop("Treshold for call rate and maf must be between 0 and 1")
@@ -8,13 +11,13 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
     outfile = "012"
 
 	if(!is.matrix(data))
-    stop("Data must be matrix class")
+    stop("Data must be in matrix class")
   
   match.arg(frame)
   match.arg(outfile)
   
   if(isTRUE(base)){
-    if (frame=="long"){
+    if (frame == "long"){
       if(ncol(data)>4)
         stop("For format long, the object must have four columns")
     
@@ -33,7 +36,8 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
       if(any(is.na(curPos))){
         vec <- rep(NA,length(snp.name))
         vec[which(!is.na(curPos))] <- curSnp[na.omit(curPos)]
-      }else{
+        }
+      else{
         vec <- curSnp[curPos]
         return(vec)}
     }
@@ -65,16 +69,23 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
   }
     
   m <- count_allele(data)
-  } else{
+  }
+  else{
     if(frame=="long")
-      stop("format long only works with nitrogenous bases. Check base argument")
+      stop("format long only accepts nitrogenous bases. Check base argument")
+    
     m <- data
   }
+  
+  if(is.null(colnames(m)))
+    stop("Colnames is missing")
+  
 
   miss.freq <- rowSums(is.na(m))/ncol(m)
   
   if (sweep.sample < 0 | sweep.sample > 1)
       stop("Treshold for sweep.clean must be between 0 and 1")
+  
 	id.rmv <- rownames(m)[miss.freq > sweep.sample]
     m <- m[miss.freq <= sweep.sample,]
     data <- data[miss.freq <= sweep.sample,]
@@ -95,36 +106,41 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
     m <- m[, position]
     data <- data[, position]
     
-  if (input==TRUE && any(!is.finite(CR[position])))
+  if (isTRUE(input) & any(!is.finite(CR[position])))
       stop("There are markers with all missing data. There is no way to do
            imputation. Try again using another call rate treshold")
   
   all.equal_ <- Vectorize(function(x, y) {isTRUE(all.equal(x, y))})
   
-  if (any(CR!=1L) && isTRUE(input))
+  samplefp <- function(p, f){
+    samp <- sample(c(0,1,2), 1,
+                   prob=c(((1-p)^2+((1-p)*p*f)),
+                          (2*p*(1-p)-(2*p*(1-p)*f)),
+                          (p^2+((1-p)*p*f))))
+    return(as.integer(samp))
+  }
+  
+  input.fun <- function(m, p, f){
+    indicesM <- which(x = is.na(m), arr.ind = TRUE)
+    m[indicesM] <- mapply(samplefp, p[indicesM[,2]], f[indicesM[,1]])
+    return(m)
+  }
+  
+  if (any(CR!=1L) & isTRUE(input))
   {
     if (any(all.equal_(miss.freq[miss.freq <= sweep.sample], 1L)))
        stop("There are samples with all missing data. There is no way to do
            imputation. Try again using another sweep.sample treshold")
-
-    f <- rowSums(m!=1, na.rm = TRUE)/rowSums(!is.na(m))
-    f[is.nan(f)] <- 1
     
-    samplefp <- function(p, f){
-      samp <- sample(c(0,1,2), 1,
-                     prob=c(((1-p)^2+((1-p)*p*f)), 
-                            (2*p*(1-p)-(2*p*(1-p)*f)), 
-                            (p^2+((1-p)*p*f))))
-      return(as.integer(samp))}
-    
-    input.fun <- function(m, p, f){
-      icol <- unlist(apply(m, 1, function(x) which(is.na(x))))
-      posrow <- apply(m, 1, function(x) sum(is.na(x)))
-      irow <- rep(seq(length(posrow)), times=posrow)
-      m[cbind(irow, icol)] <- mapply(samplefp, p[icol], f[irow])
-      return(m)}
-    
-    m <- input.fun(m=m, p=p[position], f=f)
+    if(type == "wright"){
+      f <- rowSums(m!=1, na.rm = TRUE)/rowSums(!is.na(m))
+      f[is.nan(f)] <- 1
+      m <- input.fun(m=m, p=p[position], f=f)
+    }
+    if(type == "mean"){
+      tmp <- which(is.na(m), arr.ind = TRUE)
+      m[tmp] <- colMeans(m, na.rm = T)[tmp[,2]]
+    }
   }
   
   if (outfile=="-101")
@@ -148,10 +164,10 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
                  snp.rmv[[1]],
                  paste(length(id.rmv), "Samples removed by sweep.sample =", sweep.sample, sep = " "),
                  id.rmv,
-                 ifelse(input, paste(sum(is.na(data)), "markers were inputed = ", round((sum(is.na(data))/length(data))*100, 2), "%"),
+                 ifelse(isTRUE(input), paste(sum(is.na(data)), "markers were inputed = ", round((sum(is.na(data))/length(data))*100, 2), "%"),
 		       "No marker was imputed"))
   
-  if(missing(hapmap)){
+  if(is.null(hapmap)){
     storage.mode(m) <- "numeric"
     return(list(M.clean=m, report=report))
   } else{

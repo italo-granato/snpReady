@@ -48,7 +48,6 @@ M <- as.matrix(maize.line)
 raw.data(M, frame="long", base=TRUE, sweep.sample= 0.8, 
          call.rate=0.95, maf=0.05, input=TRUE, outfile="-101")
 
-
 }
 \references{
 # missing

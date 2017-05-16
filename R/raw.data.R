@@ -1,48 +1,8 @@
-#' @title Preparation of genomic data
-#' 
-#' @description This function gets genomic data ready to be used in packages or softwares that
-#' perform genomic predictions
-#' 
-#' @usage raw.data(data, frame=c("long","wide"), hapmap,
-#'        base=TRUE, sweep.sample= 1, call.rate=0.95, maf=0.05,
-#'        input=TRUE, outfile=c("012","-101","structure"))
-#' 
-#' @param data object of class \code{matrix}
-#' @param frame \code{character}. Format of genomic data to be inputed. Two formats are currently supported. \code{"long"} is used for objects
-#' with sample ID (1st column), marker ID (2nd column), fist allele (3rd column) and second allele (4th column). \code{"wide"} inputes
-#' a \eqn{n} x \eqn{m} matrix where markers must be in columns and individuals in rows
-#' @param hapmap \code{matrix}. Object with information on SNPs, chromosome and position
-#' @param base \code{logical}. Are gentype coded as nitrogenous bases? if \code{TRUE}, data are converted to numeric. If \code{FALSE}, it follows to clean up.
-#' @param sweep.sample \code{numeric}. Threshold for removing samples from data by missing rate. Samples with missing rate above the defined threshold are
-#' removed from dataset.
-#' @param call.rate \code{numeric}. Threshold for removing marker by missing genotype rate. SNP with \code{"call rate"} below threshold are removed from dataset.
-#' @param maf \code{numeric}. Threshold for removing SNP by minor allele frequency. 
-#' @param input \code{logical}. If \code{"TRUE"}, imputation of missing data is performed. See details.
-#' @param outfile \code{character}. Type of output to be produced. \code{"012"} outputs matrix coded as 0 to \code{AA}, 1 to \code{Aa} and 2 to \code{aa}. \code{"-101"}
-#' presents marker matrix coded as -1, 0 and 1 to \code{aa}, \code{Aa} and \code{AA}, respectively. \code{"structure"} returns a matrix suitable for STRUCTURE Software.
-#' For this, each remaining marker is splited in two columns, one for each allele. Nitrogenous bases are then recoded to a number, so A is 1, C is 2, G is 3 and T is 4. 
-#' 
-#' @details The function allows flexible imputation of genomic data. Data might be in long format with 4 columns or in wide 
-#' format where markers are in columns and individuals in rows. Both numeric and nitrogenous bases are accepted. Samples and markers can be eliminated based on missing data rate. Markers can also be eliminated based on
-#' the frequency of the minor allele. Imputation is carried out through combination of allelic frequency and individual
-#' inbreeding coefficient. Hence, for missing values, genotypes are imputed based on their probability of occurrence. This probability
-#' depends both on genotype frequency and inbreeding of the individual a specific locus.
-#' 
-#' @return Returns a properly coded marker matrix output and a report specifying which individuals are removed by \code{sweep.sample} and which markers are removed by \code{"call.rate"}
-#' and \code{"maf"}.
-#' @seealso # # missing
-#' @references # missing
-#' @examples
-#' data(maize.line)
-#' M <- as.matrix(maize.line)
-#' raw.data(M, frame="long", base=TRUE, sweep.sample= 0.8, 
-#'          call.rate=0.95, maf=0.05, input=TRUE, outfile="-101")
-#' 
-#'
-
-
 #' @export
-raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sample= 1, call.rate=0.95, maf=0.05, input=TRUE, outfile=c("012","-101","structure")) {
+raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE, sweep.sample= 1,
+                     call.rate=0.95, maf=0.05, input=TRUE, type = c("wright", "mean"),
+                     outfile=c("012","-101","structure"))
+{
 
   if (call.rate < 0 | call.rate > 1 | maf < 0 | maf > 1)
     stop("Treshold for call rate and maf must be between 0 and 1")
@@ -51,13 +11,13 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
     outfile = "012"
 
 	if(!is.matrix(data))
-    stop("Data must be matrix class")
+    stop("Data must be in matrix class")
   
   match.arg(frame)
   match.arg(outfile)
   
   if(isTRUE(base)){
-    if (frame=="long"){
+    if (frame == "long"){
       if(ncol(data)>4)
         stop("For format long, the object must have four columns")
     
@@ -76,7 +36,8 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
       if(any(is.na(curPos))){
         vec <- rep(NA,length(snp.name))
         vec[which(!is.na(curPos))] <- curSnp[na.omit(curPos)]
-      }else{
+        }
+      else{
         vec <- curSnp[curPos]
         return(vec)}
     }
@@ -108,16 +69,23 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
   }
     
   m <- count_allele(data)
-  } else{
+  }
+  else{
     if(frame=="long")
-      stop("format long only works with nitrogenous bases. Check base argument")
+      stop("format long only accepts nitrogenous bases. Check base argument")
+    
     m <- data
   }
+  
+  if(is.null(colnames(m)))
+    stop("Colnames is missing")
+  
 
   miss.freq <- rowSums(is.na(m))/ncol(m)
   
   if (sweep.sample < 0 | sweep.sample > 1)
       stop("Treshold for sweep.clean must be between 0 and 1")
+  
 	id.rmv <- rownames(m)[miss.freq > sweep.sample]
     m <- m[miss.freq <= sweep.sample,]
     data <- data[miss.freq <= sweep.sample,]
@@ -138,36 +106,41 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
     m <- m[, position]
     data <- data[, position]
     
-  if (input==TRUE && any(!is.finite(CR[position])))
+  if (isTRUE(input) & any(!is.finite(CR[position])))
       stop("There are markers with all missing data. There is no way to do
            imputation. Try again using another call rate treshold")
   
   all.equal_ <- Vectorize(function(x, y) {isTRUE(all.equal(x, y))})
   
-  if (any(CR!=1L) && isTRUE(input))
+  samplefp <- function(p, f){
+    samp <- sample(c(0,1,2), 1,
+                   prob=c(((1-p)^2+((1-p)*p*f)),
+                          (2*p*(1-p)-(2*p*(1-p)*f)),
+                          (p^2+((1-p)*p*f))))
+    return(as.integer(samp))
+  }
+  
+  input.fun <- function(m, p, f){
+    indicesM <- which(x = is.na(m), arr.ind = TRUE)
+    m[indicesM] <- mapply(samplefp, p[indicesM[,2]], f[indicesM[,1]])
+    return(m)
+  }
+  
+  if (any(CR!=1L) & isTRUE(input))
   {
     if (any(all.equal_(miss.freq[miss.freq <= sweep.sample], 1L)))
        stop("There are samples with all missing data. There is no way to do
            imputation. Try again using another sweep.sample treshold")
-
-    f <- rowSums(m!=1, na.rm = TRUE)/rowSums(!is.na(m))
-    f[is.nan(f)] <- 1
     
-    samplefp <- function(p, f){
-      samp <- sample(c(0,1,2), 1,
-                     prob=c(((1-p)^2+((1-p)*p*f)), 
-                            (2*p*(1-p)-(2*p*(1-p)*f)), 
-                            (p^2+((1-p)*p*f))))
-      return(as.integer(samp))}
-    
-    input.fun <- function(m, p, f){
-      icol <- unlist(apply(m, 1, function(x) which(is.na(x))))
-      posrow <- apply(m, 1, function(x) sum(is.na(x)))
-      irow <- rep(seq(length(posrow)), times=posrow)
-      m[cbind(irow, icol)] <- mapply(samplefp, p[icol], f[irow])
-      return(m)}
-    
-    m <- input.fun(m=m, p=p[position], f=f)
+    if(type == "wright"){
+      f <- rowSums(m!=1, na.rm = TRUE)/rowSums(!is.na(m))
+      f[is.nan(f)] <- 1
+      m <- input.fun(m=m, p=p[position], f=f)
+    }
+    if(type == "mean"){
+      tmp <- which(is.na(m), arr.ind = TRUE)
+      m[tmp] <- colMeans(m, na.rm = T)[tmp[,2]]
+    }
   }
   
   if (outfile=="-101")
@@ -191,10 +164,10 @@ raw.data <- function(data, frame = c("long","wide"), hapmap, base=TRUE, sweep.sa
                  snp.rmv[[1]],
                  paste(length(id.rmv), "Samples removed by sweep.sample =", sweep.sample, sep = " "),
                  id.rmv,
-                 ifelse(input, paste(sum(is.na(data)), "markers were inputed = ", round((sum(is.na(data))/length(data))*100, 2), "%"),
+                 ifelse(isTRUE(input), paste(sum(is.na(data)), "markers were inputed = ", round((sum(is.na(data))/length(data))*100, 2), "%"),
 		       "No marker was imputed"))
   
-  if(missing(hapmap)){
+  if(is.null(hapmap)){
     storage.mode(m) <- "numeric"
     return(list(M.clean=m, report=report))
   } else{

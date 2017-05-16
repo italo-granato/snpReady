@@ -1,48 +1,5 @@
-#' Population genetics from genomic data
-#'
-#' @description This function allows for estimating parameters of population genetics from genomic data. In addition,
-#' it also allows estimations considering subpopulations.
-#' 
-#' @usage popgen(M, subgroups)
-#' 
-#' @param M object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows.
-#' @param subgroups a \code{vector} with information for subgroups or subpopulations.
-#' 
-#' @details 
-#' The matrix of makers is of dimension \eqn{n} x \eqn{p}, in which individuals are in rows and markers in columns.
-#' The number of subgroups is user defined  and accepts any data type (\code{character}, \code{integer}, \code{numeric}...) to distinguish subpopulations.
-#' These two dataset must have the same sort for rows (genotypes).
-
-#' @return Two lists are returned (\code{general} and \code{bygroup}), one with general information for markers and individuals and another by group (if applicable).
-#' 
-#' \code{general}: A four-level list 
-#' 
-#' \itemize{marker}: For each marker it presents the allelic frequency (\eqn{p} and \eqn{q}),
-#' Minor Allele Frequency (\eqn{MAF}), expected heterozygosity (\eqn{H_e}), observed
-#' heterozygosity (\eqn{H_o}), Nei's Genetic Diversity (\eqn{DG}) and Polymorphism Informative Content(\eqn{PIC}) 
-#' 
-#' \itemize{genotypes}: it presents observed heterozygosity (\eqn{H_o}), coefficient of inbreeding (\eqn{F_i}) and selfing index (\eqn{S_i})
-#'
-#' \itemize{population}: The same parameters produced for markers are returned for general population with its mean, lower and upper limits
-#'
-#' \itemize{Variability}: shows estimates of effective population size (\eqn{Ne}), additive (\eqn{Va}) and dominance (\eqn{Vd}) variances components, and a
-#' summary of number of groups, genotypes and markers
-#' 
-#' \code{bygroups}
-#' 
-#' Same outputs produced for general it is created for subpopulations or subgroups. Moreover, two more list are presented each with number of exclusive and fixed alleles per group
-#'
-#' @examples
-#' # hybrid maize data
-#' data(maize.hyb)
-#' x <- popgen(maize.hyb) 
-#'
-#' # using subpopulations
-#' PS<-c(rep(1,25), rep(2,25))
-#' x <- popgen(maize.hyb, subgroups=PS)
-
 #' @export
-popgen <- function(M, subgroups)
+popgen <- function(M, subgroups=NULL)
   {
   if(is.null(colnames(M)))
   stop("Colnames is missing")
@@ -54,7 +11,7 @@ popgen <- function(M, subgroups)
   
   Z<-as.matrix(M[, !hasAllMiss])
   
-  if(missing(subgroups))
+  if(is.null(subgroups))
     subgroups <- 1
   
   labelSG <- unique(subgroups)
@@ -101,7 +58,7 @@ popgen <- function(M, subgroups)
       variance <- t(round(data.frame(Ne, Va, Vd, "number of genotypes" = g, "number of markers" = m),2))
       colnames(variance) <- ("estimate")
       
-      average <- list("markers" = markers, "genotypes" = genotypes, "population" = population, "variability" = variance)
+      average <- list("Markers" = markers, "Genotypes" = genotypes, "Population" = population, "Variability" = variance)
       return(average)
   }
   

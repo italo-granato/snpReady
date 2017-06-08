@@ -3,7 +3,7 @@ A tool to assist breeders to prepare genotypic datasets for genomic analysis in 
 
 ### Installation
 
-```
+```R
 library(devtools)
 install_github("italo-granato/snpReady")
 ```

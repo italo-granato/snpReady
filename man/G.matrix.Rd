@@ -9,7 +9,7 @@ G.matrix(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("wide", "long"
 \item{M}{\code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns.}
 
 \item{method}{Method for constructing the GRM. Four methods are currently supported. \code{"VanRaden"} indicates the method proposed by Vanraden (2008) for additive
-genomic relationship and its counterpart for dominance genomic relationship. \code{"UAR"} and \code{"UARadj"} represent methods proposed by Yang et al. (2010) for additive genomic relationship. \code{GK} represents the Gaussian kernel for additive genomic. See \code{Details}}
+genomic relationship and its counterpart for dominance genomic relationship. \code{"UAR"} and \code{"UARadj"} represent methods proposed by Yang et al. (2010) for additive genomic relationship. \code{"GK"} represents the Gaussian kernel for additive genomic. See \code{Details}}
 
 \item{format}{Type of object to be returned. \code{wide} returns a \eqn{n \times n} matrix. \code{long} returns the low diagonal from GRM as a table with 3 columns. See \code{Details}}
 }

@@ -1,4 +1,3 @@
-#' @export
 popgen <- function(M, subgroups=NULL)
   {
   if(is.null(colnames(M)))
@@ -9,7 +8,7 @@ popgen <- function(M, subgroups=NULL)
   if(any(hasAllMiss))
     warning("There are some markers with all data points missing. They were removed from dataset")
   
-  Z<-as.matrix(M[, !hasAllMiss])
+  Z <- as.matrix(M[, !hasAllMiss])
   
   if(is.null(subgroups))
     subgroups <- 1
@@ -67,10 +66,10 @@ popgen <- function(M, subgroups=NULL)
   bygroup <- c("There are no subgroups")
   
   if(nSG > 1){
-    bygroup <- lapply(labelSG, function(i) g.of.p(Z[subgroups == labelSG, ]) )
+    bygroup <- lapply(labelSG, function(i) g.of.p(Z[subgroups == i, ]) )
     names(bygroup) <- labelSG
     
-    pbyg <- sapply(X = labelSG, FUN = function(x) bygroup[[x]]$markers$p)
+    pbyg <- sapply(X = as.vector(labelSG), FUN = function(x) bygroup[[x]]$Markers$p)
     
     for(i in 1:nSG){
     fixed <- pbyg[,i] == 1 | pbyg[,i] == 0
@@ -90,7 +89,7 @@ popgen <- function(M, subgroups=NULL)
     }
   }
   
-    return<-list("general" = general, "bygroup"=bygroup)
+    return<-list("general" = general, "bygroup" = bygroup)
 }
 
 

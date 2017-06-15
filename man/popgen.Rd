@@ -9,12 +9,12 @@ it also allows estimations considering subpopulations.
 popgen(M, subgroups)
 }
 \arguments{
-\item{M}{object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows. Missing data should be assign as \code{NA}}
+\item{M}{Object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows. Missing data should be assign as \code{NA}}
 
-\item{subgroups}{a \code{vector} with information for subgroups or subpopulations.}
+\item{subgroups}{A \code{vector} with information for subgroups or subpopulations.}
 }
 \details{
-The matrix of makers is of dimension \eqn{n} x \eqn{p}, in which individuals are in rows and markers in columns.
+The matrix of makers is of dimension \eqn{n \times p}, in which individuals are in rows and markers in columns.
 The number of subgroups is user defined  and accepts any data type (\code{character}, \code{integer}, \code{numeric}...) to distinguish subpopulations.
 These two dataset must have the same sort for rows (genotypes).
 }
@@ -30,7 +30,8 @@ heterozygosity (\eqn{H_o}), Nei's Genetic Diversity (\eqn{DG}) and Polymorphism 
 \item{$Population}{Treating whole individuals as one population, the same parameters produced for markers are returned for general population with its mean, lower and upper limits}
 \item{$Variability}{shows estimates of effective population size (\eqn{Ne}), additive (\eqn{Va}) and dominance (\eqn{Vd}) variances components, and a summary of number of groups, genotypes and markers}
 
-if \code{bygroups} is provided, same output produced for general is created for subgroups. Moreover, two more list are presented each with number of exclusive and fixed alleles for each group
+if \code{subgroups} is provided, same output produced for general is created for subgroups. Moreover, two more list are presented each with number of exclusive and fixed alleles for each group
+}
 }
 \examples{
 # hybrid maize data

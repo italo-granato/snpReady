@@ -1,4 +1,3 @@
-#' @export
 G.matrix <- function(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("wide", "long")){
   
   if (any(is.na(M)))

@@ -1,4 +1,3 @@
-#' @export
 raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE, sweep.sample= 1,
                      call.rate=0.95, maf=0.05, input=TRUE, type = c("wright", "mean"),
                      outfile=c("012","-101","structure"))

@@ -5,7 +5,7 @@ A tool to assist breeders to prepare genotypic datasets for genomic analysis in 
 
 As snpReady is not available on CRAN yet, its installation needs to be done via [devtools](https://github.com/hadley/devtools#updating-to-the-latest-version-of-devtools). Hence, it is necessary first install devtools and later install snpReady
 ```R
-install.packages(devtools)
+install.packages("devtools")
 library(devtools)
 install_github("italo-granato/snpReady")
 ```

@@ -2,8 +2,7 @@
 \alias{popgen}
 \title{Population genetics from genomic data}
 \description{
-This function allows for estimating parameters of population genetics from genomic data. In addition,
-it also allows estimations considering subpopulations.
+This function allows for estimating parameters of population genetics from genomic data. In addition, it also allows estimations considering subpopulations.
 }
 \usage{
 popgen(M, subgroups)

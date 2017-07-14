@@ -9,7 +9,7 @@ G.matrix(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("wide", "long"
 \item{M}{\code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns.}
 
 \item{method}{Method for constructing the GRM. Four methods are currently supported. \code{"VanRaden"} indicates the method proposed by Vanraden (2008) for additive
-genomic relationship and its counterpart for dominance genomic relationship. \code{"UAR"} and \code{"UARadj"} represent methods proposed by Yang et al. (2010) for additive genomic relationship. \code{"GK"} represents the Gaussian kernel for additive genomic. See \code{Details}}
+genomic relationship and its counterpart for dominance genomic relationship. \code{"UAR"} and \code{"UARadj"} are methods proposed by Yang et al. (2010) for additive genomic relationship. \code{"GK"} represents the Gaussian kernel for additive genomic. See \code{Details}}
 
 \item{format}{Type of object to be returned. \code{wide} returns a \eqn{n \times n} matrix. \code{long} returns the low diagonal from GRM as a table with 3 columns. See \code{Details}}
 }
@@ -52,6 +52,7 @@ A <- x$Ga
 D <- x$Gd
 }
 \references{
-VanRaden, P.M. (2008) Efficient Methods to Compute Genomic Predictions. Journal of Dairy Science, 91:4414-4423 
+Pérez-Elizalde, S.,Cuevas, J.; Pérez-Rodríguez, P.; Crossa, J. (2015) Selection of The Bandwidth Parameter in a Bayesian Kernel Regression Model for Genomic-Enabled Prediction. J Agr Biol Envir S, 20-4:512-532
 Yang, J., Benyamin, B., McEvoy, B.P., et al (2010) Common SNPs explain a large proportion of the heritability for human height. Nature Genetics 42:565-569
+VanRaden, P.M. (2008) Efficient Methods to Compute Genomic Predictions. Journal of Dairy Science, 91:4414-4423
 }

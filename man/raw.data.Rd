@@ -7,7 +7,7 @@ perform genomic predictions
 }
 \usage{
 raw.data(data, frame = c("long","wide"), hapmap = NULL, base = TRUE, sweep.sample= 1,
-                     call.rate=0.95, maf=0.05, input=TRUE, type = c("wright", "mean"),
+                     call.rate=0.95, maf=0.05, imput=TRUE, type = c("wright", "mean"),
                      outfile=c("012","-101","structure"))
 }
 \arguments{
@@ -27,7 +27,7 @@ removed from dataset}
 
 \item{maf}{Threshold for removing SNP by minor allele frequency. Must be between {0, 1}}
 
-\item{input}{Should imputation of missing data be performed?. Default is \code{TRUE} }
+\item{imput}{Should imputation of missing data be performed?. Default is \code{TRUE} }
 
 \item{type}{Type of imputation. It can be by "wright" or "mean". See \code{details} }
 
@@ -64,7 +64,7 @@ and \code{maf}.
 data(maize.line)
 M <- as.matrix(maize.line)
 raw.data(M, frame="long", base=TRUE, sweep.sample= 0.8, 
-         call.rate=0.95, maf=0.05, input=TRUE, outfile="-101")
+         call.rate=0.95, maf=0.05, imput=TRUE, outfile="-101")
 
 }
 \references{

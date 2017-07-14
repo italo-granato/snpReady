@@ -1,5 +1,5 @@
 raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE, sweep.sample= 1,
-                     call.rate=0.95, maf=0.05, input=TRUE, type = c("wright", "mean"),
+                     call.rate=0.95, maf=0.05, imput=TRUE, type = c("wright", "mean"),
                      outfile=c("012","-101","structure"))
 {
 
@@ -89,7 +89,7 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
     m <- m[miss.freq <= sweep.sample,]
     data <- data[miss.freq <= sweep.sample,]
     
-  CR <- (colSums(!is.na(m)) - colSums(is.na(m)))/colSums(!is.na(m))
+  CR <- 1 - colSums(is.na(m))/nrow(m)
   
   p <- colSums(m, na.rm = TRUE)/(2*colSums(!is.na(m)))
   minor <- apply(cbind(p, 1-p), 1, min)
@@ -105,7 +105,7 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
     m <- m[, position]
     data <- data[, position]
     
-  if (isTRUE(input) & any(!is.finite(CR[position])))
+  if (isTRUE(imput) & any(!is.finite(CR[position])))
       stop("There are markers with all missing data. There is no way to do
            imputation. Try again using another call rate treshold")
   
@@ -125,7 +125,7 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
     return(m)
   }
   
-  if (any(CR!=1L) & isTRUE(input))
+  if (any(CR!=1L) & isTRUE(imput))
   {
     if (any(all.equal_(miss.freq[miss.freq <= sweep.sample], 1L)))
        stop("There are samples with all missing data. There is no way to do
@@ -147,24 +147,30 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
 
   if(outfile=="structure"){
     m <- lapply(as.data.frame(data), function(x){
-      curCol <- do.call(rbind, strsplit(as.character(x), split = ""))
-      if(all(is.na(curCol))) {curCol <- cbind(curCol, curCol)}
+      curCol <- unlist(strsplit(as.character(x), split = ""))
+      if(all(is.na(curCol))) {curCol <- c(curCol, curCol)}
       return(curCol)})
     m <- as.matrix(do.call(cbind, m))
-    colnames(m) <- rep(colnames(data), each=2)
+    colnames(m) <- colnames(data)
+    rownames(m) <- rep(rownames(data), each=2)
     
     m <- chartr("ACGT", "1234", m)
     m[is.na(m)] <- -9
   }
   
-  report <- list(paste(length(snp.rmv[[2]]), "Markers removed by MAF =", maf, sep = " "),
-                 snp.rmv[[2]],
-                 paste(length(snp.rmv[[1]]), "Markers removed by Call Rate =", call.rate, sep=" "),
-                 snp.rmv[[1]],
-                 paste(length(id.rmv), "Samples removed by sweep.sample =", sweep.sample, sep = " "),
-                 id.rmv,
-                 ifelse(isTRUE(input), paste(sum(is.na(data)), "markers were inputed = ", round((sum(is.na(data))/length(data))*100, 2), "%"),
-		       "No marker was imputed"))
+  report <- list(maf = list(r = paste(length(snp.rmv[[2]]), "Markers removed by MAF =", maf, sep = " "),
+                            whichID = snp.rmv[[2]]),
+                 cr = list(r = paste(length(snp.rmv[[1]]), "Markers removed by Call Rate =", call.rate, sep=" "),
+                           whichID = snp.rmv[[1]]),
+                 sweep = list(r = paste(length(id.rmv), "Samples removed by sweep.sample =", sweep.sample, sep = " "),
+                              whichID = id.rmv),
+                 imput = ifelse(isTRUE(imput), paste(sum(is.na(data)), "markers were inputed = ", round((sum(is.na(data))/length(data))*100, 2), "%"),
+                                "No marker was imputed"))
+  
+  for(i in 1:3){
+    if(length(report[[i]]$whichID) == 0)
+      report[[i]]$whichID <- NULL
+  }
   
   if(is.null(hapmap)){
     storage.mode(m) <- "numeric"

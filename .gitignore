@@ -1,3 +1,4 @@
 *.Rhistory
 .Rproj.user
 snpReady.Rproj
+inst/doc

@@ -1,5 +1,5 @@
 raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE, sweep.sample= 1,
-                     call.rate=0.95, maf=0.05, imput=TRUE, type = c("wright", "mean"),
+                     call.rate=0.95, maf=0.05, imput=TRUE, imput.type = c("wright", "mean"),
                      outfile=c("012","-101","structure"))
 {
 
@@ -13,7 +13,7 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
     stop("Data must be in matrix class")
   
   match.arg(frame)
-  match.arg(outfile)
+  match.arg(imput.type)
   
   if(isTRUE(base)){
     if (frame == "long"){
@@ -23,6 +23,9 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
     bs <- unique(na.omit(as.vector(data[, 3:4])))
     if(!any(all(bs %in% c("A","C", "G", "T")) | all(bs %in% c("A", "B"))))
       stop("SNPs must be coded as nitrogenous bases (ACGT) or as A and B")
+    
+    if(!all(bs %in% c("A","C", "G", "T")) & outfile == "structure")
+      stop("For outfile 'structure', SNPs must be coded as nitrogenous bases (ACGT)")
     
     sample.id <- sort(unique(data[,1L]))
     snp.name <- sort(unique(data[,2L]))
@@ -49,6 +52,9 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
     bs <- unique(unlist(strsplit(unique(data[!is.na(data)]), "")))
     if(!any(all(bs %in% c("A","C", "G", "T")) | all(bs %in% c("A", "B"))))
       stop("SNPs must be coded as nitrogenous bases (ACGT) or as AB")
+    
+    if(!all(bs %in% c("A","C", "G", "T")) & outfile == "structure")
+      stop("For outfile 'structure', SNPs must be coded as nitrogenous bases (ACGT)")
   }
   
    count_allele <- function(m){
@@ -69,8 +75,11 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
     
   m <- count_allele(data)
   }else{
-    if(frame=="long")
+    if(frame == "long")
       stop("format long only accepts nitrogenous bases. Check base argument")
+    
+    if(outfile = "structure")
+      stop("output for 'structure' only accepts nitrogenous bases. Check base argument")
     
     m <- data
   }
@@ -129,31 +138,39 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
        stop("There are samples with all missing data. There is no way to do
            imputation. Try again using another sweep.sample treshold")
     
-    if(type == "wright"){
+    if(imput.type == "wright"){
       f <- rowSums(m!=1, na.rm = TRUE)/rowSums(!is.na(m))
       f[is.nan(f)] <- 1
       m <- input.fun(m=m, p=p[position], f=f)
-    }
-    if(type == "mean"){
+    } else{
       tmp <- which(is.na(m), arr.ind = TRUE)
       m[tmp] <- colMeans(m, na.rm = T)[tmp[,2]]
     }
   }
   
-  if (outfile=="-101") m <- m - 1
-
-  if(outfile=="structure"){
-    tmp <- lapply(as.data.frame(data), function(x){
-      curCol <- strsplit(as.character(x), split = "")
-      tmp <- lapply(curCol, function(x) if(any(is.na(x))){rep(NA, 2)}else{x})
-      curCol <- unlist(tmp)
-      return(curCol)})
-    m <- as.matrix(do.call(cbind, tmp))
-    colnames(m) <- colnames(data)
-    rownames(m) <- rep(rownames(data), each=2)
-    m <- chartr("ACGT", "1234", m)
-    m[is.na(m)] <- -9
-  }
+  switch(outfile,
+         "-101" = {
+           m <- m - 1
+           },
+         "structure" = {
+           tmp <- lapply(as.data.frame(data), function(x){
+             curCol <- strsplit(as.character(x), split = "")
+             tmp <- lapply(curCol, function(x) if(any(is.na(x))){rep(NA, 2)}else{x})
+             curCol <- unlist(tmp)
+             return(curCol)})
+           m <- as.matrix(do.call(cbind, tmp))
+           colnames(m) <- colnames(data)
+           rownames(m) <- rep(rownames(data), each=2)
+           m <- chartr("ACGT", "1234", m)
+           m[is.na(m)] <- -9
+         },
+         "012" = {
+           m <- m
+         },
+         {
+         stop("Output selected is not available")
+           }
+         )
   
   report <- list(maf = list(r = paste(length(snp.rmv[[2]]), "Markers removed by MAF =", maf, sep = " "),
                             whichID = snp.rmv[[2]]),

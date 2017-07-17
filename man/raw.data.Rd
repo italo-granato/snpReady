@@ -29,11 +29,11 @@ removed from dataset}
 
 \item{imput}{Should imputation of missing data be performed?. Default is \code{TRUE} }
 
-\item{type}{Type of imputation. It can be by "wright" or "mean". See \code{details} }
+\item{imput.type}{Type of imputation. It can be by "wright" or "mean". See \code{details} }
 
 \item{outfile}{\code{character}. Type of output to be produced. \code{"012"} outputs matrix coded as 0 to \code{AA}, 1 to \code{Aa} and 2 to \code{aa}. \code{"-101"}
 presents marker matrix coded as -1, 0 and 1 to \code{aa}, \code{Aa} and \code{AA}, respectively. \code{"structure"} returns a matrix suitable for STRUCTURE Software.
-For this, each remaining marker is splited in two columns, one for each allele. Nitrogenous bases are then recoded to a specific number, so A is 1, C is 2, G is 3 and T is 4. This format is only acceptable if base are \code{TRUE}}
+For this, each individual is splited in two rows, one for each allele. Nitrogenous bases are then recoded to a specific number, so A is 1, C is 2, G is 3 and T is 4. This format is only acceptable if base are \code{TRUE}}
 }
 \details{
 The function allows flexible input of genomic data. Data might be in long format with 4 columns or in wide 

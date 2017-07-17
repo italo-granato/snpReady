@@ -68,8 +68,7 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
   }
     
   m <- count_allele(data)
-  }
-  else{
+  }else{
     if(frame=="long")
       stop("format long only accepts nitrogenous bases. Check base argument")
     
@@ -79,7 +78,6 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
   if(is.null(colnames(m)))
     stop("Colnames is missing")
   
-
   miss.freq <- rowSums(is.na(m))/ncol(m)
   
   if (sweep.sample < 0 | sweep.sample > 1)
@@ -142,18 +140,17 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
     }
   }
   
-  if (outfile=="-101")
-    m <- m - 1
+  if (outfile=="-101") m <- m - 1
 
   if(outfile=="structure"){
-    m <- lapply(as.data.frame(data), function(x){
-      curCol <- unlist(strsplit(as.character(x), split = ""))
-      if(all(is.na(curCol))) {curCol <- c(curCol, curCol)}
+    tmp <- lapply(as.data.frame(data), function(x){
+      curCol <- strsplit(as.character(x), split = "")
+      tmp <- lapply(curCol, function(x) if(any(is.na(x))){rep(NA, 2)}else{x})
+      curCol <- unlist(tmp)
       return(curCol)})
-    m <- as.matrix(do.call(cbind, m))
+    m <- as.matrix(do.call(cbind, tmp))
     colnames(m) <- colnames(data)
     rownames(m) <- rep(rownames(data), each=2)
-    
     m <- chartr("ACGT", "1234", m)
     m[is.na(m)] <- -9
   }
@@ -174,13 +171,14 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
   
   if(is.null(hapmap)){
     storage.mode(m) <- "numeric"
-    return(list(M.clean=m, report=report))
+    return(list(M.clean = m, report = report))
   } else{
     storage.mode(m)  <- "numeric"
     hap <- hapmap[hapmap[,1L] %in% colnames(m),]
     hap <- hap[order(hap[,2L], hap[,3L], na.last = TRUE, decreasing = F),]
     colnames(hap) <- c("SNP","Chromosome","Position")
-    return(list(M.clean=m, Hapmap=hap, report=report))
+    m <- m[, match(hap[,1L], colnames(m))]
+    return(list(M.clean = m, Hapmap = hap, report = report))
   }
 }
 

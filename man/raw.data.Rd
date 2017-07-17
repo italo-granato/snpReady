@@ -6,9 +6,9 @@ This function gets genomic data ready to be used in packages or softwares that
 perform genomic predictions
 }
 \usage{
-raw.data(data, frame = c("long","wide"), hapmap = NULL, base = TRUE, sweep.sample= 1,
-                     call.rate=0.95, maf=0.05, imput=TRUE, type = c("wright", "mean"),
-                     outfile=c("012","-101","structure"))
+raw.data(data, frame = c("long","wide"), hapmap=NULL, base=TRUE, sweep.sample=1,
+                     call.rate=0.95, maf=0.05, imput=TRUE,
+                     imput.type=c("wright", "mean"), outfile=c("012","-101","structure"))
 }
 \arguments{
 \item{data}{object of class \code{matrix}}

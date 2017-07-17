@@ -80,12 +80,22 @@ popgen <- function(M, subgroups=NULL)
     
     fixed <- colnames(Z)[which(fixed)]
     
-    bygroup[[labelSG[i]]]$exclusive <- ifelse(length(exclus) == 0,
-                                              "There are no exclusive alleles for this group",
-                                              exclus)
-    bygroup[[labelSG[i]]]$fixed <- ifelse(length(fixed) == 0,
-                                          "There are no exclusive alleles for this group",
-                                          fixed)
+    if(length(exclus) == 0){
+      excl <- "There are no exclusive alleles for this group"
+    }else{
+      excl <- exclus
+    }
+    
+    bygroup[[labelSG[i]]]$exclusive <- excl
+    
+    if(length(fixed) == 0){
+      fix.g <- "There are no fixed alleles for this group"
+    }else{
+      fix.g <- fixed
+    }
+    
+    bygroup[[labelSG[i]]]$fixed <- fix.g
+    
     }
   }
   

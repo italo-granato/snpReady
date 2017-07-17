@@ -150,7 +150,9 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
   
   switch(outfile,
          "-101" = {
-           m <- m - 1
+           m[m == 0] <- -1
+           m[m == 1] <- 0
+           m[m == 2] <- 1
            },
          "structure" = {
            tmp <- lapply(as.data.frame(data), function(x){

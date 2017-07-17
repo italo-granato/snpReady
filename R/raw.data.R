@@ -78,7 +78,7 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
     if(frame == "long")
       stop("format long only accepts nitrogenous bases. Check base argument")
     
-    if(outfile = "structure")
+    if(outfile == "structure")
       stop("output for 'structure' only accepts nitrogenous bases. Check base argument")
     
     m <- data

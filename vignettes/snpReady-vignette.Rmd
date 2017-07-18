@@ -1,58 +1,172 @@
 ---
-title: "Vignette Title"
+title: "snpReady - a tool to assist breeders to run genomic selections"
 author: "Vignette Author"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+   rmarkdown::html_document:
+      theme: default
+      highlight: pygments
+      toc: true
+      depth: 3
+      css: style.css
+
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{snpReady-vignette}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+<style>
+ body {text-align: justify}
+ p {line-height: 2em;}
+ </style>
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
+# Introduction
 
-## Vignette Info
 
-Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
-
-## Styles
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+```{r, eval=FALSE}
+library(devtools)
+install_github("italo-granato/snpReady")
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
 
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
+# Basic usage
+##  *Quality control*
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The function was created with the purpose of recoding raw data from different SNP genotyping platforms markers and prepare it for use in genomic analyses. Thus, it reshapes, recodes, makes quality control and imputation of missing data in the dataset. It also clean the hapmap based on the procedures done in the raw dataset.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The raw marker matrix, can be organized in two ways. In the long format, for each subject, there is an observation of each SNP and its alleles. Thus, if there are n individuals and p markers, the matrix is the order of is $(n \times p) \times 4$ where the columns represents the identification of the individual, the SNP identification and the other two one for each allele in this respective order. For ilustrate that, lets use a maize dataset with 64 lines and 539 SNPs.  
+ 
+```{r}
+library(snpReady)
+geno <- read.table("http://italo-granato.github.io/geno.txt", header = TRUE, na.strings = "NA")
+head(geno)
+dim(geno)
 
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
+```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Another format that can be used as input is the wide, where there is information per individuals in rows and SNPs in columns. In this case, the matrix is the order of $n \times p$.
+```{r, echo = FALSE}
+tmp <- data.frame(sample = geno$sample,
+                  marker = geno$marker,
+                  alleles = paste(geno$allele.1, geno$allele.2, sep = ""), stringsAsFactors = F)
+library(reshape2)
+x <- acast(data = tmp, sample ~ marker, value.var = "alleles")
+x[x == "NANA"] <- NA
+x[1:10,1:5]
+```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The raw data can be coded as nitrogenous base (A, C, G, and T) or A and B. However if the data is already recoded this can be set by `base`argument and only quality control is made. Thus, if base is FALSE dataset must be coded as 0,1,2. Missing data shoud be set as NA.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quality control (QC) for genomic data is based on removing individuals and markers with poor information. In general, for individuals, it can associated with the amount of missing. Hence, individuals who does not meet some threshold of missing data can be removed through `sweep.sample` argument. For markers, QC is based on allele frequency and amount of missing data. Markers with a low frequency of one of its alleles usually are not very informative and in some situations are considered monomorphic, and thus they can be removed. The same is for missing data. These QC can be made through `MAF` and `call.rate`.   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Another feature is the imputation of missing data. Assuming that some amount of missing data is acceptable, these need to be imputed. We present two types of imputation map-independent. One is based on the Wright equilibrium. For a missing position, we assume that the probability of assuming a value is dependent on both allelic frequency of the SNP and the the level of homosigosity of an individual. Thus:
+$$P(x_{ij})=\left\{
+                \begin{array}{ll}
+                  P(x = 0) = (1 - p_j)^2+ p_j (1 - p_j ) F_i\\
+                  P(x = 1) = 2p_j (1 - p_j )-2p_j (1 - p_j)\\
+                  P(x=2)= p_j^2+p_j (1 - p_j ) F_i
+                \end{array}
+              \right.$$
+Where $p_i$ is the frequency of the major allele for an SNP $i$, and $F_j$ is the level of homosigosity of an individual $j$.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Another method of imputation currently implemented is based on mean of each SNP. Each missing position for a SNP is replaced by the SNP mean. Thus,
+$$P(x_{ij})= 2p_j$$
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lets make basic usage for `raw.data` with the maize dataset. In this dataset there is 64 samples genotyped with 539 SNPs. First, lets run a basic quality control on this dataset. The outfile argument is used to export the cleaned matrix in the suitable format. One epecial format is suitable for use in the `STRUCTURE` software. 
 
-## More Examples
+```{r}
+geno.ready <- raw.data(data = as.matrix(geno), frame = "long", base = TRUE, sweep.sample = 0.5, call.rate = 0.95, maf = 0.10, imput = FALSE, outfile = "012")
+M <- geno.ready$M.clean
+M[1:10,1:5]
+```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In the lines above, was used a call rate of 0.95 which means it can accept markers with only a maximum of 5% of missing data. For MAF, was 0.1, wich means that markers with a minor frequency allele less than 0.1 was removed. Besides the cleaned matrix, is also outputed a report on how many and what markers were removed by theses steps in the quality control.
+```{r}
+geno.ready$report
+```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lets use the make the quality control along with imputation. When using the imputation, is needed to choose between the two supported methods. 
+```{r}
+geno.ready2 <- raw.data(data = as.matrix(geno), frame = "long", base = TRUE, sweep.sample = 0.5, call.rate = 0.95, maf = 0.10, imput = TRUE, imput.type = "wright", outfile = "012")
+Mwrth <- geno.ready2$M.clean
+Mwrth[1:10,1:5]
+```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;About the wright method, in average the accuracy is about 62%. Imputation based on mean also have intermediates accuracy. This is less than some map-dependent methods like BEAGLE. However, as noted by Rutkoski et al (2013) with less missing data allowed a simple imputation can be sufficient.
+  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;About the output formats, the default is the count of reference allele, such as this is seted arbitrarily. The other format is code as -1, 0, 1, case considering $p_j$ as 0.5. One epecial format is suitable for use in the STRUCTURE software. For this, is necessary that the raw data be coded as base.
+```{r}
+geno.readySTR <- raw.data(data = as.matrix(geno), frame = "long", base = TRUE, sweep.sample = 0.5, call.rate = 0.95, maf = 0.10, imput = FALSE, outfile = "structure")
+Mstr <- geno.readySTR$M.clean
+Mstr[1:10,1:5]
+```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For this, each individual is splited in two rows, one for each allele. Nitrogenous bases are then recoded to a specific number such that A is 1, C is 2, G is 3 and T is 4. In addition, given that STRUCTURE can handle missing data, arguments related to imputation are ignored when this output is selected.
+  
+## Genomic relationship matrix (GRM)
+  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Genomic relationship matrices (GRM) are created through the `G.matrix` function. This matrices are used for genomic prediction especially in the G-BLUP model. Different kinship matrices and parametrizations were proposed with the aim of increasing the accuracy of prediction of genomic selection. In the G.matrix function is produced producing additive and dominant genomic relationship matrix.   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The matrix used in the data entry is coded as allele count, where $AA = 2$, $Aa = 1$, $aa = 0$. The second argument is the method used to generate GRM. There is four methods to generate the GRM. Three forms of GRM and the Gaussian kernel (GK). Methods currently implemented are the one proposed by vanRaden (2008), two methods proposed by Yang et al (2010), the UAR (unified additive relationship) and adjusted UAR and the Gaussian kernel (Perez-Elizalde et al, 2015).
+  
+```{r}
+G <- G.matrix(M = Mwrth, method = "VanRaden", format = "wide") 
+Ga <- G$Ga
+Ga[1:5,1:5]
 
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
+Gd <- G$Gd
+Gd[1:5,1:5]
 
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
+```
+For the vanRaden method, two matrices are generated the additive and dominante. However for the other methods, only the additive matrix is outputed.
+```{r}
+G <- G.matrix(M = Mwrth, method = "UAR", format = "wide") 
+G[1:5,1:5]
+```
+Two formats of output is generate, one as matrix of order $n \times n$.
+```{r}
+dim(G)
+```
+Another output is the long format, where only the lower diagonal of the inverse is used to create a table in a suitable format for ASREML, where there is three columns representing row, columns and respective value. 
+```{r}
+G <- G.matrix(M = Mwrth, method = "UAR", format = "long") 
+head(G)
 ```
 
-Also a quote using `>`:
+These two formats are suitable to use in many aplications like BGLR, rrBLUP and ASREML-R. 
+  
+## *Population genetics summary*  
+  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The `popgen` function aims to produce summary about population genetics. Thus, for each marker locus, the estimates of minor allele frequency (MAF), observed heterozygosity (Ho) and expected (He), Nei's genetic diversity index (DG) and polymorphic information content (PIC) are obtained. For individuals, the function provides estimates of observed heterozygosity (Ho), inbreeding coefficient (F) and Selfing index (S).
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In general, dataset needs to be coded as allele count and missing data can be accepted. Estimates for the whole population is presented in a list. Thus, there is estimates for `Genotype`, `Markers`, `Population` and `Variability`. 
+```{r}
+pop.gen <- popgen(M = Mwrth)
+head(pop.gen$general$Markers)
+head(pop.gen$general$Genotypes)
+head(pop.gen$general$Population)
+head(pop.gen$general$Variability)
+```
 
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`popgen` also allows the assignment of subpopulations to individuals and thus allows to estimate the same population genetic parameters for each subpopulation. In the presence of the vector of subpopulations, there are also estimates of effective population size, components of additive variance and dominance. For our case studies lets split the whole population into two subpopulations by nitrogen use efficiency, the high and low nitrogen efficiency. 
+```{r}
+subgroups <- as.matrix(c(rep("HNE", 10), rep("LNE", 52)))
+pop.gen <- popgen(M = Mwrth, subgroups = subgroups)
+```
+For HNE group:
+```{r}
+head(pop.gen$bygroup$HNE$Markers)
+head(pop.gen$bygroup$HNE$Genotypes)
+```
+For LNE group:
+```{r}
+head(pop.gen$bygroup$LNE$Markers)
+head(pop.gen$bygroup$LNE$Genotypes)
+```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Besides displayed the same parameters as in the general population, separation by group allows for identification of exclusive/absent and fixed alleles in the assigned sub-populations. For HNE:
+```{r}
+head(pop.gen$bygroup$HNE$exclusive)
+head(pop.gen$bygroup$HNE$fixed)
+```
+and for LNE:
+```{r}
+head(pop.gen$bygroup$LNE$exclusive)
+head(pop.gen$bygroup$LNE$fixed)
+```
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;As noted, for HNE group we have several fixed alleles and no exclusive alleles. For LNE, the contrary was observed. Hence, for two populations, considering that quality control was made and monomorfic markers were removed, if one allele is fixed in one population, it will be exclusive in another subpopulation.
+
+Reference:
+
+
+
+
+
+
+
+

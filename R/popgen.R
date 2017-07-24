@@ -28,18 +28,18 @@ popgen <- function(M, subgroups=NULL)
       Hesp <- 2*p*q
       Hobs <- colMeans(M==1, na.rm = T)/2
       Dg <- 1-p^2-q^2
-      PIC <- 1-(p^2+q^2)-(2*p^2*q^2)
+      PIC <- 1-(p^2 + q^2) - (2*p^2*q^2)
       propMiss <- colSums(is.na(M))/g
       markers <- round(cbind(p, q, MAF, "He"=Hesp, "Ho"=Hobs, "DG"=Dg, PIC, "Miss" = propMiss), 2)
       markers[is.nan(markers)] <- NA
       markers <- as.data.frame(markers)
       
       
-      Hg.obs <- rowMeans(M==1, na.rm = T)/2
+      Hg.obs <- rowMeans(M == 1, na.rm = T)/2
       Fi <- 1- Hg.obs/mean(Hesp, na.rm = TRUE)
       Si <- (2*Fi)/(1+Fi)
       
-      genotypes <- round(cbind("Ho"=Hg.obs, Fi, Si),2)
+      genotypes <- round(cbind("Ho" = Hg.obs, Fi, Si),2)
       
       meanMrk <- colMeans(markers, na.rm = TRUE)
       rangeMrk <- t(apply(X = markers, MARGIN = 2, FUN = function(x) range(x, na.rm = TRUE)))

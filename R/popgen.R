@@ -26,7 +26,7 @@ popgen <- function(M, subgroups=NULL)
       MAF <- apply(fs, 1, min)
       q <- 1-p
       Hesp <- 2*p*q
-      Hobs <- colMeans(M==1, na.rm = T)/2
+      Hobs <- colMeans(M==1, na.rm = T)
       Dg <- 1-p^2-q^2
       PIC <- 1-(p^2 + q^2) - (2*p^2*q^2)
       propMiss <- colSums(is.na(M))/g
@@ -35,7 +35,7 @@ popgen <- function(M, subgroups=NULL)
       markers <- as.data.frame(markers)
       
       
-      Hg.obs <- rowMeans(M == 1, na.rm = T)/2
+      Hg.obs <- rowMeans(M == 1, na.rm = T)
       Fi <- 1- Hg.obs/mean(Hesp, na.rm = TRUE)
       Si <- (2*Fi)/(1+Fi)
       
@@ -51,7 +51,7 @@ popgen <- function(M, subgroups=NULL)
       rownames(population) <- c(rownames(population)[1:4], "F", "S")
       colnames(population) <- c("mean", "lower", "upper")
       
-      Ne <- 1/(2*mean(Fi))*g
+      Ne <- 1/(2*mean(Fi)*g)
       Va <- sum(2*p*q)
       Vd <- sum((2*p*q)^2)
       variance <- t(round(data.frame(Ne, Va, Vd, "number of genotypes" = g, "number of markers" = m),2))
@@ -99,7 +99,7 @@ popgen <- function(M, subgroups=NULL)
     }
   }
   
-    return<-list("general" = general, "bygroup" = bygroup)
+    return<-list("whole" = general, "bygroup" = bygroup)
 }
 
 

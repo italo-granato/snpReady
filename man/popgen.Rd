@@ -18,9 +18,9 @@ The number of subgroups is user defined  and accepts any data type (\code{charac
 These two dataset must have the same sort for rows (genotypes).
 }
 \value{
-  Two-level lists are returned (\code{general} and \code{bygroup}), one with general information for markers and individuals and another by subgroups (if applicable).
+  Two-level lists are returned (\code{whole} and \code{bygroup}), one with general information for markers and individuals and another by subgroups (if applicable).
 
-For \code{general}, a list containing estimates parameters for
+For \code{whole}, a list containing estimates parameters for
 \describe{
 \item{$Markers}{For each marker it presents the allelic frequency (\eqn{p} and \eqn{q}),
 Minor Allele Frequency (\eqn{MAF}), expected heterozygosity (\eqn{H_e}), observed
@@ -29,7 +29,7 @@ heterozygosity (\eqn{H_o}), Nei's Genetic Diversity (\eqn{DG}) and Polymorphism 
 \item{$Population}{Treating whole individuals as one population, the same parameters produced for markers are returned for general population with its mean, lower and upper limits}
 \item{$Variability}{shows estimates of effective population size (\eqn{Ne}), additive (\eqn{Va}) and dominance (\eqn{Vd}) variances components, and a summary of number of groups, genotypes and markers}
 
-if \code{subgroups} is provided, same output produced for general is created for subgroups. Moreover, two more list are presented each with number of exclusive and fixed alleles for each group
+if \code{subgroups} is provided, same output produced for whole population is created for subgroups. Moreover, two more list are presented each with number of exclusive and fixed alleles for each group
 }
 }
 \examples{

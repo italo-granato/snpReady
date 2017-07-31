@@ -11,8 +11,7 @@ Description: This package consists of three functions to clean, summarize and pr
 Depends:
     Matrix,
     matrixcalc,
-	  stringr,
-	  reshape2
+	  stringr
 License: GPL-3
 URL: 
 RoxygenNote: 6.0.1

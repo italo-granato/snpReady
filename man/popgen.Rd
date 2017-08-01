@@ -8,7 +8,7 @@ This function allows for estimating parameters of population genetics from genom
 popgen(M, subgroups)
 }
 \arguments{
-\item{M}{Object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows. Missing data should be assign as \code{NA}}
+\item{M}{Object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows. Missing data should be assigned as \code{NA}}
 
 \item{subgroups}{A \code{vector} with information for subgroups or subpopulations.}
 }
@@ -40,4 +40,8 @@ x <- popgen(maize.hyb)
 # using subpopulations
 PS<-c(rep(1,25), rep(2,25))
 x <- popgen(maize.hyb, subgroups=PS)
+}
+
+\references{
+Weir, B.S. and C.C. Cockerham. (1984). Estimating F-Statistics for the Analysis of Population Structure. Evolution 38: 1358-1370. doi:10.2307/2408641.
 }

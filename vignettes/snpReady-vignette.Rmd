@@ -271,4 +271,4 @@ head(pop.gen$bygroup$LNE$fixed)
 
 #### [9] <span>VanRaden, P.M. 2008. Efficient methods to compute genomic predictions. **Journal of dairy science** 91(11): 4414–23. [Available Here](http://www.sciencedirect.com/science/article/pii/S0022030208709901)</span> {#R8}
 
-#### [10] <span>Yang, J., B. Benyamin, B.P. Mcevoy, S. Gordon, A.K. Henders, R. Dale, P.A. Madden, A.C. Heath, N.G. Martin, G.W. Montgomery, M.E. Goddard, and P.M. Visscher. 2010. Common SNPs explain a large proportion of heritability for human height. **Nature** 569: 565–569. [Available Here](http://www.nature.com/doifinder/10.1038/ng.608)</span> {#R9}
+#### [10] <span>Yang, J., B. Benyamin, B.P. Mcevoy, S. Gordon, A.K. Henders, R. Dale, P.A. Madden, A.C. Heath, N.G. Martin, G.W. Montgomery, M.E. Goddard, and P.M. Visscher. 2010. Common SNPs explain a large proportion of heritability for human height. **Nature** 569: 565–569. [Available Here](http://www.nature.com/ng/journal/v42/n7/full/ng.608.html?foxtrotcallback=true)</span> {#R9}

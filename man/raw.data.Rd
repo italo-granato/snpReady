@@ -49,11 +49,9 @@ p(x_{ij}) = \left \{
                 \end{array}
               \right.
 }
-
 Hence, for missing values, genotypes are imputed based on their probability of occurrence. This probability depends both on genotype frequency and inbreeding of the individual a specific locus.
 The second method is based on mean of SNP. Thus, each missing point in a SNP \eqn{j} is replaced by mean of SNP \eqn{j}  
 \deqn{x_{ij} = 2p_j}
-  
    
 }
 \value{
@@ -67,9 +65,6 @@ raw.data(M, frame="long", base=TRUE, sweep.sample= 0.8,
          call.rate=0.95, maf=0.05, imput=TRUE, outfile="-101")
 
 }
-\references{
-# missing
-}
 \seealso{
-# # missing
+
 }

@@ -1,12 +1,12 @@
 Package: snpReady
 Version: 0.9.3
-Date: 2016-08-01
+Date: 2017-07-25
 Authors@R: c(
     person("Italo", "Granato", email="italo.granato@gmail.com", role = c("aut", "cre")),
     person("Roberto", "Fritsche-Neto", email="roberto.neto@usp.br", role =c("aut", "ths"))
     )
-Title: Preparing genotypic datasets in order to run genomic analysis
-Description: This package consists of three functions to clean, summarize and prepare genomic datasets to Genome
+Title: Preparing Genotypic Datasets in Order To Run Genomic Analysis
+Description: Consists of three functions to clean, summarize and prepare genomic datasets to Genome
     Selection and Genome Association analysis and to estimate population genetic parameters.
 Depends:
     Matrix,
@@ -16,5 +16,6 @@ License: GPL-3
 URL: 
 RoxygenNote: 6.0.1
 Suggests: knitr,
-    rmarkdown
+    rmarkdown,
+    reshape2
 VignetteBuilder: knitr

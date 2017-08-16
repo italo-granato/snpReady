@@ -5,8 +5,8 @@ Authors@R: c(
     person("Italo", "Granato", email="italo.granato@gmail.com", role = c("aut", "cre")),
     person("Roberto", "Fritsche-Neto", email="roberto.neto@usp.br", role =c("aut", "ths"))
     )
-Title: Preparing Genotypic Datasets in Order To Run Genomic Analysis
-Description: Consists of three functions to clean, summarize and prepare genomic datasets to Genome
+Title: Preparing Genotypic Datasets in Order to Run Genomic Analysis
+Description: Three functions to clean, summarize and prepare genomic datasets to Genome
     Selection and Genome Association analysis and to estimate population genetic parameters.
 Depends:
     Matrix,

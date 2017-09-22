@@ -12,9 +12,12 @@ G.matrix <- function(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("w
   if(missing(format))
     stop("Format argument is missing")
   
-  N <- nrow(M) 
-  m <- ncol(M) 
+  N <- nrow(M)
+  m <- ncol(M)
   p <- colSums(M)/(2*N)
+  
+  if(any(p == 0 | p == 1))
+    stop("Monomorphic markers are no accepted")
 
   WWG <- function(M, p){
     w <- scale(x = M, center = T, scale = F)

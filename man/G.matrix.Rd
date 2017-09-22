@@ -46,7 +46,7 @@ G_{UARadj} = \left \{
 }  
 where \eqn{\beta = 1 - frac{c + 1/N}{var(A_{jk}}}, c is a constant dependent on MAF of causal variants assumed as 0. 
 \code{GK} represents the Gaussian kernel, obtained by
-\deqn{ K (x_i, x_{i'}) = \frac{exp(-d_{ii'}^2)}{quantile(d^2, 0.05)}}
+\deqn{ K (x_i, x_{i'}) = \frac{exp(-d_{ii'}^2)}{quantile(d^2, 0.5)}}
 where \eqn{d_{ii'}^2} is the square of euclidian distance between two individuals
 The \code{format} argument is the desired output format. For \code{"wide"}, the relationship output produced is in matrix format, with \eqn{n \times n} dimension. 
 If \code{"long"} is the chosen format, the inverse of the relationship matrix is computed and converted to a table. In this case, the low triangular part of the relationship matrix

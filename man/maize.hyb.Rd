@@ -4,9 +4,9 @@
 \name{maize.hyb}
 \alias{maize.hyb}
 \title{maize hybrids}
-\format{A matrix with 50 rows and 500 columns, where hybrids are in rows and SNP markers in columns}
+\format{A matrix with 50 rows and 492 columns, where hybrids are in rows and SNP markers in columns}
 \description{
-50 hybrids of maize genotyped with 500 SNP markers
+50 hybrids of maize genotyped with 492 SNP markers
 }
 \examples{
 #' data(maize.hyb)

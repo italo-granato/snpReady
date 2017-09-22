@@ -1,11 +1,11 @@
 #' maize hybrids
 #' 
-#' 50 hybrids of maize genotyped with 500 SNP markers
+#' 50 hybrids of maize genotyped with 492 SNP markers
 #'
 #' @rdname maize.hyb 
 #' @name maize.hyb
 #' @docType data
-#' @format A matrix with 50 rows and 500 columns, where hybrids are in rows and SNP markers in columns
+#' @format A matrix with 50 rows and 492 columns, where hybrids are in rows and SNP markers in columns
 #' @keywords datasets; hybrids
 #' @examples
 #' #' data(maize.hyb)

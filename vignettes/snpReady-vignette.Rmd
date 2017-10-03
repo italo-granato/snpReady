@@ -193,9 +193,11 @@ DG, PIC, MAF, Ho, F and S are provided. Besides, measures of variability are est
 
 * Effective populational size
 
-$\begin{aligned}
-Ne = \frac{1}{2\bar{F_i}N}
-\end{aligned}$
+$
+\begin{aligned}
+Ne =\left(\frac{1}{2\bar{F_i}} \right) N
+\end{aligned}
+$
 
 * Additive variance due to the allele frequencies
 

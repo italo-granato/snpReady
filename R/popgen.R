@@ -51,7 +51,7 @@ popgen <- function(M, subgroups=NULL)
       rownames(population) <- c(rownames(population)[1:4], "F", "S")
       colnames(population) <- c("mean", "lower", "upper")
       
-      Ne <- 1/(2*mean(Fi)*g)
+      Ne <- (1/(2*mean(Fi)))*g
       Va <- sum(2*p*q)
       Vd <- sum((2*p*q)^2)
       variance <- t(round(data.frame(Ne, Va, Vd, "number of genotypes" = g, "number of markers" = m),2))

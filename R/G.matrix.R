@@ -90,10 +90,10 @@ G.matrix <- function(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("w
   }
   
   if(method == "GK"){
-    w <- scale(x = M, center = T, scale = F)
+    w <- scale(x = M, center = T, scale = T)
     D <- as.matrix(dist(w)) ^ 2
     if(quantile(D, 0.5) == 0)
-      stop("Was not possible to compute the 5% quantile for the distance matrix")
+      stop("Was not possible to compute the 50% quantile for the distance matrix")
     GK <- exp(-D / quantile(D, 0.05))
     
     if(format == "long")

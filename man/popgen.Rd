@@ -2,20 +2,20 @@
 \alias{popgen}
 \title{Population genetics from genomic data}
 \description{
-This function allows for estimating parameters of population genetics from genomic data. In addition, it also allows estimations considering subpopulations.
+Allows for estimating parameters of population genetics from genomic data. Besides, it also allows the estimate of same parameters considering subpopulations.
 }
 \usage{
 popgen(M, subgroups)
 }
 \arguments{
-\item{M}{Object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the number favorable alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows. Missing data should be assigned as \code{NA}}
+\item{M}{Object of class \code{matrix}. A (non-empty) matrix of molecular markers, considering the count of reference alleles per loci (0, 1 or 2). Markers must be in columns and individuals in rows. Missing data should be assigned as \code{NA}}
 
 \item{subgroups}{A \code{vector} with information for subgroups or subpopulations.}
 }
 \details{
 The matrix of makers is of dimension \eqn{n \times p}, in which individuals are in rows and markers in columns.
-The number of subgroups is user defined  and accepts any data type (\code{character}, \code{integer}, \code{numeric}...) to distinguish subpopulations.
-These two dataset must have the same sort for rows (genotypes).
+The number of subgroups is defined by the user and accepts any data type (\code{character}, \code{integer}, \code{numeric}...) to distinguish subpopulations.
+These two inputs must have the same sort for rows (genotypes).
 }
 \value{
   Two-level lists are returned (\code{whole} and \code{bygroup}), one with general information for markers and individuals and another by subgroups (if applicable).
@@ -25,11 +25,11 @@ For \code{whole}, a list containing estimates parameters for
 \item{$Markers}{For each marker it presents the allelic frequency (\eqn{p} and \eqn{q}),
 Minor Allele Frequency (\eqn{MAF}), expected heterozygosity (\eqn{H_e}), observed
 heterozygosity (\eqn{H_o}), Nei's Genetic Diversity (\eqn{DG}) and Polymorphism Informative Content(\eqn{PIC})} 
-\item{$Genotypes}{It presents observed heterozygosity (\eqn{H_o}), coefficient of inbreeding (\eqn{F_i}) and selfing index (\eqn{S_i})}
-\item{$Population}{Treating whole individuals as one population, the same parameters produced for markers are returned for general population with its mean, lower and upper limits}
+\item{$Genotypes}{It presents observed heterozygosity (\eqn{H_o}) and coefficient of inbreeding (\eqn{F_i})}
+\item{$Population}{The same parameters as those for markers except PIC are returned for general population along with lower and upper boundaries}
 \item{$Variability}{shows estimates of effective population size (\eqn{Ne}), additive (\eqn{Va}) and dominance (\eqn{Vd}) variances components, and a summary of number of groups, genotypes and markers}
 
-if \code{subgroups} is provided, same output produced for whole population is created for subgroups. Moreover, two more list are presented each with number of exclusive and fixed alleles for each group
+In the presence of \code{subgroups}, the same populational parameters are estimated considering each subpopulation accompanied by its exclusive and fixed alleles. Moreover, a list with the F-statistics for genotypes and markers are exhibited. For genotypes, it shows the statistics considering all subpopulations and a pairwise framework, and for markers loci, the parameters are presented only considering all subpopulations.
 }
 }
 \examples{

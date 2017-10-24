@@ -1,12 +1,12 @@
 \name{G.matrix}
 \alias{G.matrix}
 \encoding{UTF-8}
-\title{Generate Genetic Relationship Matrix (GRM)}
+\title{Estimation of Genomic Relationship Matrix}
 \usage{
 G.matrix(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("wide", "long"))
 }
 \arguments{
-\item{M}{\code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns.}
+\item{M}{\code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns. This matrix do not need to be centered.}
 
 \item{method}{Method for constructing the GRM. Four methods are currently supported. \code{"VanRaden"} indicates the method proposed by Vanraden (2008) for additive
 genomic relationship and its counterpart for dominance genomic relationship. \code{"UAR"} and \code{"UARadj"} are methods proposed by Yang et al. (2010) for additive genomic relationship. \code{"GK"} represents the Gaussian kernel for additive genomic. See \code{Details}}
@@ -17,13 +17,13 @@ genomic relationship and its counterpart for dominance genomic relationship. \co
 It returns the GRM. If the method is \code{VanRaden}, additive and dominance matrices are produced. Otherwise, only the additive form.
 }
 \description{
-This function allows to create four different types of Genomic Relationship Matrix (GRM)
+It generates four different types of Genomic Relationship Matrix (GRM)
 }
 \details{
 
 G.matrix provides four diferent types of relationship matrix. The \code{VanRaden} represents the relationship matrix estimated as proposed by Vanraden (2008):
- \deqn{G = \frac{XX'}{2\sum p_i(1-p_i)}}
- where \eqn{X} is the centered marker matrix
+ \deqn{G = \frac{XX'}{trace(XX')/n}}
+\eqn{X} is the centered marker matrix. For any marker locus \eqn{i}, \eqn{x_i = m_i - 2p_{i}} where \eqn{m_i} is the vector of SNP genotypes coded as allele couting (0, 1 and 2).
 
 \code{UAR} is the genomic relationship matrices proposed by Yang et al. (2010) and named as Unified Additive Relationship (UAR). This matrix is then obtained by
 \deqn{
@@ -50,7 +50,7 @@ where \eqn{\beta = 1 - frac{c + 1/N}{var(A_{jk}}}, c is a constant dependent on 
 where \eqn{d_{ii'}^2} is the square of euclidian distance between two individuals
 The \code{format} argument is the desired output format. For \code{"wide"}, the relationship output produced is in matrix format, with \eqn{n \times n} dimension. 
 If \code{"long"} is the chosen format, the inverse of the relationship matrix is computed and converted to a table. In this case, the low triangular part of the relationship matrix
-is changed to a table with 3 columns representing the respective rows, columns and values (Used mainly by ASReml)
+is changed to a table with three columns representing the respective rows, columns, and values (Used mainly by ASReml)
 
 If the relationship matrix is not positive definite, a near positive definite matrix is created and solved, followed by a warning message.
 }

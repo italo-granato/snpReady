@@ -35,7 +35,7 @@ popgen <- function(M, subgroups=NULL)
     
     
     Hg.obs <- rowMeans(M == 1, na.rm = TRUE)
-    Fi <- Hg.obs/mean(Hesp)
+    Fi <- 1 - Hg.obs/mean(Hesp)
     
     genotypes <- round(cbind("Ho" = Hg.obs, "Fi" = Fi),2)
     

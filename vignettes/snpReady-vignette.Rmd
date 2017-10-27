@@ -62,8 +62,8 @@ $$P(x_{ij})=\left\{
                 \end{array}
               \right.$$
 Where $p_i$ is the frequency of the major allele for an SNP $i$, and $F_j$ is the level of homozygosity of an individual $j$ estimate as a simple proportion of number of homozygous loci about the total of loci. Another method of imputation currently implemented is based on the mean of each SNP. Each missing position of a SNP $j$ is replaced by its mean. Thus:
-$$P(x_{ij})= 2p_j$$
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In this section we are goint to present a basic usage for `raw.data` in a maize data set. It is composed of 64 inbred lines genotyped with 539 SNPs. First, let's run a basic quality control on this data set.  
+$$\bar{p}= 2p_j$$
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In this section we are going to present a basic usage for `raw.data` in a maize data set. It is composed of 64 inbred lines genotyped with 539 SNPs. First, let's run a basic quality control on this data set.  
   
 ```{r}
 geno.ready <- raw.data(data = as.matrix(geno), frame = "long", base = TRUE, sweep.sample = 0.5, call.rate = 0.95, maf = 0.10, imput = FALSE)
@@ -180,12 +180,6 @@ $\begin{aligned}
 F_i = 1 - \frac{H_{o_i}}{\bar{H_e}}
 \end{aligned}$
 
-* Selfing index
-
-$\begin{aligned}
-S_i = \frac{2F_i}{(1+F_i)}
-\end{aligned}$
-
 where $nH_i$ is the number of heterozigous genotypes (of type $A_1A_2$ or $A_2A_1$) in the individual $i$, $m$ is the number of markers and $\bar{H_e} = \frac{\sum_{j=1}^{m} H_{e_j}}{m}$, the mean of $H_e$;
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Then, based on the estimates described above,  populational parameters, means and bounders of 
@@ -222,7 +216,7 @@ head(pop.gen$whole$Population)
 head(pop.gen$whole$Variability)
 ```
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The `popgen` function also allows the assignment of subpopulations to individuals. Thus, it estimates the same population genetic parameters for each subpopulation, such as effective population size, components of additive and dominance variance, and endogamy. In our example, let's split the whole population into two subpopulations according to the nitrogen use efficiency (NE), the high and low one. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The `popgen` function also allows the assignment of subpopulations to individuals. It estimates the same population genetic parameters for each subpopulation, such as effective population size, components of additive and dominance variance, and endogamy. In our example, let's split the whole population into two subpopulations according to the nitrogen use efficiency (NE), the high and low one. 
 ```{r}
 subgroups <- as.matrix(c(rep("HNE", 10), rep("LNE", 52)))
 pop.gen <- popgen(M = Mwrth, subgroups = subgroups)
@@ -250,7 +244,24 @@ head(pop.gen$bygroup$LNE$exclusive)
 head(pop.gen$bygroup$LNE$fixed)
 ```
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;As can be noted, in the HNE group there are many fixed alleles and no particular alleles. On the other hand, in LNE, the opposite was observed. Hence, for two populations, considering that quality control was made and monomorphic markers were removed, if one allele is fixed in one population, the other will be exclusive in another subpopulation.
+
+In the presence of subgroups, `popgen` also produces the Wright's F statistics in order to measure interpopulation genetic diversity. $F_{IS}$ measures the deficiency of average heterozygotes in each population, $F_{ST}$ is related to the degree of gene differentiation among populations and $F_{IT}$ is the deficiency of average heterozygotes in subpopulations. The parameters are estimated as follows:
+
+$\begin{aligned}
+F_{IS} = 1 - dfrac{H_I}{H_S}
+\end{aligned}$
   
+  
+$\begin{aligned}
+F_{ST} = 1 - dfrac{H_S}{H_T}
+\end{aligned}$
+  
+  
+$\begin{aligned}
+F_{IT} = 1 - dfrac{H_I}{H_T}
+\end{aligned}$
+
+where $H_I$ is the weighted average of observed heterozygosity in the subpopulations, $H_S$ is the average expected heterozygosity estimated from each subpopulation and $H_T$ is the expected heterozygosity in the total population. The F parameters are estimated considering all population and a pairwise comparison. Also, these parameters are estimated for each marker.
   
   
 # **References**
@@ -263,11 +274,11 @@ head(pop.gen$bygroup$LNE$fixed)
 
 #### [4] <span>Endelman, J.B. 2011. Ridge Regression and Other Kernels for Genomic Selection with R Package rrBLUP. **The Plant Genome** 4: 250–255. [Available Here](http://dx.doi.org/10.3835/plantgenome2011.08.0024)</span> {#R3}
 
-#### [5] <span>Pérez, P., and G. De Los Campos. 2014. Genome-wide regression & prediction with the BGLR statistical package. **Genetics** 198(2): 483–495. [Available Here](http://www.genetics.org/content/early/2014/07/06/genetics.114.164442)</span> {#R4}
+#### [5] <span>Pérez, P., and G. De Los Campos. 2014. Genome-wide regression & prediction with the BGLR statistical package. **Genetics** 198(2): 483–495.</span> {#R4}
 
 #### [6] <span>Pérez-Elizalde, S., J. Cuevas, P. Pérez-Rodríguez, and J. Crossa. 2015. Selection of the Bandwidth Parameter in a Bayesian Kernel Regression Model for Genomic-Enabled Prediction. **Journal of Agricultural, Biological, and Environmental Statistics** 20(4): 512–532. [Available Here](http://link.springer.com/10.1007/s13253-015-0229-y)</span> {#R5}
 
-#### [7] <span>Pritchard, J.K., M. Stephens, and P. Donnelly. 2000. Inference of Population Structure Using Multilocus Genotype Data. **Genetics** 155(2): 945-959. [Available Here](http://www.genetics.org/content/155/2/945.abstract)</span> {#R6}
+#### [7] <span>Pritchard, J.K., M. Stephens, and P. Donnelly. 2000. Inference of Population Structure Using Multilocus Genotype Data. **Genetics** 155(2): 945-959. </span> {#R6}
 
 #### [8] <span>Rutkoski, J.E., J. Poland, J.-L. Jannink, and M.E. Sorrells. 2013. Imputation of Unordered Markers and the Impact on Genomic Selection Accuracy. **G3: Genes, Genomes, Genetics** 3(3): 427–439. [Available Here](http://www.g3journal.org/content/3/3/427)</span> {#R7}
 

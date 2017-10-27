@@ -1,6 +1,6 @@
 Package: snpReady
-Version: 0.9.3
-Date: 2017-07-25
+Version: 0.9.4
+Date: 2017-10-27
 Authors@R: c(
     person("Italo", "Granato", email="italo.granato@gmail.com", role = c("aut", "cre")),
     person("Roberto", "Fritsche-Neto", email="roberto.neto@usp.br", role =c("aut", "ths"))

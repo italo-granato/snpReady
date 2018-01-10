@@ -35,8 +35,8 @@ popgen <- function(M, subgroups=NULL)
     
     
     Hg.obs <- rowMeans(M == 1, na.rm = TRUE)
-    m <- scale(M, center = T, scale = F)
-    Fi <- (rowSums(m^2, na.rm = T)/sum(2*p*(1-p))) - 1
+    mat <- scale(M, center = T, scale = F)
+    Fi <- (rowSums(mat^2, na.rm = T)/sum(2*p*(1-p))) - 1
     
     
     genotypes <- round(cbind("Ho" = Hg.obs, "Fi" = Fi),2)

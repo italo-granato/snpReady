@@ -52,7 +52,7 @@ popgen <- function(M, subgroups=NULL)
     bygroup[[labelSG[i]]]$fixed <- fix.g
     }
     
-    # F statistics
+    # ----- F statistics -----
     ngroups <- as.vector(table(subgroups))
     Hig <- matrix(sapply(bygroup, function(x) x$Population["Ho","mean"]), ncol = nSG)
     His <- sapply(bygroup, function(x) x$Markers[,"Ho"])
@@ -63,15 +63,14 @@ popgen <- function(M, subgroups=NULL)
     Fstatsg <- F.stats(Hi = Hig, Hs = Hsg, Ht = mean(Ht), ngroups = ngroups)
     Fstatsm <- F.stats(Hi = His, Hs = Hss, Ht = Ht, ngroups = ngroups)
     
-    # Fstats pairwise
+    # ------ Fstats pairwise ------
     pw <- combn(x = labelSG, m = 2)
-    pw1 <- as.vector(pw[1,])
-    pw2 <- as.vector(pw[2,])
+	matFST <- matrix(0, nrow = nSG, ncol = nSG, dimnames = list(labelSG, labelSG))
     
     Fstspw <- round(data.frame("Fis" = numeric(ncol(pw)+1),
                                "Fst" = numeric(ncol(pw)+1),
                                "Fit" = numeric(ncol(pw)+1),
-                               row.names = c("All_Pop", paste(pw1, pw2, sep = "-") )), 3)
+                               row.names = c("All_Pop", paste(pw[1,], pw[2,], sep = "-") )), 3)
     Fstspw[1,] <- Fstatsg
     
     for(i in 1:ncol(pw)){
@@ -80,6 +79,7 @@ popgen <- function(M, subgroups=NULL)
       Hisg <- Hig[,sel, drop=FALSE]
       Hssg <- Hsg[,sel, drop=FALSE]
       Fstspw[i+1,] <- F.stats(Hi = Hisg, Hs = Hssg, Ht = mean(Ht), ngroups = nsbg)
+	  matFST[pw[1,i], pw[2,i]] <- matFST[pw[2,i], pw[1,i]] <- Fstspw[i+1, 2]						   
     }
     
     Fstats <- list("Genotypes" = Fstspw, "Markers" = Fstatsm)

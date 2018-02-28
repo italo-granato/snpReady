@@ -95,6 +95,23 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
   if(is.null(colnames(m)))
     stop("Marker names are missing")
 	
+  if(!is.null(hapmap)){
+    if(ncol(m) != nrow(hapmap))
+      stop("The number of markers differ in the hapmap and the data")
+    
+    hapmap <- hapmap[order(hapmap[,2L], hapmap[,3L], na.last = TRUE, decreasing = F), ]
+    
+    tmp <- match(hapmap[,1L], colnames(m)) #match between marker names
+    
+    if(any(is.na(tmp)))
+      stop("Marker names in data does not match the marker names in hapmap")
+											
+    
+    m <- m[,tmp]
+    
+    tmpd <- match(hapmap[,1L], colnames(data)) #match between marker names
+    data <- data[,tmpd]
+  }
   
   idName <- rownames(m)
   markerName <- colnames(m)

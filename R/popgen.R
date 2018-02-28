@@ -16,7 +16,6 @@ popgen <- function(M, subgroups=NULL)
   labelSG <- unique(subgroups)
   nSG <- length(labelSG)
 
-    markers <- round(cbind(p, q, MAF, "He" = Hesp, "Ho" = Hobs, "DG" = Dg, PIC, "Miss" = propMiss), 2)
   general <- g.of.p(Z)
   
   bygroup <- c("There are no subgroups")
@@ -105,6 +104,13 @@ popgen <- function(M, subgroups=NULL)
     Dg <- 1- p^2 - q^2
     PIC <- 1-(p^2 + q^2) - (2*p^2*q^2)
     propMiss <- colSums(is.na(M))/g
+	counts <- matrix(NA, nrow = ncol(M), ncol = 3, dimnames = list(colnames(M), c(0,1,2)))
+  for(i in 1:3){
+    counts[,i] <- colSums(M == colnames(counts)[i], na.rm = T)
+  }
+  hwetest <- chiS(counts = counts)																					
+    markers <- cbind(round(cbind(p, q, MAF, "He" = Hesp, "Ho" = Hobs, "GD" = Dg, PIC, "Miss" = propMiss), 2),
+                   hwetest)
     markers[is.nan(markers)] <- NA
     markers <- as.data.frame(markers)
     
@@ -157,4 +163,19 @@ inbreeding.fun <- function(mat, p){
   EH <- as.vector(round(nEHom %*%  t(!is.na(mat))))
   Fi <- round((nOHom - EH)/(rowSums(!is.na(mat)) - EH), 3)
   return(Fi)
+}
+
+chiS <- function(counts){
+  p <- ((2 * counts[,"2"]) + counts[,"1"])/(2*rowSums(counts))
+  
+  Expfr <- Vectorize(FUN = function(p){
+    return(c("0" = (1-p)**2, "1" = 2*p*(1-p), "2" = p**2))
+  })
+  
+  E <- t(Expfr(p)) * rowSums(counts)
+  
+  sumChi <- rowSums((E - counts)^2/E)
+  
+  pvalue <- pchisq(sumChi, 1, lower.tail = FALSE)
+  return(cbind("pval" = pvalue, "chiSq" = round(sumChi, 3)))
 }

@@ -17,8 +17,6 @@ popgen <- function(M, subgroups=NULL)
   nSG <- length(labelSG)
 
     markers <- round(cbind(p, q, MAF, "He" = Hesp, "Ho" = Hobs, "DG" = Dg, PIC, "Miss" = propMiss), 2)
-    mat <- scale(M, center = T, scale = F)
-    Fi <- (rowSums(mat^2, na.rm = T)/sum(2*p*(1-p))) - 1
   general <- g.of.p(Z)
   
   bygroup <- c("There are no subgroups")
@@ -112,6 +110,7 @@ popgen <- function(M, subgroups=NULL)
     
     
     Hg.obs <- rowMeans(M == 1, na.rm = TRUE)
+    Fi <- inbreeding.fun(mat = M, p = p)
     
     
     genotypes <- round(cbind("Ho" = Hg.obs, "Fi" = Fi),2)
@@ -151,4 +150,11 @@ F.stats <- function(Hi, Hs, Ht, ngroups){
   FST.pop <- round(data.frame("Fis" = Fis.pop, "Fst" = Fst.pop, "Fit" = Fit.pop), 3) 
   rownames(FST.pop) <- rownames(Ht)
   return(FST.pop)
+}
+inbreeding.fun <- function(mat, p){
+  nOHom <- rowSums(mat != 1, na.rm = T)
+  nEHom <- 1 - (2* p *(1-p))
+  EH <- as.vector(round(nEHom %*%  t(!is.na(mat))))
+  Fi <- round((nOHom - EH)/(rowSums(!is.na(mat)) - EH), 3)
+  return(Fi)
 }

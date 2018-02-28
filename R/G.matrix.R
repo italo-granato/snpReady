@@ -1,4 +1,5 @@
-G.matrix <- function(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("wide", "long")){
+G.matrix <- function(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("wide", "long"),
+                     plot = FALSE){
   
   if (any(is.na(M)))
     stop("Matrix should not have missing values")
@@ -95,10 +96,29 @@ if(format == "long"){
     }
     return(G)
   }else{
+    if(plot){
+      if(method == "VanRaden"){
+        for(i in 1:length(Ga)){
+          pdf = pdf(paste("heatmap_", method, names(Ga)[i],".pdf", sep = ""), width = 10, height = 4)
+          heatmap(Ga[[i]], scale = "none", Rowv = NA, Colv = NA, cexRow = 0.5, 
+                  cexCol = 0.5,  main=paste(method, names(Ga)[i], sep = " "))
+          dev.off()
+        }
+      }else{
+        pdf = pdf(paste("heatmap_", method, ".pdf", sep = ""), width = 10, height = 4)
+        heatmap(Ga, scale = "none", Rowv = NA, Colv = NA, cexRow = 0.5, 
+                cexCol = 0.5,  main=method)
+        dev.off()		  
+      }
       
+      tmp <- Ga
+      if(method == "VanRaden")
+        tmp <- tmp$Ga
+							        
+      pckin <- princomp(tmp, cor=TRUE, scores=TRUE)
+      #' @importFrom rgl plot3d
+      plot3d(pckin$scores[,1:3])
     }
-    return(Gmat)
+    return(Ga)
   }
-  
-  }
-  
+}

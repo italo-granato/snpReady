@@ -3,21 +3,15 @@ G.matrix <- function(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("w
   if (any(is.na(M)))
     stop("Matrix should not have missing values")
   
-  match.arg(method)
-  match.arg(format)
-  
   if(missing(method))
     stop("Method argument is missing")
      
-  if(missing(format))
-    stop("Format argument is missing")
-  
   N <- nrow(M)
   m <- ncol(M)
-  p <- colSums(M)/(2*N)
+  p <- colMeans(M)/2
   
   if(any(p == 0 | p == 1))
-    stop("Monomorphic markers are no accepted")
+    stop("Monomorphic markers are no allowed")
 
   WWG <- function(M, p){
     w <- scale(x = M, center = T, scale = F)

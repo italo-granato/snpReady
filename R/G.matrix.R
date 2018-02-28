@@ -66,33 +66,39 @@ G.matrix <- function(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("w
     return(g)
   }
   
-  if (method == "VanRaden"){
-    Gmat <- WWG(M, p)
-    namesG <- names(Gmat)
-    if (format == "long"){
-      Gmat <- lapply(Gmat, function(x) toSparse(posdefmat(x)))
+   switch(method,
+         "VanRaden" = {
+           Ga <- WWG(M, p)
+           },
+         "UAR" = {
+           Ga <- UAR(M, p, metho = method)
+         },
+         "UARadj" = {
+           Ga <- UAR(M, p, metho = method)
+         },
+         "GK" = {
+           w <- scale(x = M, center = T, scale = T)
+           D <- as.matrix(dist(w)) ^ 2
+           if(quantile(D, 0.5) == 0)
+             stop("Was not possible to compute the 5% quantile for the distance matrix")
+           Ga <- exp(-D / quantile(D, 0.05))
+         },
+         {
+           stop("Method selected is not available")
+         })
+if(format == "long"){
+    if(is.list(Ga)){
+      G <- lapply(Gmat, function(x) toSparse(posdefmat(x)))
+      names(G) <- names(Ga)
+    }else{
+      G <- toSparse(posdefmat(Ga))
+    }
+    return(G)
+  }else{
       
     }
     return(Gmat)
   }
   
-  if (method %in% c("UAR", "UARadj")){
-    uar <- UAR(M, p, metho = method)
-    if (format == "long")
-      {uar <- toSparse(posdefmat(uar))}
-    return(Ga=uar)
   }
   
-  if(method == "GK"){
-    w <- scale(x = M, center = T, scale = T)
-    D <- as.matrix(dist(w)) ^ 2
-    if(quantile(D, 0.5) == 0)
-      stop("Was not possible to compute the 50% quantile for the distance matrix")
-    GK <- exp(-D / quantile(D, 0.05))
-    
-    if(format == "long")
-      {GK <- toSparse(posdefmat(GK))}
-    return(GK)
-  }
-
-}

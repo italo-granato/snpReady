@@ -6,6 +6,8 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
   if (call.rate < 0 | call.rate > 1 | maf < 0 | maf > 1)
     stop("Treshold for call rate and maf must be between 0 and 1")
   
+ if (sweep.sample < 0 | sweep.sample > 1)
+      stop("Treshold for sweep.sample must be between 0 and 1")										  
   if(missing(outfile))
     outfile = "012"
 
@@ -15,7 +17,7 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
   match.arg(frame)
   match.arg(imput.type)
   
-  if(isTRUE(base)){
+  if(base){
     if (frame == "long"){
       if(ncol(data)>4)
         stop("For format long, the object must have four columns")
@@ -57,14 +59,20 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
       stop("For outfile 'structure', SNPs must be coded as nitrogenous bases (ACGT)")
   }
   
-   count_allele <- function(m){
+	whichBase <- all(bs %in% c("A","C", "G", "T"))											  
+   count_allele <- function(m, nitrBase = T){
     #' @importFrom stringr str_count
+	if(nitrBase){		   
     A <- matrix(str_count(m, "A"), ncol = ncol(m), byrow = FALSE)
     C <- matrix(str_count(m, "C"), ncol = ncol(m), byrow = FALSE)
     G <- matrix(str_count(m, "G"), ncol = ncol(m), byrow = FALSE)
     C[, colSums(A, na.rm = TRUE)!=0] <- 0
     G[, colSums(A, na.rm = TRUE)!=0 | colSums(C, na.rm = TRUE)!=0] <- 0
     res <- A + C + G
+	}else{
+        A <- matrix(str_count(m, "A"), ncol = ncol(m), byrow = FALSE)
+        res <- A
+    }	
     if (any(colSums(res, na.rm=TRUE) == 0))
       res[,colSums(res, na.rm=TRUE) == 0] <- 2
     res[is.na(m)] <- NA
@@ -73,7 +81,7 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
     return(res)
   }
     
-  m <- count_allele(data)
+  m <- count_allele(data, nitrBase = whichBase)
   }else{
     if(frame == "long")
       stop("format long only accepts nitrogenous bases. Check base argument")
@@ -85,67 +93,70 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
   }
   
   if(is.null(colnames(m)))
-    stop("Colnames is missing")
+    stop("Marker names are missing")
+	
   
-  miss.freq <- rowSums(is.na(m))/ncol(m)
+  idName <- rownames(m)
+  markerName <- colnames(m)
+	
+  missID <- rowMeans(is.na(m))
+  posSS <- missID <= sweep.sample #selected by ID call rate
   
-  if (sweep.sample < 0 | sweep.sample > 1)
-      stop("Treshold for sweep.clean must be between 0 and 1")
+  #id.rmv <- rownames(m)[missID > sweep.sample]
+  m <- m[posSS,]
+  data <- data[posSS,]
   
-	id.rmv <- rownames(m)[miss.freq > sweep.sample]
-    m <- m[miss.freq <= sweep.sample,]
-    data <- data[miss.freq <= sweep.sample,]
-    
-  CR <- 1 - colSums(is.na(m))/nrow(m)
-  
-  p <- colSums(m, na.rm = TRUE)/(2*colSums(!is.na(m)))
+  CR <- 1 - colMeans(is.na(m))
+  poscr <- CR >= call.rate #selected by CR							  
+  p <- colMeans(m, na.rm = T)/2
   minor <- apply(cbind(p, 1-p), 1, min)
   minor[is.nan(minor)] <- 0
-  
-  snp.rmv <- vector("list", 2)
-  snp.rmv[[1]] <- colnames(m)[CR < call.rate]
-  snp.rmv[[2]] <- colnames(m)[minor < maf]
-  
-  position <- (CR >= call.rate) & (minor >= maf)
-  if (sum(position)==0L)
+  posmaf <- minor >= maf #selected by maf	
+  #snp.rmv <- vector("list", 2)
+  #snp.rmv[[1]] <- colnames(m)[CR < call.rate]
+  #snp.rmv[[2]] <- colnames(m)[minor < maf]
+  #position <- (CR >= call.rate) & (minor >= maf)
+  if (sum(poscr & posmaf)==0L)
      stop("All markers were removed. Try again with another treshold for CR and MAF")
-    m <- m[, position]
-    data <- data[, position]
+   
+  m <- m[, poscr & posmaf]
+  data <- data[, poscr & posmaf]
+  
+  if (imput){
     
-  if (isTRUE(imput) & any(!is.finite(CR[position])))
-      stop("There are markers with all missing data. There is no way to do
-           imputation. Try again using another call rate treshold")
-  
-  all.equal_ <- Vectorize(function(x, y) {isTRUE(all.equal(x, y))})
-  
-  samplefp <- function(p, f){
-    samp <- sample(c(0,1,2), 1,
-                   prob=c(((1-p)^2+((1-p)*p*f)),
-                          (2*p*(1-p)-(2*p*(1-p)*f)),
-                          (p^2+((1-p)*p*f))))
-    return(as.integer(samp))
-  }
-  
-  input.fun <- function(m, p, f){
-    indicesM <- which(x = is.na(m), arr.ind = TRUE)
-    m[indicesM] <- mapply(samplefp, p[indicesM[,2]], f[indicesM[,1]])
-    return(m)
-  }
-  
-  if (any(CR!=1L) & isTRUE(imput))
-  {
-    if (any(all.equal_(miss.freq[miss.freq <= sweep.sample], 1L)))
-       stop("There are samples with all missing data. There is no way to do
-           imputation. Try again using another sweep.sample treshold")
+    samplefp <- function(p, f){
+      samp <- sample(c(0,1,2), 1,
+                     prob=c(((1-p)^2+((1-p)*p*f)),
+                            (2*p*(1-p)-(2*p*(1-p)*f)),
+                            (p^2+((1-p)*p*f))))
+      return(as.integer(samp))
+    }
+	
+	 input.fun <- function(m, p, f){
+      indicesM <- which(x = is.na(m), arr.ind = TRUE)
+      m[indicesM] <- mapply(samplefp, p[indicesM[,2]], f[indicesM[,1]])
+      return(m)
+    }
     
-    if(imput.type == "wright"){
-      f <- rowSums(m!=1, na.rm = TRUE)/rowSums(!is.na(m))
+  if (any(CR[poscr & posmaf] == 0))
+      stop("There are markers with all missing data. There is no way to
+           impute. Try again using another call rate treshold")
+  
+   if(imput.type == "wright"){
+      
+      if (any(missID[posSS] == 1L))
+        stop("There are samples with all missing data. There is no way to do
+             imputation. Try again using another sweep.sample treshold")
+      
+							   
+      f <- rowMeans(m != 1, na.rm = TRUE)
       f[is.nan(f)] <- 1
-      m <- input.fun(m=m, p=p[position], f=f)
-    } else{
+      m <- input.fun(m=m, p=p[poscr & posmaf], f=f)
+    } 
+    if(imput.type == "mean"){
       tmp <- which(is.na(m), arr.ind = TRUE)
       m[tmp] <- colMeans(m, na.rm = T)[tmp[,2]]
-    }
+   }
   }
   
   switch(outfile,

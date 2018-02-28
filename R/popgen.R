@@ -17,7 +17,6 @@ popgen <- function(M, subgroups=NULL)
   nSG <- length(labelSG)
 
     markers <- round(cbind(p, q, MAF, "He" = Hesp, "Ho" = Hobs, "DG" = Dg, PIC, "Miss" = propMiss), 2)
-    Hg.obs <- rowMeans(M == 1, na.rm = TRUE)
     mat <- scale(M, center = T, scale = F)
     Fi <- (rowSums(mat^2, na.rm = T)/sum(2*p*(1-p))) - 1
   general <- g.of.p(Z)

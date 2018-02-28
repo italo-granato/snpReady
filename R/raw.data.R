@@ -216,15 +216,12 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
       report[[i]]$whichID <- NULL
   }
   
+  storage.mode(m) <- "numeric"
   if(is.null(hapmap)){
-    storage.mode(m) <- "numeric"
     return(list(M.clean = m, report = report))
   } else{
-    storage.mode(m)  <- "numeric"
-    hap <- hapmap[hapmap[,1L] %in% colnames(m),]
-    hap <- hap[order(hap[,2L], hap[,3L], na.last = TRUE, decreasing = F),]
-    colnames(hap) <- c("SNP","Chromosome","Position")
-    m <- m[, match(hap[,1L], colnames(m))]
+     hap <- hapmap[poscr & posmaf, ]															  
+    colnames(hap) <- c("rs","chrom","pos")	  
     return(list(M.clean = m, Hapmap = hap, report = report))
   }
 }

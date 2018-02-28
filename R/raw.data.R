@@ -185,9 +185,9 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
          "structure" = {
            tmp <- lapply(as.data.frame(data), function(x){
              curCol <- strsplit(as.character(x), split = "")
-             tmp <- lapply(curCol, function(x) if(any(is.na(x))){rep(NA, 2)}else{x})
-             curCol <- unlist(tmp)
-             return(curCol)})
+             curCol[ which(is.na(curCol))] <- list(rep(NA, 2))
+             res <- unlist(curCol)
+             return(res)} )
            m <- as.matrix(do.call(cbind, tmp))
            colnames(m) <- colnames(data)
            rownames(m) <- rep(rownames(data), each=2)

@@ -202,14 +202,14 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
            }
          )
   
-  report <- list(maf = list(r = paste(length(snp.rmv[[2]]), "Markers removed by MAF =", maf, sep = " "),
-                            whichID = snp.rmv[[2]]),
-                 cr = list(r = paste(length(snp.rmv[[1]]), "Markers removed by Call Rate =", call.rate, sep=" "),
-                           whichID = snp.rmv[[1]]),
-                 sweep = list(r = paste(length(id.rmv), "Samples removed by sweep.sample =", sweep.sample, sep = " "),
-                              whichID = id.rmv),
-                 imput = ifelse(isTRUE(imput), paste(sum(is.na(data)), "markers were inputed = ", round((sum(is.na(data))/length(data))*100, 2), "%"),
-                                "No marker was imputed"))
+  report <- list(maf = list(r = paste(sum(!posmaf), "Markers removed by MAF =", maf, sep = " "),
+                            whichID = markerName[!posmaf]),
+                 cr = list(r = paste(sum(!poscr), "Markers removed by Call Rate =", call.rate, sep=" "),
+                           whichID = markerName[!poscr]),
+                 sweep = list(r = paste(sum(!posSS), "Samples removed by sweep.sample =", sweep.sample, sep = " "),
+                              whichID = idName[!posSS]),
+                 imput = ifelse(imput, paste(sum(is.na(data)), "data points were inputed = ", round((sum(is.na(data))/length(data))*100, 2), "%"),
+                                "No data point was imputed"))
   
   for(i in 1:3){
     if(length(report[[i]]$whichID) == 0)

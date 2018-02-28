@@ -1,4 +1,4 @@
-popgen <- function(M, subgroups=NULL)
+popgen <- function(M, subgroups=NULL, plot = FALSE)
   {
   if(is.null(colnames(M)))
   stop("Colnames is missing")
@@ -86,6 +86,44 @@ popgen <- function(M, subgroups=NULL)
     
     bygroup <- c(bygroup, list("F.stats" = Fstats))
   }
+  # ---- plots by subgroup ----
+  if(plot){
+    main <- c("MAF", "GD", "PIC", "He") 
+    
+    # barplot
+    for(i in 1:4){
+      pdf(paste("whole_", main[i],".pdf", sep=""), width = 14, height = 7)
+      param <- general$Markers[, main[i]]
+      breaks = seq(0, 0.5, 0.1)
+      
+      switch(main[i],
+             "MAF" = {main.tmp = "Minor allele frequency"},
+             "GD" = {main.tmp = "Nei's genetic diversity"},
+             "PIC" = {main.tmp = "PIC"
+             breaks = seq(0, 0.4, 0.1)},
+             "He" = {main.tmp = "Expected heterozygosity"})
+      
+      barplot.pg(x = param, breaks = breaks, main = main.tmp)
+      dev.off()
+      
+      if(nSG > 1){
+        pdf(paste("bygroup_", main[i],".pdf", sep=""), width = 14, height = 7)
+        ceiling(nSG/2)
+        par(mfrow = c(ceiling(nSG/2), 2))
+        for(j in 1:nSG){
+          param <- bygroup[[j]]$Markers[, main[i] ]
+          barplot.pg(x = param, breaks = breaks, main = paste(main.tmp, names(bygroup)[j], sep = " - "))
+        }
+        dev.off()
+      }
+    }
+    
+    # heatmap Fst
+    pdf("heatmap_Fst.pdf", width = 14, height = 7)
+    heatmap(matFST, scale = "none", Rowv = NA, Colv = NA, cexRow = 0.9, 
+            cexCol = 0.9,  main="Fst pairwise", verbose = F)
+    dev.off()
+  }
   
     out <- list("whole" = general, "bygroup" = bygroup)
     return(out)
@@ -156,6 +194,26 @@ F.stats <- function(Hi, Hs, Ht, ngroups){
   FST.pop <- round(data.frame("Fis" = Fis.pop, "Fst" = Fst.pop, "Fit" = Fit.pop), 3) 
   rownames(FST.pop) <- rownames(Ht)
   return(FST.pop)
+}
+
+barplot.pg <- function(x, space = 0.75, width = 4, breaks = NULL, names.arg=NULL, rot_angle = 60,
+                       cex = 0.8, xlim = c(0, 50), main = NULL, plotName='general', ext='jpeg')
+{
+  tmp <- hist(x = x, breaks = breaks, right = T, plot = FALSE)
+  nbars <- length(tmp$counts)
+  spacet <- c(2, rep(space,nbars-1))
+  if(is.null(names.arg))
+    names.arg <- paste(breaks[seq(nbars)], "-", breaks[seq(2,nbars+1)])
+  
+  ptm <- barplot(tmp$counts, beside = T, xlim = xlim, width = width, 
+                 ylim = c(0,max(tmp$counts)+10), ylab = "counts",
+                 space = spacet, col = "black", axes = F, border = F)
+  
+  axis(side = 1, at = ptm, label = F, col.ticks='white')
+  axis(side = 2, pos = 5, las = 2, cex.axis = cex)
+  text(x = ptm,y = par("usr")[3], labels = names.arg, 
+       srt = rot_angle, adj = c(1.1,1.1), xpd = TRUE, cex = cex)
+  title(main = main)
 }
 inbreeding.fun <- function(mat, p){
   nOHom <- rowSums(mat != 1, na.rm = T)

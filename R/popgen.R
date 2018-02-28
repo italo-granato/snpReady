@@ -6,7 +6,7 @@ popgen <- function(M, subgroups=NULL)
   hasAllMiss <- colSums(is.na(M)) == nrow(M)
   
   if(any(hasAllMiss))
-    warning("There are some markers with all data points missing. They were removed from dataset")
+    warning("There are some markers with all data missing. These markers were removed from dataset")
   
   Z <- as.matrix(M[, !hasAllMiss])
   
@@ -16,51 +16,10 @@ popgen <- function(M, subgroups=NULL)
   labelSG <- unique(subgroups)
   nSG <- length(labelSG)
 
-  g.of.p <- function(M){
-    m<-ncol(M)
-    g<-nrow(M)
-    
-    p <- colMeans(M, na.rm = T)/2
-    fs <- cbind(p, 1-p)
-    MAF <- apply(fs, 1, min)
-    q <- 1-p
-    Hesp <- 2*p*q
-    Hobs <- colMeans(M == 1, na.rm = T)
-    Dg <- 1- p^2 - q^2
-    PIC <- 1-(p^2 + q^2) - (2*p^2*q^2)
-    propMiss <- colSums(is.na(M))/g
     markers <- round(cbind(p, q, MAF, "He" = Hesp, "Ho" = Hobs, "DG" = Dg, PIC, "Miss" = propMiss), 2)
-    markers[is.nan(markers)] <- NA
-    markers <- as.data.frame(markers)
-    
-    
     Hg.obs <- rowMeans(M == 1, na.rm = TRUE)
     mat <- scale(M, center = T, scale = F)
     Fi <- (rowSums(mat^2, na.rm = T)/sum(2*p*(1-p))) - 1
-    
-    
-    genotypes <- round(cbind("Ho" = Hg.obs, "Fi" = Fi),2)
-    
-    meanMrk <- colMeans(markers, na.rm = TRUE)
-    rangeMrk <- t(apply(X = markers, MARGIN = 2, FUN = function(x) range(x, na.rm = TRUE)))
-    
-    meanGen <- colMeans(genotypes, na.rm = TRUE)
-    rangeGen <- t(apply(X = genotypes, MARGIN = 2, FUN = function(x) range(x, na.rm = TRUE)))
-    
-    population <- round(rbind(cbind(meanMrk, rangeMrk)[c(6,7,3),], cbind(meanGen, rangeGen)), 2)
-    rownames(population) <- c(rownames(population)[1:4], "F")
-    colnames(population) <- c("mean", "lower", "upper")
-    
-    Ne <- (1/(2*mean(Fi)))*g
-    Va <- sum(2*p*q)
-    Vd <- sum((2*p*q)^2)
-    variance <- t(round(data.frame(Ne, Va, Vd, "number of genotypes" = g, "number of markers" = m),2))
-    colnames(variance) <- ("estimate")
-    
-    average <- list("Markers" = markers, "Genotypes" = genotypes, "Population" = population, "Variability" = variance)
-    return(average)
-  }
-  
   general <- g.of.p(Z)
   
   bygroup <- c("There are no subgroups")
@@ -136,6 +95,47 @@ popgen <- function(M, subgroups=NULL)
     return(out)
 }
 
+ g.of.p <- function(M){
+    m<-ncol(M)
+    g<-nrow(M)
+    
+    p <- colMeans(M, na.rm = T)/2
+    fs <- cbind(p, 1-p)
+    MAF <- apply(fs, 1, min)
+    q <- 1-p
+    Hesp <- 2*p*q
+    Hobs <- colMeans(M == 1, na.rm = T)
+    Dg <- 1- p^2 - q^2
+    PIC <- 1-(p^2 + q^2) - (2*p^2*q^2)
+    propMiss <- colSums(is.na(M))/g
+    markers[is.nan(markers)] <- NA
+    markers <- as.data.frame(markers)
+    
+    
+    Hg.obs <- rowMeans(M == 1, na.rm = TRUE)
+    
+    
+    genotypes <- round(cbind("Ho" = Hg.obs, "Fi" = Fi),2)
+    
+    meanMrk <- colMeans(markers, na.rm = TRUE)
+    rangeMrk <- t(apply(X = markers, MARGIN = 2, FUN = function(x) range(x, na.rm = TRUE)))
+    
+    meanGen <- colMeans(genotypes, na.rm = TRUE)
+    rangeGen <- t(apply(X = genotypes, MARGIN = 2, FUN = function(x) range(x, na.rm = TRUE)))
+    
+    population <- round(rbind(cbind(meanMrk, rangeMrk)[c(6,7,3),], cbind(meanGen, rangeGen)), 2)
+    rownames(population) <- c(rownames(population)[1:4], "F")
+    colnames(population) <- c("mean", "lower", "upper")
+    
+    Ne <- (1/(2*mean(Fi)))*g
+    Va <- sum(2*p*q)
+    Vd <- sum((2*p*q)^2)
+    variance <- t(round(data.frame(Ne, Va, Vd, "number of genotypes" = g, "number of markers" = m),2))
+    colnames(variance) <- ("estimate")
+    
+    average <- list("Markers" = markers, "Genotypes" = genotypes, "Population" = population, "Variability" = variance)
+    return(average)
+  }
 F.stats <- function(Hi, Hs, Ht, ngroups){
   n.harm <- matrix(ngroups/sum(ngroups), nrow = 1)
   

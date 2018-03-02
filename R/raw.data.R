@@ -1,6 +1,6 @@
 raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE, sweep.sample= 1,
                      call.rate=0.95, maf=0.05, imput=TRUE, imput.type = c("wright", "mean"),
-                     outfile=c("012","-101","structure"))
+                     outfile=c("012","-101","structure"), plot = FALSE)
 {
 
   if (call.rate < 0 | call.rate > 1 | maf < 0 | maf > 1)

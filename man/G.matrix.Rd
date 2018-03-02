@@ -3,7 +3,8 @@
 \encoding{UTF-8}
 \title{Estimation of Genomic Relationship Matrix}
 \usage{
-G.matrix(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("wide", "long"), plot = FALSE)
+G.matrix(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("wide", "long"), 
+         plot = FALSE)
 }
 \arguments{
 \item{M}{\code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns. This matrix do not need to be centered.}

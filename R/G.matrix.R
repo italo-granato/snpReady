@@ -89,7 +89,7 @@ G.matrix <- function(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("w
          })
 if(format == "long"){
     if(is.list(Ga)){
-      G <- lapply(Gmat, function(x) toSparse(posdefmat(x)))
+      G <- lapply(Ga, function(x) toSparse(posdefmat(x)))
       names(G) <- names(Ga)
     }else{
       G <- toSparse(posdefmat(Ga))

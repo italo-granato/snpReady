@@ -8,7 +8,7 @@ perform genomic predictions
 \usage{
 raw.data(data, frame = c("long","wide"), hapmap=NULL, base=TRUE, sweep.sample=1,
                      call.rate=0.95, maf=0.05, imput=TRUE,
-                     imput.type=c("wright", "mean"), outfile=c("012","-101","structure"))
+                     imput.type=c("wright", "mean"), outfile=c("012","-101","structure"), plot = FALSE)
 }
 \arguments{
 \item{data}{object of class \code{matrix}}
@@ -34,6 +34,7 @@ removed from dataset}
 \item{outfile}{\code{character}. Type of output to be produced. \code{"012"} outputs matrix coded as 0 to \code{AA}, 1 to \code{Aa} and 2 to \code{aa}. \code{"-101"}
 presents marker matrix coded as -1, 0 and 1 to \code{aa}, \code{Aa} and \code{AA}, respectively. \code{"structure"} returns a matrix suitable for STRUCTURE Software.
 For this, each individual is splited in two rows, one for each allele. Nitrogenous bases are then recoded to a specific number, so A is 1, C is 2, G is 3 and T is 4. This format is only acceptable if base are \code{TRUE}}
+\item{plot}{If \code{TRUE}, a graphical output of quality control is produced. }
 }
 \details{
 The function allows flexible input of genomic data. Data might be in long format with 4 columns or in wide 
@@ -57,6 +58,7 @@ The second method is based on mean of SNP. Thus, each missing point in a SNP \eq
 \value{
 Returns a properly coded marker matrix output and a report specifying which individuals are removed by \code{sweep.sample} and which markers are removed by \code{"call.rate"}
 and \code{maf}.
+Also, a plot with proportion of removed markers and imputed data, for each chromosome, when the map is included, is produced when \code{plot} is TRUE
 }
 \examples{
 data(maize.line)

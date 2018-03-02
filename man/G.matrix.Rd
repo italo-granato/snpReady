@@ -3,7 +3,7 @@
 \encoding{UTF-8}
 \title{Estimation of Genomic Relationship Matrix}
 \usage{
-G.matrix(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("wide", "long"))
+G.matrix(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("wide", "long"), plot = FALSE)
 }
 \arguments{
 \item{M}{\code{matrix}. Matrix of markers in which \eqn{n} individuals are in rows and \eqn{p} markers in columns. This matrix do not need to be centered.}
@@ -12,9 +12,11 @@ G.matrix(M, method=c("VanRaden", "UAR", "UARadj", "GK"), format=c("wide", "long"
 genomic relationship and its counterpart for dominance genomic relationship. \code{"UAR"} and \code{"UARadj"} are methods proposed by Yang et al. (2010) for additive genomic relationship. \code{"GK"} represents the Gaussian kernel for additive genomic. See \code{Details}}
 
 \item{format}{Type of object to be returned. \code{wide} returns a \eqn{n \times n} matrix. \code{long} returns the low diagonal from GRM as a table with 3 columns. See \code{Details}}
+\item{plot}{If \code{TRUE}, a graphical output is produced. See \code{Details}}
 }
 \value{
-It returns the GRM. If the method is \code{VanRaden}, additive and dominance matrices are produced. Otherwise, only the additive form.
+It returns the GRM. If the method is \code{VanRaden}, additive and dominance matrices are produced. Otherwise, only the additive form. 
+If \code{plot} is \code{TRUE} a heat map of the pairwise relationship is save as pdf into the working directory . Also, a 3D plot with the three first principal components is generated. 
 }
 \description{
 It generates four different types of Genomic Relationship Matrix (GRM)

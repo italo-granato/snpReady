@@ -206,10 +206,34 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
   if(is.null(hapmap)){
     return(list(M.clean = m, report = report))
   } else{
-     hap <- hapmap[poscr & posmaf, ]															  
+    
+    if(plot){
+      nimp <- aggregate(colSums(is.na(data)), by = list(hapmap[poscr & posmaf, 2]), FUN = sum)$x
+      
+      bychrom <- t(cbind("cr" = table(hapmap[!poscr | (!poscr & !posmaf) , 2])/table(hapmap[,2]), 
+                         "maf" = table(hapmap[!posmaf & poscr, 2])/table(hapmap[,2]),
+                         "n.imput" = nimp/(table(hapmap[, 2])*nrow(data))) )
+      barplot.rd(bychrom)
+    }
+    
+    hap <- hapmap[poscr & posmaf, ]															  
     colnames(hap) <- c("rs","chrom","pos")	  
     return(list(M.clean = m, Hapmap = hap, report = report))
   }
+}
+
+barplot.rd <- function(data, col = gray.colors(3), plotName = "QCreport"){
+  pdf = pdf(paste(plotName,".pdf", sep = ""), width = 10, height = 4)
+  
+  barplot(data, beside = TRUE, horiz = FALSE, ylab = "frequency", axes = F,
+          xlab = "chromosome", ylim = c(0, max(data) ), 
+          main = "Quality control", col = col)
+  axis(side = 2, las = 2)
+  par(new = T, mar = c(2,2,2,0))
+  plot(1, type = "n", xlab = "", ylab = "", bty="n", axes = F)
+  legend(x = "topright", fill = col, legend = c("Maf", "CR", "Imput"), 
+         bty = "n")
+  dev.off()
 }
 
 samplefp <- function(p, f){

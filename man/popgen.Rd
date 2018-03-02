@@ -13,8 +13,7 @@ popgen(M, subgroups)
 \item{subgroups}{A \code{vector} with information for subgroups or subpopulations.}
 }
 \details{
-The matrix of makers is of dimension \eqn{n \times p}, in which individuals are in rows and markers in columns.
-The number of subgroups is defined by the user and accepts any data type (\code{character}, \code{integer}, \code{numeric}...) to distinguish subpopulations.
+The number of subgroups is defined by the user and accepts any data type (\code{character}, \code{integer} ...) to distinguish subpopulations.
 These two inputs must have the same sort for rows (genotypes).
 }
 \value{

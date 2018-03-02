@@ -141,20 +141,6 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
   
   if (imput){
     
-    samplefp <- function(p, f){
-      samp <- sample(c(0,1,2), 1,
-                     prob=c(((1-p)^2+((1-p)*p*f)),
-                            (2*p*(1-p)-(2*p*(1-p)*f)),
-                            (p^2+((1-p)*p*f))))
-      return(as.integer(samp))
-    }
-	
-	 input.fun <- function(m, p, f){
-      indicesM <- which(x = is.na(m), arr.ind = TRUE)
-      m[indicesM] <- mapply(samplefp, p[indicesM[,2]], f[indicesM[,1]])
-      return(m)
-    }
-    
   if (any(CR[poscr & posmaf] == 0))
       stop("There are markers with all missing data. There is no way to
            impute. Try again using another call rate treshold")
@@ -226,3 +212,16 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
   }
 }
 
+samplefp <- function(p, f){
+  samp <- sample(c(0,1,2), 1,
+                 prob=c(((1-p)^2+((1-p)*p*f)),
+                        (2*p*(1-p)-(2*p*(1-p)*f)),
+                        (p^2+((1-p)*p*f))))
+  return(as.integer(samp))
+}
+
+input.fun <- function(m, p, f){
+  indicesM <- which(x = is.na(m), arr.ind = TRUE)
+  m[indicesM] <- mapply(samplefp, p[indicesM[,2]], f[indicesM[,1]])
+  return(m)
+}

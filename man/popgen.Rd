@@ -49,5 +49,5 @@ x <- popgen(maize.hyb, subgroups=PS)
 \references{
 Weir, B.S. and C.C. Cockerham. (1984). Estimating F-Statistics for the Analysis of Population Structure. Evolution 38: 1358-1370. doi:10.2307/2408641.
 
-Keller M.C., Visscher P.M., Goddard M.E. (2011) Quantification of inbreeding due to distant ancestors and its detection using dense single nucleotide polymorphism data. Genetics 189:237–249. doi: 10.1534/genetics.111.130922
+Keller M.C., Visscher P.M., Goddard M.E. (2011) Quantification of inbreeding due to distant ancestors and its detection using dense single nucleotide polymorphism data. Genetics 189:237-249. doi: 10.1534/genetics.111.130922
 }

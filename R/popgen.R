@@ -209,7 +209,7 @@ barplot.pg <- function(x, space = 0.75, width = 4, breaks = NULL, names.arg=NULL
                  ylim = c(0,max(tmp$counts)+10), ylab = "counts",
                  space = spacet, col = "black", axes = F, border = F)
   
-  axis(side = 1, at = ptm, label = F, col.ticks='white')
+  axis(side = 1, at = ptm, labels = F, col.ticks='white')
   axis(side = 2, pos = 5, las = 2, cex.axis = cex)
   text(x = ptm,y = par("usr")[3], labels = names.arg, 
        srt = rot_angle, adj = c(1.1,1.1), xpd = TRUE, cex = cex)

@@ -1,6 +1,6 @@
 Package: snpReady
-Version: 0.9.4
-Date: 2017-10-27
+Version: 0.9.5
+Date: 2018-03-01
 Authors@R: c(
     person("Italo", "Granato", email="italo.granato@gmail.com", role = c("aut", "cre")),
     person("Roberto", "Fritsche-Neto", email="roberto.neto@usp.br", role =c("aut", "ths"))
@@ -11,7 +11,8 @@ Description: Three functions to clean, summarize and prepare genomic datasets to
 Depends:
     Matrix,
     matrixcalc,
-	  stringr
+	  stringr,
+	  rgl
 License: GPL-3
 URL: 
 RoxygenNote: 6.0.1

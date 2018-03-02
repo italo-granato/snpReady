@@ -164,7 +164,21 @@ $DG = 1 - p_j^2 - q_j^2$
 $PIC = 1-(p_j^2 + q_j^2) - (2p_j^2q_j^2)$
 <br>
 
-where $nA_1$ is the number of copies of $A_1$ allele in the population, $N$ is the number of individuals, $nH_j$ is the number of heterozigous genotypes (of type $A_1A_2$ or $A_2A_1$) in the locus $j$.
+* Missing rate
+
+$\begin{aligned} 
+H_o=\frac{nNA_j}{N}
+\end{aligned}$
+<br>
+
+* Hardy-Weinberg equilibrium statistic
+
+$\begin{aligned} 
+\chi^2=\frac{1}{d}\sum_{k=1}^{3} \frac{(O_k - E_k)^2}{E_k}
+\end{aligned}$
+<br>
+
+where $nA_1$ is the number of copies of $A_1$ allele in the population, $N$ is the number of individuals, $nH_j$ is the number of heterozygous genotypes (of type $A_1A_2$ or $A_2A_1$) in the locus $j$, $O_k$ is the observed values for the genotypes $0$, $1$ and $2$, $E_k$ is the expected values for $0 = N * (1 - p_j)^2$, $1 = N * 2p_j(1-p_j)$ and $2=N * p_j^2$.
   
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Moreover, for any individual $i$, the function provides estimates of:
 
@@ -177,10 +191,10 @@ H_{o_i} = \frac{nH_i}{m}
 * Inbreeding coefficient
 
 $\begin{aligned}
-F_i = 1 - \frac{H_{o_i}}{\bar{H_e}}
+F_i=\frac{O(H_i)-E(H)}{m-E(H)}
 \end{aligned}$
 
-where $nH_i$ is the number of heterozigous genotypes (of type $A_1A_2$ or $A_2A_1$) in the individual $i$, $m$ is the number of markers and $\bar{H_e} = \frac{\sum_{j=1}^{m} H_{e_j}}{m}$, the mean of $H_e$;
+where $nH_i$ is the number of heterozigous genotypes (of type $A_1A_2$ or $A_2A_1$) in the individual $i$, $m$ is the number of markers, $O(H_i)$ is the observed homozygosity for individual $i$, $E(H) = \sum_{j} 1-2p_j(1-p_j)$ is the expected homozygosity across all snps.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Then, based on the estimates described above,  populational parameters, means and bounders of 
 DG, PIC, MAF, Ho, F and S are provided. Besides, measures of variability are estimated:
@@ -245,23 +259,23 @@ head(pop.gen$bygroup$LNE$fixed)
 ```
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;As can be noted, in the HNE group there are many fixed alleles and no particular alleles. On the other hand, in LNE, the opposite was observed. Hence, for two populations, considering that quality control was made and monomorphic markers were removed, if one allele is fixed in one population, the other will be exclusive in another subpopulation.
 
-In the presence of subgroups, `popgen` also produces the Wright's F statistics in order to measure interpopulation genetic diversity. $F_{IS}$ measures the deficiency of average heterozygotes in each population, $F_{ST}$ is related to the degree of gene differentiation among populations and $F_{IT}$ is the deficiency of average heterozygotes in subpopulations. The parameters are estimated as follows:
+In the presence of subgroups, `popgen` also produces the Wright's F statistics in order to measure genetic divergence between populations. $F_{IS}$ measures the deficiency of average heterozygotes in each population, $F_{ST}$ is related to the degree of gene differentiation among populations and $F_{IT}$ is the deficiency of average heterozygotes in subpopulations. The parameters are estimated as follows:
 
 $\begin{aligned}
-F_{IS} = 1 - dfrac{H_I}{H_S}
+F_{IS} = 1 - \dfrac{H_I}{H_S}
 \end{aligned}$
   
   
 $\begin{aligned}
-F_{ST} = 1 - dfrac{H_S}{H_T}
+F_{ST} = 1 - \dfrac{H_S}{H_T}
 \end{aligned}$
   
   
 $\begin{aligned}
-F_{IT} = 1 - dfrac{H_I}{H_T}
+F_{IT} = 1 - \dfrac{H_I}{H_T}
 \end{aligned}$
 
-where $H_I$ is the weighted average of observed heterozygosity in the subpopulations, $H_S$ is the average expected heterozygosity estimated from each subpopulation and $H_T$ is the expected heterozygosity in the total population. The F parameters are estimated considering all population and a pairwise comparison. Also, these parameters are estimated for each marker.
+where $H_I$ is the weighted average of observed heterozygosity in the subpopulations, $H_S$ is the average expected heterozygosity estimated from each subpopulation and $H_T$ is the expected heterozygosity in the total population. Besides the estimates of F parameters for each marker locus, estimates considering means of $H_I$, $H_T$ and $H_S$ for each population is produced. Thus, There is a comparison considering all population and in a pairwise format which each pair of populations are compared against each other.
   
   
 # **References**

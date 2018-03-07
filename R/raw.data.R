@@ -1,5 +1,5 @@
 raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE, sweep.sample= 1,
-                     call.rate=0.95, maf=0.05, imput=TRUE, imput.type = c("wright", "mean"),
+                     call.rate=0.95, maf=0.05, imput=TRUE, imput.type = c("wright", "mean","knni"),
                      outfile=c("012","-101","structure"), plot = FALSE)
 {
 
@@ -159,7 +159,10 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
     if(imput.type == "mean"){
       tmp <- which(is.na(m), arr.ind = TRUE)
       m[tmp] <- colMeans(m, na.rm = T)[tmp[,2]]
-   }
+    }
+    if(imput.type == "knni"){
+      m <- t(impute.knn(t(m), 2)$data)
+    }
   }
   
   switch(outfile,

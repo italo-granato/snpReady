@@ -1,6 +1,6 @@
 Package: snpReady
 Version: 0.9.5
-Date: 2018-03-01
+Date: 2018-03-07
 Authors@R: c(
     person("Italo", "Granato", email="italo.granato@gmail.com", role = c("aut", "cre")),
     person("Roberto", "Fritsche-Neto", email="roberto.neto@usp.br", role =c("aut", "ths"))
@@ -12,7 +12,8 @@ Depends:
     Matrix,
     matrixcalc,
 	  stringr,
-	  rgl
+	  rgl,
+	  impute
 License: GPL-3
 URL: 
 RoxygenNote: 6.0.1

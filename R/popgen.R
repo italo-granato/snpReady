@@ -27,26 +27,23 @@ popgen <- function(M, subgroups=NULL, plot = FALSE)
     pbyg <- sapply(X = as.vector(labelSG), FUN = function(x) bygroup[[x]]$Markers$p)
     ## Exclusive alleles
     for(i in 1:nSG){
-    fixed <- pbyg[,i] == 1 | pbyg[,i] == 0
+    fxd <- pbyg[,i] == 1 | pbyg[,i] == 0
     
+    exc <- (pbyg[,i]>0 & apply(pbyg[,-i, drop = F] == 0, 1, all)) |
+      (pbyg[,i]<1 & apply(pbyg[,-i, drop = F] == 1, 1, all))
 
-    exclus <- colnames(Z)[c(which(pbyg[,i]>0 & apply(as.matrix(pbyg[,-i]==0),MARGIN =  1,FUN = all)),
-                            which(pbyg[,i]<1 & apply(as.matrix(pbyg[,-i]==1),MARGIN =  1,FUN = all)))]
-    
-    fixed <- colnames(Z)[which(fixed)]
-    
-    if(length(exclus) == 0){
+    if(sum(exc) == 0){
       excl <- "There are no exclusive alleles for this group"
     }else{
-      excl <- exclus
+      excl <- colnames(Z)[exc]
     }
     
     bygroup[[labelSG[i]]]$exclusive <- excl
     
-    if(length(fixed) == 0){
+    if(sum(fxd) == 0){
       fix.g <- "There are no fixed alleles for this group"
     }else{
-      fix.g <- fixed
+      fix.g <- colnames(Z)[fxd]
     }
     
     bygroup[[labelSG[i]]]$fixed <- fix.g
@@ -153,11 +150,11 @@ popgen <- function(M, subgroups=NULL, plot = FALSE)
     markers <- as.data.frame(markers)
     
     
-    Hg.obs <- rowMeans(M == 1, na.rm = TRUE)
-    Fi <- inbreeding.fun(mat = M, p = p)
+    Hg.obs <- round(rowMeans(M == 1, na.rm = TRUE), 2)
+    Fi <- round(inbreeding.fun(mat = M, p = p), 3)
     
     
-    genotypes <- round(cbind("Ho" = Hg.obs, "Fi" = Fi),2)
+    genotypes <- cbind("Ho" = Hg.obs, "Fi" = Fi)
     
     meanMrk <- colMeans(markers, na.rm = TRUE)
     rangeMrk <- t(apply(X = markers, MARGIN = 2, FUN = function(x) range(x, na.rm = TRUE)))
@@ -207,7 +204,7 @@ barplot.pg <- function(x, space = 0.75, width = 4, breaks = NULL, names.arg=NULL
   
   ptm <- barplot(tmp$counts, beside = T, xlim = xlim, width = width, 
                  ylim = c(0,max(tmp$counts)+10), ylab = "counts",
-                 space = spacet, col = "black", axes = F, border = F)
+                 space = spacet, col = "#E1974C", axes = F, border = F)
   
   axis(side = 1, at = ptm, labels = F, col.ticks='white')
   axis(side = 2, pos = 5, las = 2, cex.axis = cex)
@@ -233,7 +230,8 @@ chiS <- function(counts){
   E <- t(Expfr(p)) * rowSums(counts)
   
   sumChi <- rowSums((E - counts)^2/E)
-  
   pvalue <- pchisq(sumChi, 1, lower.tail = FALSE)
-  return(cbind("pval" = pvalue, "chiSq" = round(sumChi, 3)))
+  resSQ <- cbind("chiSq" = round(sumChi, 3), "pval" = pvalue)
+  resSQ[is.na(resSQ)] <- 0
+  return(resSQ)
 }

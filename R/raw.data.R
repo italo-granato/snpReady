@@ -140,6 +140,9 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
   data <- data[, poscr & posmaf]
   
   if (imput){
+    if(missing(imput.type) | is.null(imput.type))
+      stop("A imput type must be chosen")
+    
     
   if (any(CR[poscr & posmaf] == 0))
       stop("There are markers with all missing data. There is no way to
@@ -225,7 +228,7 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
   }
 }
 
-barplot.rd <- function(data, col = gray.colors(3), plotName = "QCreport"){
+barplot.rd <- function(data, col = c("#7293CB", "#E1974C", "#D35E60"), plotName = "QCreport"){
   pdf = pdf(paste(plotName,".pdf", sep = ""), width = 10, height = 4)
   
   barplot(data, beside = TRUE, horiz = FALSE, ylab = "frequency", axes = F,

@@ -28,8 +28,8 @@ vignette: >
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Therefore, there is the need of prepare genomic datasets, in such a way that it can be easily applied in a great range of studies. Hence, we propose proposed snpReady package based on needs of setting datasets ready to run genomic studies in leading genomic applications. Thus, we include in this package the three primary critical needs faced before running genomic analyses: [preparation and quality control of datasets](#QC), [estimation of relationship matrices](#GRM) and [estimation of basic population genetics parameters](#PGS).
   
 #  **Quality control** {#QC}
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The function was created with the purpose of recoding and reshape the obtained from different SNP genotyping platforms and prepare it for use in genomic analyses. Thus, it reshapes, recodes, makes quality control and imputation of missing data in the dataset. It also cleans the HapMap based on the chosen procedures in the raw data set.  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Marker matrix used as input can be organized in two ways. In the long format, for each subject, there is an observation of each SNP and its alleles. Thus, if there are $n$ individuals and $p$ markers, the matrix is the order of is $(n \times p) \times 4$ where columns represent subjects and SNP identification and one for each allele, in this particular order. In order to illustrate the process, let's use a maize data set with 64 lines and 539 SNPs.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The function was created with the purpose of recoding and reshape the matrices obtained from different SNP genotyping platforms and let it ready to be used in genomic analyses. Thus, it reshapes, recodes, makes quality control and imputation of missing data in the dataset. It also cleans the map based on the same threshold used in the raw data set.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Marker matrix used as input can be organized in two ways. In the *long* format, for each subject, there is an observation of each SNP and its alleles. Thus, if there are $n$ individuals and $p$ markers, the matrix is the order of is $(n \times p) \times 4$ where columns represent samples and SNP identification and one for each allele, in this particular order. In order to illustrate the process, we use a maize data set with 64 lines and 539 SNPs.  
  
 ```{r}
 library(snpReady)
@@ -38,7 +38,7 @@ head(geno)
 dim(geno)
 
 ```
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Another format that can be used as input is wide, where subjects are in the row and SNPs in columns. In this case, the matrix is the order of $n \times p$.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Another format that can be used as input is *wide*, where samples are in the row and SNPs in columns. In this case, the matrix is the order of $n \times p$.
 ```{r, echo = FALSE}
 tmp <- data.frame(sample = geno$sample,
                   marker = geno$marker,
@@ -51,8 +51,8 @@ x[x == "NANA"] <- NA
 x[1:10,1:5]
 ```
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Raw data can be coded as the nitrogenous base (A, C, G, and T) or a standard A and B. However, if the data was already recoded this can be set by `base` argument and only quality control is made. Thus, if the base is `FALSE` dataset must be coded as 0, 1 and 2. Missing data should be set as NA.  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quality control (QC) for genomic data is based on removing individuals and markers with poor information. In general, for individuals, it can be associated with the amount of missing markers. Hence, subjects which do not meet some threshold of missing data can be removed through `sweep.sample` argument. For markers, QC is based on allele frequency and the amount of missing data. Markers with a low frequency of one of its alleles usually are non-informative and in some situations are considered monomorphic. Therefore, they can be removed. The same trend is applied for missing data. Thus, the QC process is made through `MAF` and `call.rate`.   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The raw data can be coded as the nitrogenous base (A, C, G, and T) or the standard A and B. However, if the data was already recoded this can be set by `base` argument and only quality control is made. Thus, if the base is `FALSE` dataset must be coded as 0, 1 and 2. Missing data should be set as NA.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quality control (QC) for genomic data is based on removing individuals and markers with poor information. In general, for individuals, it can be associated with the amount of missing markers. Hence, samples which do not meet some threshold of missing data can be removed through `sweep.sample`. For markers, QC is based on allele frequency and the amount of missing data. Markers with a low frequency of one of its alleles usually are non-informative and in some situations are considered monomorphic. Therefore, they can be removed. The same trend is applied for missing data. Thus, the QC process is made through `MAF` and `call.rate`.   
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Along with removing non-informative markers, imputation of missing data becomes necessary. We present two types of map-independent imputation. One is based on the Wright equilibrium. For a missing position, we assume that the probability of taking up value is dependent on both allele frequency of the SNP and the level of homozygosity of an individual. Thus:
 $$P(x_{ij})=\left\{
                 \begin{array}{ll}
@@ -61,7 +61,7 @@ $$P(x_{ij})=\left\{
                   P(x=2)= p_j^2+p_j (1 - p_j ) F_i
                 \end{array}
               \right.$$
-Where $p_i$ is the frequency of the major allele for an SNP $i$, and $F_j$ is the level of homozygosity of an individual $j$ estimate as a simple proportion of number of homozygous loci about the total of loci. Another method of imputation currently implemented is based on the mean of each SNP. Each missing position of a SNP $j$ is replaced by its mean. Thus:
+Where $p_i$ is the frequency of the major allele for an SNP $i$, and $F_j$ is the level of homozygosity of an individual $j$ estimate as a proportion of the amount of homozygous loci relative to the total of loci. Another method of imputation currently implemented is based on the mean of each SNP. Each missing position of a SNP $j$ is replaced by its mean. Thus:
 $$\bar{p}= 2p_j$$
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;In this section we are going to present a basic usage for `raw.data` in a maize data set. It is composed of 64 inbred lines genotyped with 539 SNPs. First, let's run a basic quality control on this data set.  
   
@@ -70,23 +70,23 @@ geno.ready <- raw.data(data = as.matrix(geno), frame = "long", base = TRUE, swee
 M <- geno.ready$M.clean
 M[1:10,1:5]
 ```
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Above, we recode and clean the dataset according to some quality control parameters. Using a call rate of 0.95 means that it can accept markers with only a maximum of 5% of missing data. MAF of 0.1 means that markers with a minor frequency allele less than 0.1 were removed. For individuals, in the sweep.sample was used the threshold of 0.5, which means that samples with more than 50% of missing data were removed. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Above, we recode and clean the dataset according to some quality control parameters. Using a call rate of 0.95 means that it can accept markers with only a maximum of 5% of missing data. MAF of 0.1 means that markers with a minor frequency allele less than 0.1 were removed. For individuals,the threshold used for sweep.sample was 0.5, which means that samples with more than 50% of missing data were removed. 
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Besides the cleaned matrix, a report is also outputted as a summary of information on how many and what markers were removed by the steps in the quality control.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Besides the cleaned matrix, a report is also outputted as a summary on how many and what markers were removed by the steps in the quality control.
 ```{r}
 geno.ready$report
 ```
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For instance, 67 and 151 markers were removed, respectively. Moreover, two individuals were removed. Furthermore, the report output shows the SNPs ID and samples removed by each procedure. It is important highlight that some SNPs may fail in both controls applied. Thus, their identification will appear in both sections. Here, 204 markers were removed, which 14 did not attend either QC applied.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For instance, 67 and 151 markers were removed by MAF and call rate, respectively. Moreover, two individuals were removed. Furthermore, the report shows the SNP  and sample IDs removed by each procedure. It is important highlight that some SNPs may fail in both controls applied. Thus, their identification will appear in both sections. Here, 204 markers were removed, which 14 did not attend either QC applied.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Let's make quality control along with imputation. When using the imputation, it is needed to choose one of two supported methods. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Now, the quality control can be combined with imputation. When using the imputation, it is needed to choose between the supported methods. 
 ```{r}
 geno.ready2 <- raw.data(data = as.matrix(geno), frame = "long", base = TRUE, sweep.sample = 0.5, call.rate = 0.95, maf = 0.10, imput = TRUE, imput.type = "wright", outfile = "012")
 Mwrth <- geno.ready2$M.clean
 Mwrth[1:10,1:5]
 ```
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Regarding the Wright's method, its accuracy is about 62%. On the other hand, imputation based on mean also have intermediate accuracy. These methods are less accurate than those map-dependent methods, such as the one developed in BEAGLE [(Browning and Browning, 2016)](#R1). However, as described by [Rutkoski et al. (2013)](#R7) with less missing data allowed a mere imputation is enough.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Regarding the Wright's method, its accuracy is about 62%. Imputation based on mean also have intermediate accuracy. These methods are less accurate than those map-dependent methods, such as the one developed in BEAGLE [(Browning and Browning, 2016)](#R1). However, as described by [Rutkoski et al. (2013)](#R7) with lower missing data rates allowed a mere imputation is enough.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Concerning the output formats, the `outfile` argument is used to export the cleaned matrix in the suitable format. Default is the count of reference allele such that $AA = 2$, $Aa = 1$, $aa = 0$. Another format is coded as -1, 0, 1, case considering $p_j$ as 0.5. Finally, a special format is suitable for use in the `STRUCTURE` software [(Pritchard et al., 2000)](#R6). To generate this output, is necessary the raw data coded as nitrogenous bases.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Concerning the output formats, the `outfile` argument is used to export the cleaned matrix in the suitable format. Default is the count of reference allele such that $AA = 2$, $Aa = 1$, $aa = 0$. Another format is coded as -1, 0, 1, case considering $p_j$ as 0.5. Finally, a special format is suitable for use in the `STRUCTURE` software [(Pritchard et al., 2000)](#R6). To generate this output, is necessary the raw data be coded as nitrogenous bases.
 ```{r}
 geno.readySTR <- raw.data(data = as.matrix(geno), frame = "long", base = TRUE, sweep.sample = 0.5, call.rate = 0.95, maf = 0.10, imput = FALSE, outfile = "structure")
 Mstr <- geno.readySTR$M.clean
@@ -96,7 +96,7 @@ Mstr[1:10,1:5]
   
 # **Genomic relationship matrix** {#GRM}
   
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Genomic relationship matrices (GRM) are created through the `G.matrix` function. Genomic prediction models use these matrices, especially in the G-BLUP. Different kinship forms and parametrizations were proposed with the aim of increasing the accuracy of prediction of genomic selection. G.matrix function estimates four types of additive and one dominant genomic relationship matrix.   
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Genomic relationship matrices (GRM) are created through the `G.matrix` function. Genomic prediction models use these matrices, especially in the G-BLUP. Different kinship parametrizations were proposed with the aim of increasing the accuracy of prediction of genomic selection. `G.matrix` function estimates four types of additive and one dominant genomic relationship matrix.   
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The matrix used in the data entry should be coded as allele count, where $AA = 2$, $Aa = 1$, $aa = 0$. However, it accepts continuous values for some SNPs. The second argument is the method to be used to generate the GRM. There are four methods to generate it, three forms of GRM and the Gaussian kernel (GK). Methods currently implemented are the one proposed by [VanRaden (2008)](#R8), two methods proposed by [Yang et al. (2010)](#R9), the UAR (Unified Additive Relationship) and adjusted UAR, and the Gaussian kernel [(Pérez-Elizalde et al., 2015)](#R5).
   
 ```{r}
@@ -164,7 +164,21 @@ $DG = 1 - p_j^2 - q_j^2$
 $PIC = 1-(p_j^2 + q_j^2) - (2p_j^2q_j^2)$
 <br>
 
-where $nA_1$ is the number of copies of $A_1$ allele in the population, $N$ is the number of individuals, $nH_j$ is the number of heterozigous genotypes (of type $A_1A_2$ or $A_2A_1$) in the locus $j$.
+* Missing rate
+
+$\begin{aligned} 
+H_o=\frac{nNA_j}{N}
+\end{aligned}$
+<br>
+
+* Hardy-Weinberg equilibrium statistic
+
+$\begin{aligned} 
+\chi^2=\frac{1}{d}\sum_{k=1}^{3} \frac{(O_k - E_k)^2}{E_k}
+\end{aligned}$
+<br>
+
+where $nA_1$ is the number of copies of $A_1$ allele in the population, $N$ is the number of individuals, $nH_j$ is the number of heterozygous genotypes (of type $A_1A_2$ or $A_2A_1$) in the locus $j$, $O_k$ is the observed values for the genotypes $0$, $1$ and $2$, $E_k$ is the expected values for $0 = N * (1 - p_j)^2$, $1 = N * 2p_j(1-p_j)$ and $2=N * p_j^2$.
   
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Moreover, for any individual $i$, the function provides estimates of:
 
@@ -177,10 +191,10 @@ H_{o_i} = \frac{nH_i}{m}
 * Inbreeding coefficient
 
 $\begin{aligned}
-F_i = 1 - \frac{H_{o_i}}{\bar{H_e}}
+F_i=\frac{O(H_i)-E(H)}{m-E(H)}
 \end{aligned}$
 
-where $nH_i$ is the number of heterozigous genotypes (of type $A_1A_2$ or $A_2A_1$) in the individual $i$, $m$ is the number of markers and $\bar{H_e} = \frac{\sum_{j=1}^{m} H_{e_j}}{m}$, the mean of $H_e$;
+where $nH_i$ is the number of heterozigous genotypes (of type $A_1A_2$ or $A_2A_1$) in the individual $i$, $m$ is the number of markers, $O(H_i)$ is the observed homozygosity for individual $i$, $E(H) = \sum_{j} 1-2p_j(1-p_j)$ is the expected homozygosity across all snps.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Then, based on the estimates described above,  populational parameters, means and bounders of 
 DG, PIC, MAF, Ho, F and S are provided. Besides, measures of variability are estimated:
@@ -245,23 +259,23 @@ head(pop.gen$bygroup$LNE$fixed)
 ```
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;As can be noted, in the HNE group there are many fixed alleles and no particular alleles. On the other hand, in LNE, the opposite was observed. Hence, for two populations, considering that quality control was made and monomorphic markers were removed, if one allele is fixed in one population, the other will be exclusive in another subpopulation.
 
-In the presence of subgroups, `popgen` also produces the Wright's F statistics in order to measure interpopulation genetic diversity. $F_{IS}$ measures the deficiency of average heterozygotes in each population, $F_{ST}$ is related to the degree of gene differentiation among populations and $F_{IT}$ is the deficiency of average heterozygotes in subpopulations. The parameters are estimated as follows:
+In the presence of subgroups, `popgen` also produces the Wright's F statistics in order to measure genetic divergence between populations. $F_{IS}$ measures the deficiency of average heterozygotes in each population, $F_{ST}$ is related to the degree of gene differentiation among populations and $F_{IT}$ is the deficiency of average heterozygotes in subpopulations. The parameters are estimated as follows:
 
 $\begin{aligned}
-F_{IS} = 1 - dfrac{H_I}{H_S}
+F_{IS} = 1 - \dfrac{H_I}{H_S}
 \end{aligned}$
   
   
 $\begin{aligned}
-F_{ST} = 1 - dfrac{H_S}{H_T}
+F_{ST} = 1 - \dfrac{H_S}{H_T}
 \end{aligned}$
   
   
 $\begin{aligned}
-F_{IT} = 1 - dfrac{H_I}{H_T}
+F_{IT} = 1 - \dfrac{H_I}{H_T}
 \end{aligned}$
 
-where $H_I$ is the weighted average of observed heterozygosity in the subpopulations, $H_S$ is the average expected heterozygosity estimated from each subpopulation and $H_T$ is the expected heterozygosity in the total population. The F parameters are estimated considering all population and a pairwise comparison. Also, these parameters are estimated for each marker.
+where $H_I$ is the weighted average of observed heterozygosity in the subpopulations, $H_S$ is the average expected heterozygosity estimated from each subpopulation and $H_T$ is the expected heterozygosity in the total population. Besides the estimates of F parameters for each marker locus, estimates considering means of $H_I$, $H_T$ and $H_S$ for each population is produced. Thus, There is a comparison considering all population and in a pairwise format which each pair of populations are compared against each other.
   
   
 # **References**

@@ -1,5 +1,5 @@
 Package: snpReady
-Version: 0.9.6
+Version: 0.9.7
 Date: 2018-04-11
 Authors@R: c(
     person("Italo", "Granato", email="italo.granato@gmail.com", role = c("aut", "cre")),
@@ -15,7 +15,8 @@ Depends:
 	  rgl,
 	  impute
 License: GPL-3
-URL: 
+URL: https://github.com/italo-granato/snpReady
+BugReports: https://github.com/italo-granato/snpReady/issues
 RoxygenNote: 6.0.1
 Suggests: knitr,
     rmarkdown,

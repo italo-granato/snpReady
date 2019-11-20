@@ -15,7 +15,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
 
 BiocManager::install("impute")
 ```
-for older R versions, refer to the proper Bioconductor version associated with the specific R versions, available [here](https://bioconductor.org/about/release-announcements/)
+For older R versions, you need to install the proper Bioconductor version associated, available [here](https://bioconductor.org/about/release-announcements/)
 
 ```R
 BiocManager::install(version="X.X")

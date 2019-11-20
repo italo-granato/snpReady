@@ -7,7 +7,7 @@ snpReady is available on CRAN
 ```R
 install.packages("snpReady")
 ```
-The snpReady package has `impute` package as dependency. However, the package is available at bioconductor[https://bioconductor.org/]. To install this package in the R - version 3.6
+The snpReady package has `impute` package as dependency. However, the package is available at bioconductor[https://bioconductor.org/]. To install this package in the current R version
 
 ```R
 if (!requireNamespace("BiocManager", quietly = TRUE))

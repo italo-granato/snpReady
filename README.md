@@ -7,7 +7,22 @@ snpReady is available on CRAN
 ```R
 install.packages("snpReady")
 ```
-In github it is available the experimental version and its installation needs to be done via [devtools](https://github.com/hadley/devtools#updating-to-the-latest-version-of-devtools). Hence, it is necessary first install devtools and later install snpReady
+The snpReady package has `impute` package as dependency. However, the package is available at bioconductor[https://bioconductor.org/]. To install this package in the R - version 3.6
+
+```R
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("impute")
+```
+for older R versions, refer to the proper Bioconductor version associated with the specific R versions, available here[https://bioconductor.org/about/release-announcements/]
+
+```R
+BiocManager::install(version="X.X")
+```
+where `X.X` is the bioconductor version.
+
+The experimental version is available at the github and its installation needs to be done via [devtools](https://github.com/hadley/devtools#updating-to-the-latest-version-of-devtools). Hence, it is necessary first install devtools and later install snpReady
 ```R
 install.packages("devtools")
 library(devtools)

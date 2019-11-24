@@ -164,7 +164,8 @@ raw.data <- function(data, frame = c("long","wide"), hapmap = NULL, base = TRUE,
       m[tmp] <- colMeans(m, na.rm = T)[tmp[,2]]
     }
     if(imput.type == "knni"){
-      m <- t(impute.knn(t(m), 2)$data)
+      install.dep()
+      m <- t(impute::impute.knn(t(m), 2)$data)
     }
   }
   

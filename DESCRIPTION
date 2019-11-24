@@ -12,7 +12,6 @@ Depends:
 Imports:
     Matrix,
     matrixcalc,
-	  impute,
 	  stringr,
 	  rgl
 License: GPL-3

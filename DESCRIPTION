@@ -9,11 +9,12 @@ Title: Preparing Genotypic Datasets in Order to Run Genomic Analysis
 Description: Three functions to clean, summarize and prepare genomic datasets to Genome
     Selection and Genome Association analysis and to estimate population genetic parameters.
 Depends:
+Imports:
     Matrix,
     matrixcalc,
+	  impute,
 	  stringr,
-	  rgl,
-	  impute
+	  rgl
 License: GPL-3
 URL: https://github.com/italo-granato/snpReady
 BugReports: https://github.com/italo-granato/snpReady/issues

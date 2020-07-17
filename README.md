@@ -1,6 +1,6 @@
 
 <p style="font-family:Arial; font-size:60px; font-weight: 900", align="center">
-# snpReady
+snpReady
 </p>
 
 <p align="center">

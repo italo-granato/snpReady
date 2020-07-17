@@ -1,4 +1,19 @@
+<p align="center">
 # snpReady
+
+<a href="https://www.tidyverse.org/lifecycle/#maturing">
+<img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Maturing">
+</a> <a href="https://www.gnu.org/licenses/lgpl-3.0">
+<img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg" alt="LGPL, Version 3.0">
+</a> <a href="http://www.repostatus.org/#active">
+<img src="http://www.repostatus.org/badges/latest/active.svg" alt="Status of the Repo: Active">
+</a> <a href="">
+<img src="https://cranlogs.r-pkg.org/badges/snpReady" alt="Dowloads from the CRAN">
+</a> <a href="https://cran.r-project.org/package=snpReady">
+<img src="http://www.r-pkg.org/badges/version-ago/snpReady" alt="CRAN"> </a>
+
+</p>
+
 A tool to assist breeders to prepare genotypic datasets for genomic analysis in order to run genomic analysis and estimates some population genetics parameters. Thus, it produce outputs that can be use in many packages or softwares related to genomic analysis.
 
 ## Installation

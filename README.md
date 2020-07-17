@@ -1,8 +1,6 @@
 
-<p style="font-family:Arial; font-size:60px; font-weight: 900", align="center">
-snpReady
-</p>
-
+<p style="font-family:Arial; font-size:60px; font-weight: 900", align="center"> snpReady </p>
+<br>
 <p align="center">
 <a href="https://www.tidyverse.org/lifecycle/#maturing">
 <img src="https://img.shields.io/badge/lifecycle-maturing-blue.svg" alt="Maturing">

@@ -126,23 +126,25 @@ popgen <- function(M, subgroups=NULL, plot = FALSE)
     return(out)
 }
 
- g.of.p <- function(M){
+g.of.p <- function(M){
     m<-ncol(M)
     g<-nrow(M)
     
     p <- colMeans(M, na.rm = T)/2
-    fs <- cbind(p, 1-p)
-    MAF <- apply(fs, 1, min)
+    # fs <- cbind(p, 1-p)
+    # MAF <- apply(fs, 1, min)
+    MAF <- minp(p)
     q <- 1-p
     Hesp <- 2*p*q
     Hobs <- colMeans(M == 1, na.rm = T)
     Dg <- 1- p^2 - q^2
     PIC <- 1-(p^2 + q^2) - (2*p^2*q^2)
     propMiss <- colSums(is.na(M))/g
-	counts <- matrix(NA, nrow = ncol(M), ncol = 3, dimnames = list(colnames(M), c(0,1,2)))
-  for(i in 1:3){
-    counts[,i] <- colSums(M == colnames(counts)[i], na.rm = T)
-  }
+    # counts <- matrix(NA, nrow = ncol(M), ncol = 3, dimnames = list(colnames(M), c(0,1,2)))
+    # for(i in 1:3) counts[,i] <- colSums(M == (i-1), na.rm = T)
+    counts <- sapply(0:2, function(x) colSums(M == x, na.rm = T))
+    colnames(counts) <- c('0','1','2')
+	
   hwetest <- chiS(counts = counts)																					
     markers <- cbind(round(cbind(p, q, MAF, "He" = Hesp, "Ho" = Hobs, "GD" = Dg, PIC, "Miss" = propMiss), 2),
                    hwetest)
@@ -223,11 +225,13 @@ inbreeding.fun <- function(mat, p){
 chiS <- function(counts){
   p <- ((2 * counts[,"2"]) + counts[,"1"])/(2*rowSums(counts))
   
-  Expfr <- Vectorize(FUN = function(p){
-    return(c("0" = (1-p)**2, "1" = 2*p*(1-p), "2" = p**2))
-  })
+  # Expfr <- Vectorize(FUN = function(p){
+  #   return(c("0" = (1-p)**2, "1" = 2*p*(1-p), "2" = p**2))
+  # })
+  # 
+  # E <- t(Expfr(p)) * rowSums(counts)
   
-  E <- t(Expfr(p)) * rowSums(counts)
+  E <- cbind("0" = (1-p)**2, "1" = 2*p*(1-p), "2" = p**2) * rowSums(counts)
   
   sumChi <- rowSums((E - counts)^2/E)
   pvalue <- pchisq(sumChi, 1, lower.tail = FALSE)
@@ -235,3 +239,6 @@ chiS <- function(counts){
   resSQ[is.na(resSQ)] <- 0
   return(resSQ)
 }
+
+minp <- Vectorize(FUN = function(p){
+  return(min(p,(1-p))) })
